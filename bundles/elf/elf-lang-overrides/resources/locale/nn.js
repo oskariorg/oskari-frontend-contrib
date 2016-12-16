@@ -1,6 +1,6 @@
 Oskari.registerLocalization(
 {
-    "lang": "is",
+    "lang": "nn",
     "key": "findbycoordinates",
     "value": {
         "tool": {

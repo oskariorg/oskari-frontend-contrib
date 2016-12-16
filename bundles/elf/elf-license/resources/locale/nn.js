@@ -1,33 +1,33 @@
 Oskari.registerLocalization(
 {
-    "lang": "nb",
+    "lang": "nn",
     "key": "elf-license",
     "value": {
         "getLicenseText": "Lisens",
         "errors": {
             "cannotGetLicenseInformation": {
                 "title": "Feil ved henting av lisensinformasjon",
-                "message": "Kan ikke hente lisensinformasjon"
+                "message": "Kan ikkje hente lisensinformasjon"
             },
             "cannotGetLicensePrice": {
-                "title": "Fant ikke lisenspris",
-                "message": "Kan ikke hente lisenspris"
+                "title": "Fant ikkje lisenspris",
+                "message": "Kan ikkje hente lisenspris"
             },
             "failedConclude": {
-                "title": "Feil ved fastsetting av lisens",
-                "message": "Kan ikke fastsette lisens"
+                "title": "Feil ved fastsettjng av lisens",
+                "message": "Kan ikkje fastsetje lisens"
             },
             "concludeNoResponse": {
-                "title": "Kan ikke fastsette lisens",
-                "message": "Kan ikke fastsette lisens"
+                "title": "Kan ikkje fastsetje lisens",
+                "message": "Kan ikkje fastsetje lisens"
             },
             "cannotDeactivateLicense": {
-                "title": "Deaktivering av lisens feilet",
-                "message": "Kan ikke deaktivere lisens"
+                "title": "Deaktivering av lisens feila",
+                "message": "Kan ikkje deaktivere lisens"
             },
             "checkFields": {
-                "title": "Kontrollér påkrevde verdier",
-                "message": "Mangler verdier fra"
+                "title": "Kontrollér påkrevde verdiar",
+                "message": "Manglar verdiar frå"
             }
         },
         "success": {
@@ -37,23 +37,23 @@ Oskari.registerLocalization(
             }
         },
         "dialog": {
-            "licenseTitle": "Lisensdetaljer",
+            "licenseTitle": "Lisensdetaljar",
             "licenseModelDescriptionsTitle": "General descriptions of ELF license models:",
             "licenseModelDescriptions": {
                 "evaluation": "Evaluation Licence – This licence enables you to access ELF products and services for the purpose of evaluating its suitability only. It is a time limited licence.",
                 "developer": "Developer Licence – This licence enables you to access ELF products and services for the purpose of developing new products and services that include the data licensed by ELF. It is a time limited licence."
             },
-            "licenseModelsTitle": "Lisensmodeller:",
-            "noRightToAnyLicenseModels": "Du har ikke rettigheter til noen lisensmodeller.",
-            "loginShort": "Logg inn for å vise lisensmodeller.",
-            "licenseSummaryTitle": "Sammendrag av lisens",
+            "licenseModelsTitle": "Lisensmodellar:",
+            "noRightToAnyLicenseModels": "Du har ikkje rettar til nokon lisensmodellar.",
+            "loginShort": "Logg inn for å vise lisensmodellar.",
+            "licenseSummaryTitle": "Samandrag av lisens",
             "priceTitle": "Pris",
             "priceUnitEuro": "€",
             "help": {
-                "info": "Velg lisensmodell ved å klikke på den.",
-                "details": "Legg inn lisensdetaljer, alle obligatoriske felt er merket med stjerne (*). Trykk på 'Neste' for å se sammendrag av lisens og pris. Velg 'Forrige' hvis du vil se flere lisensmodeller. Du kan stoppe bestillingen ved å trykke på 'Lukk'.",
-                "summary": "Les lisensen og akseptér ved å trykke på 'Fullfør'.  Trykk på 'Tilbake'-knappen hvis du vil forandre på noe som er fylt inn. Du kan også stoppe bestillingen ved å trykke på 'Lukk'-knappen.",
-                "orderDetails": "Se din lisensbestilling ovenfor. Lukk dialogen ved å trykke på 'Lukk'-knappen. Trykk på 'Deaktiver lisens' hvis du vil deaktivere bestillingen."
+                "info": "Vel lisensmodell ved å klikke på han.",
+                "details": "Legg inn lisensdetaljar, alle obligatoriske felt er merka med stjerne (*). Trykk på 'Neste' for å sjå samandrag av lisens og pris. Vel 'Forrige' dersom du vil sjå fleire lisensmodellar. Du kan stoppe bestilling ved å trykke på 'Lukk'.",
+                "summary": "Les lisensen og akseptér ved å klikke på 'Fullfør'. Klikk på 'Tilbake'-knappen dersom du vil endre noko som er fylt inn. Du kan også stoppe bestillinga ved å klikke på 'Lukk'-knappen.",
+                "orderDetails": "Se lisensbestillinga di ovanfor. Lukk dialogen ved å klikke på 'Lukk'-knappen. Klikk på 'Deaktiver lisens' dersom du vil deaktivere bestilling."
             },
             "deactivateConfirm": {
                 "title": "Deaktiver lisens",
@@ -61,14 +61,14 @@ Oskari.registerLocalization(
             },
             "validTo": "Abonnementet er gyldig i {day}",
             "licenseId": "Lisens id: {licenseid}",
-            "licenseServiceUrl": "Lisens tjeneste URL: {serviceurl}",
+            "licenseServiceUrl": "Lisens teneste URL: {serviceurl}",
             "licenceConcluded": {
-                "message": "Lisens fullført, se nedenfor for lisensdetaljene."
+                "message": "Lisens fullført, se nedanfor for lisensdetaljane."
             },
             "licenseDurations": {
-                "D": "dager",
-                "W": "uker",
-                "M": "måneder",
+                "D": "dagar",
+                "W": "veker",
+                "M": "månader",
                 "Y": "år"
             },
             "registerLinkText": "Register"
