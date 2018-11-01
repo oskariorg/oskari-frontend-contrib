@@ -1,0 +1,23 @@
+{
+  "name": "oskari-frontend-contrib",
+  "version": "1.0.0",
+  "description": "These are unofficial bundles for Oskari created by the Oskari community. Many of them add value to your Oskari install, but they come with no official support from the core Oskari team.",
+  "keywords": [
+    "Oskari"
+  ],
+  "dependencies": {
+    "ol-cesium": "^2.2.2",
+    "oskari-frontend": "file:../oskari-frontend"
+  },
+  "scripts": {
+    "build": "./node_modules/oskari-frontend/node_modules/.bin/webpack --config ./node_modules/oskari-frontend/webpack.config.js --mode production",
+    "start": "./node_modules/oskari-frontend/node_modules/.bin/webpack-dev-server --config ./node_modules/oskari-frontend/webpack.config.js --hot",
+    "paikkis": "npm run start -- --env.appdef=applications/paikkatietoikkuna.fi",
+    "asdi": "npm run start -- --env.appdef=applications/asdi"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oskariorg/oskari-frontend-contrib.git"
+  },
+  "private": true
+}
