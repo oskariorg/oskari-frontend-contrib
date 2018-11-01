@@ -9,10 +9,10 @@ The application build process assumes that this repository and the main oskari-f
 1. Make sure you have the command line programs `git`, and `node` version 8 or greater
 2. Clone the main frontend repository: `git clone https://github.com/oskariorg/oskari-frontend.git`
 3. Clone the contrib repository (this one): `git clone https://github.com/oskariorg/oskari-frontend-contrib.git`
-- Now we have directories `oskari-frontend` and `oskari-frontend-contrib` side by side
+    - Now we have directories `oskari-frontend` and `oskari-frontend-contrib` side by side
 4. Change directory `cd oskari-frontend` and run `npm install` to install dependencies from npm
 5. Change directory `cd ..`, `cd oskari-frontend-contrib` and run `npm install` to install dependencies from npm
- - This step will link `oskari-frontend` under `node_modules` in `oskari-frontend-contrib`
+    - This step will link `oskari-frontend` under `node_modules` in `oskari-frontend-contrib`
 
 ## Using bundles in your application
 
