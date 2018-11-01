@@ -10,8 +10,8 @@
     "oskari-frontend": "file:../oskari-frontend"
   },
   "scripts": {
-    "build": "node node_modules/oskari-frontend/node_modules/.bin/webpack --config ./node_modules/oskari-frontend/webpack.config.js --mode production",
-    "start": "node node_modules/oskari-frontend/node_modules/.bin/webpack-dev-server --config ./node_modules/oskari-frontend/webpack.config.js --hot",
+    "build": "node ./node_modules/oskari-frontend/node_modules/webpack/bin/webpack.js --config ./node_modules/oskari-frontend/webpack.config.js --mode production",
+    "start": "node ./node_modules/oskari-frontend/node_modules/webpack-dev-server/bin/webpack-dev-server.js --config ./node_modules/oskari-frontend/webpack.config.js --hot",
     "paikkis": "npm run start -- --env.appdef=applications/paikkatietoikkuna.fi",
     "asdi": "npm run start -- --env.appdef=applications/asdi"
   },
