@@ -34,4 +34,11 @@ As long as the repositories are side by side, the build process will be able to 
 
 This repository also houses some application configurations (under `applications/`). After you have done the basic setup (above), applications can be built directly from this repo with eg. `npm run build -- --env.appdef=1.48:applications/paikkatietoikkuna.fi`. The output will be under `dist/`. See the main [oskari-frontend repo](https://github.com/oskariorg/oskari-frontend#readme) for detailed instructions about the build parameters.
 
+
+## Contributing
+
+If you would like to contribute your own bundles to this repo, please make a Pull request. Each bundle should have a README stating:
+1. Which versions of Oskari the bundle is compatible with
+2. Who is the maintainer of the bundle (contact information)
+
  
