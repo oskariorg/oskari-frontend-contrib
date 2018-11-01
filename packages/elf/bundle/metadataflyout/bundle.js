@@ -23,95 +23,95 @@ Oskari.clazz.define(
 
             "scripts": [{
                 "type": "text/javascript",
-                "src": "../../../../bundles/catalogue/metadataflyout/instance.js"
+                "src": "oskari-frontend/bundles/catalogue/metadataflyout/instance.js"
             }, {
                 "type": "text/javascript",
-                "src": "../../../../bundles/catalogue/metadataflyout/service/MetadataLoader.js"
+                "src": "oskari-frontend/bundles/catalogue/metadataflyout/service/MetadataLoader.js"
 
             }, {
                 "type": "text/javascript",
                 "src": "../../../../bundles/elf/metadataflyout/view/MetaDataPanel.js"
             }, {
                 "type": "text/javascript",
-                "src": "../../../../bundles/catalogue/metadataflyout/view/MetadataPage.js"
+                "src": "oskari-frontend/bundles/catalogue/metadataflyout/view/MetadataPage.js"
             }, {
                 "type": "text/javascript",
-                "src": "../../../../bundles/catalogue/metadataflyout/Flyout.js"
+                "src": "oskari-frontend/bundles/catalogue/metadataflyout/Flyout.js"
             }, {
                 "type": "text/javascript",
-                "src": "../../../../bundles/catalogue/metadataflyout/Tile.js"
+                "src": "oskari-frontend/bundles/catalogue/metadataflyout/Tile.js"
             }, {
                 "type": "text/javascript",
-                "src": "../../../../bundles/catalogue/metadataflyout/request/ShowMetadataRequest.js"
+                "src": "oskari-frontend/bundles/catalogue/metadataflyout/request/ShowMetadataRequest.js"
             }, {
                 "type": "text/javascript",
-                "src": "../../../../bundles/catalogue/metadataflyout/request/ShowMetadataRequestHandler.js"
+                "src": "oskari-frontend/bundles/catalogue/metadataflyout/request/ShowMetadataRequestHandler.js"
             }, {
                 "type": "text/javascript",
-                "src": "../../../../bundles/catalogue/metadataflyout/request/AddTabRequest.js"
+                "src": "oskari-frontend/bundles/catalogue/metadataflyout/request/AddTabRequest.js"
             }, {
                 "type": "text/javascript",
-                "src": "../../../../bundles/catalogue/metadataflyout/request/AddTabRequestHandler.js"
+                "src": "oskari-frontend/bundles/catalogue/metadataflyout/request/AddTabRequestHandler.js"
             }, {
                 "type": "text/css",
-                "src": "../../../../bundles/catalogue/metadataflyout/resources/scss/style.scss"
+                "src": "oskari-frontend/bundles/catalogue/metadataflyout/resources/scss/style.scss"
             }],
             "locales": [{
                 "lang": "fi",
                 "type": "text/javascript",
-                "src": "../../../../bundles/catalogue/metadataflyout/resources/locale/fi.js"
+                "src": "oskari-frontend/bundles/catalogue/metadataflyout/resources/locale/fi.js"
             }, {
                 "lang": "fr",
                 "type": "text/javascript",
-                "src": "../../../../bundles/catalogue/metadataflyout/resources/locale/fr.js"
+                "src": "oskari-frontend/bundles/catalogue/metadataflyout/resources/locale/fr.js"
             }, {
                 "lang": "en",
                 "type": "text/javascript",
-                "src": "../../../../bundles/catalogue/metadataflyout/resources/locale/en.js"
+                "src": "oskari-frontend/bundles/catalogue/metadataflyout/resources/locale/en.js"
             }, {
                 "lang": "es",
                 "type": "text/javascript",
-                "src": "../../../../bundles/catalogue/metadataflyout/resources/locale/es.js"
+                "src": "oskari-frontend/bundles/catalogue/metadataflyout/resources/locale/es.js"
             }, {
                 "lang": "et",
                 "type": "text/javascript",
-                "src": "../../../../bundles/catalogue/metadataflyout/resources/locale/et.js"
+                "src": "oskari-frontend/bundles/catalogue/metadataflyout/resources/locale/et.js"
             }, {
                 "lang": "is",
                 "type": "text/javascript",
-                "src": "../../../../bundles/catalogue/metadataflyout/resources/locale/is.js"
+                "src": "oskari-frontend/bundles/catalogue/metadataflyout/resources/locale/is.js"
             }, {
                 "lang": "it",
                 "type": "text/javascript",
-                "src": "../../../../bundles/catalogue/metadataflyout/resources/locale/it.js"
+                "src": "oskari-frontend/bundles/catalogue/metadataflyout/resources/locale/it.js"
             }, {
                 "lang": "sl",
                 "type": "text/javascript",
-                "src": "../../../../bundles/catalogue/metadataflyout/resources/locale/sl.js"
+                "src": "oskari-frontend/bundles/catalogue/metadataflyout/resources/locale/sl.js"
             }, {
                 "lang": "nb",
                 "type": "text/javascript",
-                "src": "../../../../bundles/catalogue/metadataflyout/resources/locale/nb.js"
+                "src": "oskari-frontend/bundles/catalogue/metadataflyout/resources/locale/nb.js"
             }, {
                 "lang": "nn",
                 "type": "text/javascript",
-                "src": "../../../../bundles/catalogue/metadataflyout/resources/locale/nn.js"
+                "src": "oskari-frontend/bundles/catalogue/metadataflyout/resources/locale/nn.js"
             }, {
                 "lang": "nl",
                 "type": "text/javascript",
-                "src": "../../../../bundles/catalogue/metadataflyout/resources/locale/nl.js"
+                "src": "oskari-frontend/bundles/catalogue/metadataflyout/resources/locale/nl.js"
             }, {
                 "lang": "nn",
                 "type": "text/javascript",
-                "src": "../../../../bundles/catalogue/metadataflyout/resources/locale/nn.js"
+                "src": "oskari-frontend/bundles/catalogue/metadataflyout/resources/locale/nn.js"
             }, {
                 "lang": "sk",
                 "type": "text/javascript",
-                "src": "../../../../bundles/catalogue/metadataflyout/resources/locale/sk.js"
+                "src": "oskari-frontend/bundles/catalogue/metadataflyout/resources/locale/sk.js"
             }, {
                 "lang": "sv",
                 "type": "text/javascript",
-                "src": "../../../../bundles/catalogue/metadataflyout/resources/locale/sv.js"
+                "src": "oskari-frontend/bundles/catalogue/metadataflyout/resources/locale/sv.js"
             }],
             "resources": []
         },

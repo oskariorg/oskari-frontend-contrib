@@ -23,36 +23,36 @@ Oskari.clazz.define("Oskari.mapframework.bundle.downloadBasket.Bundle", function
 
         "scripts": [{
             "type": "text/javascript",
-            "src": "../../../../bundles/framework/download-basket/instance.js"
+            "src": "oskari-frontend/bundles/framework/download-basket/instance.js"
         }, {
             "type": "text/javascript",
-            "src": "../../../../bundles/framework/download-basket/Flyout.js"
+            "src": "oskari-frontend/bundles/framework/download-basket/Flyout.js"
         }, {
             "type": "text/javascript",
-            "src": "../../../../bundles/framework/download-basket/Cropping.js"
+            "src": "oskari-frontend/bundles/framework/download-basket/Cropping.js"
         }, {
             "type": "text/javascript",
-            "src": "../../../../bundles/framework/download-basket/Basket.js"
+            "src": "oskari-frontend/bundles/framework/download-basket/Basket.js"
         }, {
             "type": "text/javascript",
-            "src": "../../../../bundles/framework/download-basket/Tile.js"
+            "src": "oskari-frontend/bundles/framework/download-basket/Tile.js"
         }, {
             "type": "text/css",
-            "src": "../../../../bundles/framework/download-basket/resources/scss/style.scss"
+            "src": "oskari-frontend/bundles/framework/download-basket/resources/scss/style.scss"
         }],
 
         "locales": [{
             "lang": "en",
             "type": "text/javascript",
-            "src": "../../../../bundles/framework/download-basket/resources/locale/en.js"
+            "src": "oskari-frontend/bundles/framework/download-basket/resources/locale/en.js"
         }, {
             "lang": "fi",
             "type": "text/javascript",
-            "src": "../../../../bundles/framework/download-basket/resources/locale/fi.js"
+            "src": "oskari-frontend/bundles/framework/download-basket/resources/locale/fi.js"
         }, {
             "lang": "sv",
             "type": "text/javascript",
-            "src": "../../../../bundles/framework/download-basket/resources/locale/sv.js"
+            "src": "oskari-frontend/bundles/framework/download-basket/resources/locale/sv.js"
         }]
     },
     "bundle": {

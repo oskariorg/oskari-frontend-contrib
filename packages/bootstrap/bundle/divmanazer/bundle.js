@@ -35,140 +35,140 @@ Oskari.clazz.define("Oskari.userinterface.bundle.bootstrap.UserInterfaceBundle",
          */
         "scripts" : [{
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/instance.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/instance.js"
         }, {
             "type" : "text/javascript",
             "src" : "../../../../bundles/bootstrap/divmanazer/instance.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/request/AddExtensionRequest.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/request/AddExtensionRequest.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/request/AddExtensionRequestHandler.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/request/AddExtensionRequestHandler.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/request/RemoveExtensionRequest.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/request/RemoveExtensionRequest.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/request/RemoveExtensionRequestHandler.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/request/RemoveExtensionRequestHandler.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/request/UpdateExtensionRequest.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/request/UpdateExtensionRequest.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/request/UpdateExtensionRequestHandler.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/request/UpdateExtensionRequestHandler.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/request/ModalDialogRequest.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/request/ModalDialogRequest.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/request/ModalDialogRequestHandler.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/request/ModalDialogRequestHandler.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/event/ExtensionUpdatedEvent.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/event/ExtensionUpdatedEvent.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/component/Accordion.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/component/Accordion.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/component/AccordionPanel.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/component/AccordionPanel.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/component/TabContainer.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/component/TabContainer.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/component/TabDropdownContainer.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/component/TabDropdownContainer.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/component/TabPanel.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/component/TabPanel.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/component/Badge.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/component/Badge.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/component/Alert.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/component/Alert.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/component/Popup.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/component/Popup.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/component/Overlay.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/component/Overlay.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/component/Button.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/component/Button.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/component/Form.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/component/Form.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/component/UIHelper.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/component/UIHelper.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/component/FormInput.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/component/FormInput.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/component/Popover.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/component/Popover.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/component/Grid.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/component/Grid.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/component/GridModel.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/component/GridModel.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/component/ProgressSpinner.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/component/ProgressSpinner.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/extension/DefaultTile.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/extension/DefaultTile.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/extension/DefaultFlyout.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/extension/DefaultFlyout.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/extension/DefaultExtension.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/extension/DefaultExtension.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/extension/DefaultView.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/extension/DefaultView.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/framework/divmanazer/extension/DefaultLayout.js"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/extension/DefaultLayout.js"
         },
         {
             "type" : "text/css",
             "src" : "../../../../bundles/bootstrap/divmanazer/resources/css/divman.css"
         }, {
             "type" : "text/css",
-            "src" : "../../../../bundles/framework/divmanazer/resources/scss/accordion.scss"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/resources/scss/accordion.scss"
         }, {
             "type" : "text/css",
-            "src" : "../../../../bundles/framework/divmanazer/resources/scss/tab.scss"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/resources/scss/tab.scss"
         }, {
             "type" : "text/css",
-            "src" : "../../../../bundles/framework/divmanazer/resources/scss/modal.scss"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/resources/scss/modal.scss"
         }, {
             "type" : "text/css",
-            "src" : "../../../../bundles/framework/divmanazer/resources/scss/badge.scss"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/resources/scss/badge.scss"
         }, {
             "type" : "text/css",
-            "src" : "../../../../bundles/framework/divmanazer/resources/scss/alert.scss"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/resources/scss/alert.scss"
         }, {
             "type" : "text/css",
-            "src" : "../../../../bundles/framework/divmanazer/resources/scss/forminput.scss"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/resources/scss/forminput.scss"
         }, {
             "type" : "text/css",
-            "src" : "../../../../bundles/framework/divmanazer/resources/scss/grid.scss"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/resources/scss/grid.scss"
         }, {
             "type" : "text/css",
-            "src" : "../../../../bundles/framework/divmanazer/resources/scss/popup.scss"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/resources/scss/popup.scss"
         }, {
             "type" : "text/css",
-            "src" : "../../../../bundles/framework/divmanazer/resources/scss/button.scss"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/resources/scss/button.scss"
         }, {
             "type" : "text/css",
-            "src" : "../../../../bundles/framework/divmanazer/resources/scss/overlay.scss"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/resources/scss/overlay.scss"
         }, {
             "type" : "text/css",
-            "src" : "../../../../bundles/framework/divmanazer/resources/scss/popover.scss"
+            "src" : "oskari-frontend/bundles/framework/divmanazer/resources/scss/popover.scss"
         }]
     },
     "bundle" : {

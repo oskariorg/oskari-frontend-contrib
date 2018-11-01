@@ -25,13 +25,13 @@ Oskari.clazz.define("Oskari.arcgis.bundle.arcgis.MapArcGisBundle", function() {
 
 		"scripts" : [{
 			"type" : "text/javascript",
-			"src" : "../../../../bundles/mapping/maparcgis/plugin/ArcGisLayerPlugin.ol2.js"
+			"src" : "oskari-frontend/bundles/mapping/maparcgis/plugin/ArcGisLayerPlugin.ol2.js"
 		}, {
 			"type" : "text/javascript",
-			"src" : "../../../../bundles/mapping/maparcgis/domain/ArcGisLayer.js"
+			"src" : "oskari-frontend/bundles/mapping/maparcgis/domain/ArcGisLayer.js"
 		}, {
 			"type" : "text/javascript",
-			"src" : "../../../../bundles/mapping/maparcgis/domain/ArcGis93Layer.js"
+			"src" : "oskari-frontend/bundles/mapping/maparcgis/domain/ArcGis93Layer.js"
 		}
        ]
 	},
