@@ -30,52 +30,52 @@
             "metadata" : {
                 "Import-Bundle" : {
                     "core-base" : {
-                        "bundlePath" : "../../../packages/framework/bundle/"
+                        "bundlePath" : "oskari-frontend/packages/framework/bundle/"
                     },
                     "core-map" : {
-                        "bundlePath" : "../../../packages/framework/bundle/"
+                        "bundlePath" : "oskari-frontend/packages/framework/bundle/"
                     },
                     "sandbox-base" : {
-                        "bundlePath" : "../../../packages/framework/bundle/"
+                        "bundlePath" : "oskari-frontend/packages/framework/bundle/"
                     },
                     "sandbox-map" : {
-                        "bundlePath" : "../../../packages/framework/bundle/"
+                        "bundlePath" : "oskari-frontend/packages/framework/bundle/"
                     },
                     "event-base" : {
-                        "bundlePath" : "../../../packages/framework/bundle/"
+                        "bundlePath" : "oskari-frontend/packages/framework/bundle/"
                     },
                     "event-map" : {
-                        "bundlePath" : "../../../packages/framework/bundle/"
+                        "bundlePath" : "oskari-frontend/packages/framework/bundle/"
                     },
                     "event-map-layer" : {
-                        "bundlePath" : "../../../packages/framework/bundle/"
+                        "bundlePath" : "oskari-frontend/packages/framework/bundle/"
                     },
                     "request-base" : {
-                        "bundlePath" : "../../../packages/framework/bundle/"
+                        "bundlePath" : "oskari-frontend/packages/framework/bundle/"
                     },
                     "request-map" : {
-                        "bundlePath" : "../../../packages/framework/bundle/"
+                        "bundlePath" : "oskari-frontend/packages/framework/bundle/"
                     },
                     "request-map-layer" : {
-                        "bundlePath" : "../../../packages/framework/bundle/"
+                        "bundlePath" : "oskari-frontend/packages/framework/bundle/"
                     },
                     "service-base" : {
-                        "bundlePath" : "../../../packages/framework/bundle/"
+                        "bundlePath" : "oskari-frontend/packages/framework/bundle/"
                     },
                     "service-map" : {
-                        "bundlePath" : "../../../packages/framework/bundle/"
+                        "bundlePath" : "oskari-frontend/packages/framework/bundle/"
                     },
                     "domain" : {
-                        "bundlePath" : "../../../packages/framework/bundle/"
+                        "bundlePath" : "oskari-frontend/packages/framework/bundle/"
                     },
                     "mapwmts" : {
-                        "bundlePath" : "../../../packages/framework/bundle/"
+                        "bundlePath" : "oskari-frontend/packages/framework/bundle/"
                     },
                     "mapmodule-plugin" : {
-                        "bundlePath" : "../../../packages/framework/bundle/"
+                        "bundlePath" : "oskari-frontend/packages/framework/bundle/"
                     },
                     "mapfull" : {
-                        "bundlePath" : "../../../packages/framework/bundle/"
+                        "bundlePath" : "oskari-frontend/packages/framework/bundle/"
                     },
                     "harava-mapmodule-plugin" : {
                         "bundlePath" : "../../../packages/harava/bundle/"
@@ -95,7 +95,7 @@
             "metadata" : {
                 "Import-Bundle" : {
                     "divmanazer" : {
-                        "bundlePath" : "../../../packages/framework/bundle/"
+                        "bundlePath" : "oskari-frontend/packages/framework/bundle/"
                     }
                 },
                 "Require-Bundle-Instance" : []
@@ -115,7 +115,7 @@
             "metadata": {
                 "Import-Bundle": {
                     "layerselection2": {
-                        "bundlePath": "../../../packages/framework/bundle/"
+                        "bundlePath": "oskari-frontend/packages/framework/bundle/"
                     }
                 },
                 "Require-Bundle-Instance": []

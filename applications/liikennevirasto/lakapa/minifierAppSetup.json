@@ -37,61 +37,61 @@
       "metadata":{
          "Import-Bundle":{
             "mapwmts": {
-                    "bundlePath": "../../../packages/framework/bundle/"
+                    "bundlePath": "oskari-frontend/packages/framework/bundle/"
                 },
                 "service-base": {
-                    "bundlePath": "../../../packages/framework/bundle/"
+                    "bundlePath": "oskari-frontend/packages/framework/bundle/"
                 },
                 "event-map-layer": {
-                    "bundlePath": "../../../packages/framework/bundle/"
+                    "bundlePath": "oskari-frontend/packages/framework/bundle/"
                 },
                 "request-map-layer": {
-                    "bundlePath": "../../../packages/framework/bundle/"
+                    "bundlePath": "oskari-frontend/packages/framework/bundle/"
                 },
                 "mapmodule-plugin": {
-                    "bundlePath": "../../../packages/framework/bundle/"
+                    "bundlePath": "oskari-frontend/packages/framework/bundle/"
                 },
                 "ui-components": {
-                    "bundlePath": "../../../packages/framework/bundle/"
+                    "bundlePath": "oskari-frontend/packages/framework/bundle/"
                 },
                 "event-base": {
-                    "bundlePath": "../../../packages/framework/bundle/"
+                    "bundlePath": "oskari-frontend/packages/framework/bundle/"
                 },
                 "mapfull": {
-                    "bundlePath": "../../../packages/framework/bundle/"
+                    "bundlePath": "oskari-frontend/packages/framework/bundle/"
                 },
                 "core-base": {
-                    "bundlePath": "../../../packages/framework/bundle/"
+                    "bundlePath": "oskari-frontend/packages/framework/bundle/"
                 },
                 "oskariui": {
-                    "bundlePath": "../../../packages/framework/bundle/"
+                    "bundlePath": "oskari-frontend/packages/framework/bundle/"
                 },
                 "mapwfs2": {
-                    "bundlePath": "../../../packages/framework/bundle/"
+                    "bundlePath": "oskari-frontend/packages/framework/bundle/"
                 },
                 "request-base": {
-                    "bundlePath": "../../../packages/framework/bundle/"
+                    "bundlePath": "oskari-frontend/packages/framework/bundle/"
                 },
                 "core-map": {
-                    "bundlePath": "../../../packages/framework/bundle/"
+                    "bundlePath": "oskari-frontend/packages/framework/bundle/"
                 },
                 "request-map": {
-                    "bundlePath": "../../../packages/framework/bundle/"
+                    "bundlePath": "oskari-frontend/packages/framework/bundle/"
                 },
                 "domain": {
-                    "bundlePath": "../../../packages/framework/bundle/"
+                    "bundlePath": "oskari-frontend/packages/framework/bundle/"
                 },
                 "sandbox-base": {
-                    "bundlePath": "../../../packages/framework/bundle/"
+                    "bundlePath": "oskari-frontend/packages/framework/bundle/"
                 },
                 "service-map": {
-                    "bundlePath": "../../../packages/framework/bundle/"
+                    "bundlePath": "oskari-frontend/packages/framework/bundle/"
                 },
                 "sandbox-map": {
-                    "bundlePath": "../../../packages/framework/bundle/"
+                    "bundlePath": "oskari-frontend/packages/framework/bundle/"
                 },
                 "event-map": {
-                    "bundlePath": "../../../packages/framework/bundle/"
+                    "bundlePath": "oskari-frontend/packages/framework/bundle/"
                 }
          },
          "Require-Bundle-Instance":[
@@ -112,7 +112,7 @@
       "metadata":{
          "Import-Bundle":{
             "divmanazer":{
-               "bundlePath":"../../../packages/framework/bundle/"
+               "bundlePath":"oskari-frontend/packages/framework/bundle/"
             }
          },
          "Require-Bundle-Instance":[
@@ -133,7 +133,7 @@
       "metadata":{
          "Import-Bundle":{
             "toolbar":{
-               "bundlePath":"../../../packages/framework/bundle/"
+               "bundlePath":"oskari-frontend/packages/framework/bundle/"
             }
          },
          "Require-Bundle-Instance":[
@@ -154,7 +154,7 @@
       "metadata":{
          "Import-Bundle":{
             "statehandler":{
-               "bundlePath":"../../../packages/framework/bundle/"
+               "bundlePath":"oskari-frontend/packages/framework/bundle/"
             }
          },
          "Require-Bundle-Instance":[
@@ -175,7 +175,7 @@
       "metadata":{
          "Import-Bundle":{
             "infobox":{
-               "bundlePath":"../../../packages/framework/bundle/"
+               "bundlePath":"oskari-frontend/packages/framework/bundle/"
             }
          },
          "Require-Bundle-Instance":[
@@ -217,7 +217,7 @@
       "metadata":{
          "Import-Bundle":{
             "layerselection2":{
-               "bundlePath":"../../../packages/framework/bundle/"
+               "bundlePath":"oskari-frontend/packages/framework/bundle/"
             }
          },
          "Require-Bundle-Instance":[
@@ -238,7 +238,7 @@
       "metadata":{
          "Import-Bundle":{
             "coordinatedisplay":{
-               "bundlePath":"../../../packages/framework/bundle/"
+               "bundlePath":"oskari-frontend/packages/framework/bundle/"
             }
          },
          "Require-Bundle-Instance":[
@@ -259,7 +259,7 @@
       "metadata":{
          "Import-Bundle":{
             "maplegend":{
-               "bundlePath":"../../../packages/framework/bundle/"
+               "bundlePath":"oskari-frontend/packages/framework/bundle/"
             }
          },
          "Require-Bundle-Instance":[

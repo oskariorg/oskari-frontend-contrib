@@ -26,10 +26,10 @@
         "instanceProps" : {  },
         "metadata" : { 
             "Import-Bundle" : { 
-            	"oskariui" : { "bundlePath" : "../../../packages/framework/bundle/" },
-                "mapfull" : { "bundlePath" : "../../../packages/framework/bundle/" },
-                "mapmodule-plugin" : { "bundlePath" : "../../../packages/framework/bundle/" },
-                "mapwmts" : { "bundlePath" : "../../../packages/framework/bundle/" }
+            	"oskariui" : { "bundlePath" : "oskari-frontend/packages/framework/bundle/" },
+                "mapfull" : { "bundlePath" : "oskari-frontend/packages/framework/bundle/" },
+                "mapmodule-plugin" : { "bundlePath" : "oskari-frontend/packages/framework/bundle/" },
+                "mapwmts" : { "bundlePath" : "oskari-frontend/packages/framework/bundle/" }
             },
             "Require-Bundle-Instance" : [  ]
         }
@@ -44,7 +44,7 @@
         "instanceProps" : {  },
         "metadata" : { 
             "Import-Bundle" : { 
-                "divmanazer" : { "bundlePath" : "../../../packages/framework/bundle/" } 
+                "divmanazer" : { "bundlePath" : "oskari-frontend/packages/framework/bundle/" } 
             },
             "Require-Bundle-Instance" : [  ]
         }
@@ -58,7 +58,7 @@
         "instanceProps" : {  },
         "metadata" : { 
             "Import-Bundle" : { 
-                "coordinatedisplay" : { "bundlePath" : "../../../packages/framework/bundle/" } 
+                "coordinatedisplay" : { "bundlePath" : "oskari-frontend/packages/framework/bundle/" } 
             },
             "Require-Bundle-Instance" : [  ]
         }
@@ -88,7 +88,7 @@
         "instanceProps" : {  },
         "metadata" : { 
             "Import-Bundle" : { 
-                "layerselector2" : { "bundlePath" : "../../../packages/framework/bundle/" } 
+                "layerselector2" : { "bundlePath" : "oskari-frontend/packages/framework/bundle/" } 
             },
             "Require-Bundle-Instance" : [  ]
         }
@@ -103,7 +103,7 @@
         "instanceProps" : {  },
         "metadata" : { 
             "Import-Bundle" : { 
-                "layerselection2" : { "bundlePath" : "../../../packages/framework/bundle/" } 
+                "layerselection2" : { "bundlePath" : "oskari-frontend/packages/framework/bundle/" } 
             },
             "Require-Bundle-Instance" : [  ]
         }

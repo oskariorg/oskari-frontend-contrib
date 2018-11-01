@@ -15,31 +15,31 @@
         "metadata": {
             "Import-Bundle" : {
                 "mapmodule" : {
-                    "bundlePath" : "../../../packages/mapping/ol3/"
+                    "bundlePath" : "oskari-frontend/packages/mapping/ol3/"
                 },
                 "mapwmts" : {
-                    "bundlePath" : "../../../packages/mapping/ol3/"
+                    "bundlePath" : "oskari-frontend/packages/mapping/ol3/"
                 },
                 "mapwfs2" : {
-                    "bundlePath" : "../../../packages/mapping/ol3/"
+                    "bundlePath" : "oskari-frontend/packages/mapping/ol3/"
                 },
                 "maparcgis": {
-                    "bundlePath": "../../../packages/mapping/ol3/"
+                    "bundlePath": "oskari-frontend/packages/mapping/ol3/"
                 },
                 "mapuserlayers" : {
-                    "bundlePath" : "../../../packages/mapping/ol3/"
+                    "bundlePath" : "oskari-frontend/packages/mapping/ol3/"
                 },
                 "mapmyplaces": {
-                    "bundlePath": "../../../packages/framework/bundle/"
+                    "bundlePath": "oskari-frontend/packages/framework/bundle/"
                 },
                 "oskariui" : {
-                    "bundlePath" : "../../../packages/framework/bundle/"
+                    "bundlePath" : "oskari-frontend/packages/framework/bundle/"
                 },
                 "mapfull" : {
-                    "bundlePath" : "../../../packages/framework/bundle/"
+                    "bundlePath" : "oskari-frontend/packages/framework/bundle/"
                 },
                 "ui-components": {
-                    "bundlePath": "../../../packages/framework/bundle/"
+                    "bundlePath": "oskari-frontend/packages/framework/bundle/"
                 }
             }
         }
@@ -48,7 +48,7 @@
         "metadata": {
             "Import-Bundle": {
                 "toolbar": {
-                    "bundlePath": "../../../packages/mapping/ol3/"
+                    "bundlePath": "oskari-frontend/packages/mapping/ol3/"
                 }
             }
         }
@@ -57,7 +57,7 @@
         "metadata" : {
             "Import-Bundle" : {
                 "publishedstatehandler" : {
-                    "bundlePath" : "../../../packages/framework/bundle/"
+                    "bundlePath" : "oskari-frontend/packages/framework/bundle/"
                 }
             }
         }
@@ -67,7 +67,7 @@
         "metadata": {
             "Import-Bundle": {
                 "divmanazer": {
-                    "bundlePath": "../../../packages/framework/bundle/"
+                    "bundlePath": "oskari-frontend/packages/framework/bundle/"
                 }
             }
         }
@@ -76,7 +76,7 @@
         "metadata": {
             "Import-Bundle": {
                 "featuredata2": {
-                    "bundlePath": "../../../packages/framework/bundle/"
+                    "bundlePath": "oskari-frontend/packages/framework/bundle/"
                 }
             }
         }
@@ -86,7 +86,7 @@
         "metadata" : {
             "Import-Bundle" : {
                 "infobox" : {
-                    "bundlePath" : "../../../packages/mapping/ol3/"
+                    "bundlePath" : "oskari-frontend/packages/mapping/ol3/"
                 }
             }
         }
@@ -96,7 +96,7 @@
         "metadata" : {
             "Import-Bundle" : {
                 "drawtools" : {
-                    "bundlePath" : "../../../packages/mapping/ol3/"
+                    "bundlePath" : "oskari-frontend/packages/mapping/ol3/"
                 }
             }
         }
@@ -105,7 +105,7 @@
         "metadata": {
             "Import-Bundle": {
                 "maprotator": {
-                    "bundlePath": "../../../packages/mapping/ol3/"
+                    "bundlePath": "oskari-frontend/packages/mapping/ol3/"
                 }
             }
         }
@@ -115,7 +115,7 @@
         "metadata" : {
             "Import-Bundle" : {
                 "rpc" : {
-                    "bundlePath" : "../../../packages/framework/bundle/"
+                    "bundlePath" : "oskari-frontend/packages/framework/bundle/"
                 }
             }
         }
