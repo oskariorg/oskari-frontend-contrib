@@ -22,29 +22,29 @@ Oskari.clazz.define("Oskari.mapframework.bundle.selected-featuredata.SelectedFea
 		"scripts" : [
 			{
 				"type" : "text/javascript",
-				"src" : "../../../../bundles/framework/selected-featuredata/instance.js"
+				"src" : "../../../../bundles/tampere/selected-featuredata/instance.js"
 			},
 			{
 				"type" : "text/javascript",
-				"src" : "../../../../bundles/framework/selected-featuredata/Flyout.js"
+				"src" : "../../../../bundles/tampere/selected-featuredata/Flyout.js"
 			},
 			{
 				"type" : "text/css",
-				"src" : "../../../../bundles/framework/selected-featuredata/resources/css/style.css"
+				"src" : "../../../../bundles/tampere/selected-featuredata/resources/css/style.css"
 			}],
 
         	"locales": [{
 				"lang" : "fi",
 				"type" : "text/javascript",
-				"src" : "../../../../bundles/framework/selected-featuredata/resources/locale/fi.js"
+				"src" : "../../../../bundles/tampere/selected-featuredata/resources/locale/fi.js"
 			},{
 				"lang" : "en",
 				"type" : "text/javascript",
-				"src" : "../../../../bundles/framework/selected-featuredata/resources/locale/en.js"
+				"src" : "../../../../bundles/tampere/selected-featuredata/resources/locale/en.js"
 			},{
 				"lang" : "sv",
 				"type" : "text/javascript",
-				"src" : "../../../../bundles/framework/selected-featuredata/resources/locale/sv.js"
+				"src" : "../../../../bundles/tampere/selected-featuredata/resources/locale/sv.js"
 			}]
 	},
 	"bundle" : {

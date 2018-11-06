@@ -354,7 +354,7 @@
 		"metadata": {
 			"Import-Bundle": {
 				"selected-featuredata": {
-					"bundlePath": "oskari-frontend/packages/framework/bundle/"
+					"bundlePath": "../../../packages/tampere/bundle/"
 				}
 			},
 			"Require-Bundle-Instance": []
