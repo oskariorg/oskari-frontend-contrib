@@ -4,21 +4,21 @@ These are unofficial bundles for Oskari created by the Oskari community. Many of
 
 ## Setup
 
-The application build process assumes that this repository and the main oskari-frontend repository are located side by side on your filesystem. Here are the steps to setup the build environment:
+This repository and the main oskari-frontend repository should be located side by side on your filesystem. Here are the steps to setup the build environment:
 
 1. Make sure you have the command line programs `git`, and `node` version 8 or greater
 2. Clone the main frontend repository: `git clone https://github.com/oskariorg/oskari-frontend.git`
 3. Clone the contrib repository (this one): `git clone https://github.com/oskariorg/oskari-frontend-contrib.git`
     - Now we have directories `oskari-frontend` and `oskari-frontend-contrib` side by side
-4. Change directory `cd oskari-frontend` and run `npm install` to install dependencies from npm
-5. Change directory `cd ..`, `cd oskari-frontend-contrib` and run `npm install` to install dependencies from npm
-    - This step will link `oskari-frontend` under `node_modules` in `oskari-frontend-contrib`
+4. Run `npm install` in both above repo directories
+
+Running `npm install` in this repo will create symlinks to the `oskari-frontend` directory under node_modules.
 
 In this model, it's left to the developer to checkout the correct branches/versions of the above repos.
 
 ## Using bundles in your application
 
-To use bundles from this repo in your application, set up the application project directory side by side with the above repos. Add `"oskari-frontend-contrib": "file:../oskari-frontend-contrib"` under dependencies in your package.json and run `npm install`. If you don't use NPM and package.json for dependency management, you can just create a directory named `node_modules` inside your project directory, and within create a symbolic links to `oskari-frontend` (created in step 2 above) and `oskari-frontend-contrib` (created in step 3 above) directories.
+To use bundles from this repo in your application, set up the application project directory side by side with the above repos. Add `"oskari-frontend-contrib": "file:../oskari-frontend-contrib"` under dependencies in your package.json and run `npm install`. If you don't use NPM and package.json for dependency management, you can just create a directory named `node_modules` inside your project directory, and within create symbolic links to `oskari-frontend` (created in step 2 above) and `oskari-frontend-contrib` (created in step 3 above) directories.
 
 After this setup, you can reference bundles in this repo in your application's minifierAppSetup with `oskari-frontend-contrib`:
 ```
