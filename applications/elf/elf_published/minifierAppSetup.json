@@ -30,7 +30,7 @@
                     "bundlePath" : "oskari-frontend/packages/mapping/ol3/"
                 },
                 "mapmyplaces": {
-                    "bundlePath": "oskari-frontend/packages/framework/bundle/"
+                    "bundlePath": "oskari-frontend/packages/mapping/ol3/"
                 },
                 "oskariui" : {
                     "bundlePath" : "oskari-frontend/packages/framework/bundle/"
@@ -76,7 +76,7 @@
         "metadata": {
             "Import-Bundle": {
                 "featuredata2": {
-                    "bundlePath": "oskari-frontend/packages/framework/bundle/"
+                    "bundlePath": "oskari-frontend/packages/framework/"
                 }
             }
         }

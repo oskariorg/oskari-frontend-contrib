@@ -228,7 +228,7 @@
 		"metadata": {
 			"Import-Bundle": {
 				"featuredata2": {
-					"bundlePath": "oskari-frontend/packages/framework/bundle/"
+					"bundlePath": "oskari-frontend/packages/framework/"
 				}
 			},
 			"Require-Bundle-Instance": []
@@ -282,7 +282,7 @@
 		"metadata": {
 			"Import-Bundle": {
 				"metadatacatalogue": {
-					"bundlePath": "oskari-frontend/packages/catalogue/bundle/"
+					"bundlePath": "oskari-frontend/packages/catalogue/"
 				}
 			},
 			"Require-Bundle-Instance": []

@@ -368,7 +368,7 @@
             "metadata": {
                 "Import-Bundle": {
                     "featuredata2": {
-                        "bundlePath": "oskari-frontend/packages/framework/bundle/"
+                        "bundlePath": "oskari-frontend/packages/framework/"
                     }
                 },
                 "Require-Bundle-Instance": []
