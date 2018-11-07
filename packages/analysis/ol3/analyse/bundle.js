@@ -41,13 +41,13 @@ Oskari.clazz.define("Oskari.analysis.bundle.analyse.AnalyseBundle", function() {
             "src" : "../../../../bundles/analysis/analyse/view/NotLoggedIn.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/analysis/analyse/view/StartAnalyse.js"
+            "src" : "../../../../bundles/analysis/analyse/view/StartAnalyse.ol.js"
         }, {
             "type" : "text/javascript",
             "src" : "../../../../bundles/analysis/analyse/view/AnalyseValidations.js"
         },  {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/analysis/analyse/view/ContentPanel.ol3.js"
+            "src" : "../../../../bundles/analysis/analyse/view/ContentPanel.ol.js"
         }, {
             "type" : "text/javascript",
             "src" : "../../../../bundles/analysis/analyse/view/DrawControls.js"

@@ -1,3 +1,4 @@
+import olFormatGeoJSON from 'ol/format/GeoJSON';
 /**
  * @class Oskari.analysis.bundle.analyse.view.StartAnalyse
  * Request the analyse params and layers and triggers analyse actions
@@ -865,10 +866,8 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
          * @return {OL geometry} Returns OL geometry - only the 1st one
          */
         _getOLGeometry: function (geojson) {
-            var formatter = new OpenLayers.Format.GeoJSON();
             if (geojson) {
-                var feature = formatter.read(geojson);
-                return feature[0].geometry;
+                return new olFormatGeoJSON().readFeatures(geojson)[0];
             }
             return null;
         },
@@ -2252,7 +2251,6 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             var columnsContainer = me.mainPanel.find('div.analyse-columns-container');
             if (prefix + 'aggregate' === method) {
                 columnsContainer.empty();
-                // me._createColumnsDropdown(columnsContainer);
                 me._createColumnsSelector(columnsContainer, me.loc.params.aggreLabel);
             } else if (prefix + 'aggregateText' === method) {
                 // nop
@@ -2297,57 +2295,6 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 }
             }
             return ret;
-        },
-
-        /**
-         * @method _createColumnsDropdown
-         * Creates a dropdown to choose an attribute to get aggregated.
-         *
-         * @param {jQuery Object} columnsContainer the container where the dropdown should be appended to.
-         *
-         */
-        _createColumnsDropdown: function (columnsContainer) {
-            var me = this,
-                selectedLayer = this._getSelectedMapLayer(),
-                aggreMagic = function () {
-                    return function () {
-                        if (me._isNumericField(this.value)) {
-                            me._modifyExtraParameters(
-                                me.id_prefix +
-                                'aggregateNumeric'
-                            );
-                        } else {
-                            me._modifyExtraParameters(
-                                me.id_prefix +
-                                'aggregateText'
-                            );
-                        }
-                    };
-                };
-
-            var dropdown = this.template.columnsDropdown.clone(),
-                featureListOption;
-
-            // Placeholder
-            dropdown.append(jQuery(
-                '<option value="' + null + '">' +
-                this.loc.aggregate.attribute +
-                '</option>'
-            ));
-
-            me._getLayerServiceFields(selectedLayer).forEach(
-                function (serviceField) {
-                    featureListOption = jQuery(
-                        '<option value="' + serviceField.id + '">' +
-                        serviceField.label +
-                        '</option>'
-                    );
-                    dropdown.append(featureListOption);
-                }
-            );
-
-            dropdown.on('change', aggreMagic());
-            columnsContainer.append(dropdown);
         },
 
         /**
