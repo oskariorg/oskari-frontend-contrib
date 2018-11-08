@@ -3130,7 +3130,7 @@
 					"bundlePath": "/Oskari/packages/framework/bundle/"
 				},
 				"mapanalysis": {
-					"bundlePath": "/Oskari/packages/framework/bundle/"
+					"bundlePath": "/Oskari/packages/mapping/ol/"
 				}
 			},
 			"Require-Bundle-Instance": []
