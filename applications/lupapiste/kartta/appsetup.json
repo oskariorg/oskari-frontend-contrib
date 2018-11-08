@@ -36,7 +36,7 @@
                         "bundlePath": "oskari-frontend/packages/framework/bundle/"
                     },
                     "mapanalysis": {
-                        "bundlePath": "oskari-frontend/packages/framework/bundle/"
+                        "bundlePath": "../../../packages/mapping/ol/"
                     },
                     "service-base": {
                         "bundlePath": "oskari-frontend/packages/framework/bundle/"
