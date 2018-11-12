@@ -34,7 +34,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.terrain-profile.TerrainFlyout',
             }
         },
         /**
-         * @method _initGraph initializes graph 
+         * @method _initGraph initializes graph
          * @param {GeoJsonFeature} data visualization data
          */
         _initGraph: function (data) {
