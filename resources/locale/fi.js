@@ -8,7 +8,8 @@ Oskari.registerLocalization(
             "popupText": "Piirrä kartalle viiva, jota pitkin maastoprofiili mitataan.",
             "showProfile": "Näytä profiili",
             "legendValue": "{value, number}",
-            "noValue": "Ei arvoa"
+            "noValue": "Ei arvoa",
+            "error": "Maastoprofiilia ei onnistuttu hakemaan."
         }
     }
 );

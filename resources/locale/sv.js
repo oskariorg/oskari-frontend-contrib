@@ -8,7 +8,8 @@ Oskari.registerLocalization(
             "popupText": "Rita en linje på kartan. Terrängprofilen beräknas längs linjen.",
             "showProfile": "Visa profil",
             "legendValue": "{value, number}",
-            "noValue": "Inte tillgänglig"
+            "noValue": "Inte tillgänglig",
+            "error": "Terrängprofilen kunde inte laddas ned."
         }
     }
 );

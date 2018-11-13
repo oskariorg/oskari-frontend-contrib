@@ -33,6 +33,11 @@ Oskari.clazz.define('Oskari.mapframework.bundle.terrain-profile.TerrainFlyout',
                 this._initGraph(data);
             }
         },
+        showError: function () {
+            this._spinner.stop();
+            var error = jQuery('<div class="terrainprofile-errorwrapper"><p>' + this.loc('error') + '</p></div>');
+            this.setContent(error);
+        },
         /**
          * @method _initGraph initializes graph
          * @param {GeoJsonFeature} data visualization data

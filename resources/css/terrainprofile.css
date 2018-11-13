@@ -19,12 +19,12 @@
     cursor: pointer;
 }
 
-.terrainprofile-spinnerwrapper{
+.terrainprofile-spinnerwrapper, .terrainprofile-errorwrapper{
     width: 600px;
     height: 300px;
     text-align: center;
 }
-.terrainprofile-spinnerholder{
+.terrainprofile-spinnerholder, .terrainprofile-errorwrapper p {
     display: inline-block;
     margin-top: 150px;
 }
