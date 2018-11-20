@@ -93,7 +93,6 @@ Oskari.clazz.define('Oskari.mapframework.bundle.terrain-profile.TerrainProfileBu
          * @method doQuery send query to backend
          */
         doQuery: function () {
-            var me = this;
             if (!this.feature) {
                 return;
             }
@@ -104,8 +103,8 @@ Oskari.clazz.define('Oskari.mapframework.bundle.terrain-profile.TerrainProfileBu
                 dataType: 'json',
                 url: url,
                 success: this.showFlyout.bind(this),
-                error: function (jqXHR, textStatus, errorThrown) {
-                    me.flyout.showError();
+                error: (jqXHR, textStatus, errorThrown) => {
+                    this.flyout.showError();
                     Oskari.log('TerrainProfile').warn('Could not load terrain profile data: ' + errorThrown);
                 }
             });
