@@ -258,15 +258,6 @@
                 }
             }
         }, {
-            "bundlename": "elf-license",
-            "metadata": {
-                "Import-Bundle": {
-                    "elf-license": {
-                        "bundlePath": "../../../packages/elf/bundle/"
-                    }
-                }
-            }
-        }, {
             "bundlename" : "findbycoordinates",
             "metadata" : {
                 "Import-Bundle" : {
