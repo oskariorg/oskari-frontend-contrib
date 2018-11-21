@@ -4,9 +4,11 @@
 jQuery(document).ready(function () {
     function onSuccess () {
         var service = Oskari.getSandbox().getService('Oskari.map.DataProviderInfoService');
-        service.addGroup('gepco', 'IHO-IOC GEBCO', [
-            { 'id': 'gepco.acknowledgement', 'name': 'Gazetteer of Undersea Feature Names, www.gebco.net' }
-        ]);
+        if (service) {
+            service.addGroup('gepco', 'IHO-IOC GEBCO', [
+                { 'id': 'gepco.acknowledgement', 'name': 'Gazetteer of Undersea Feature Names, www.gebco.net' }
+            ]);
+        }
     }
     function onError () {
         jQuery('#mapdiv').append('Unable to start');
