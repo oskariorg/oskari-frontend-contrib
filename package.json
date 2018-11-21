@@ -10,7 +10,7 @@
     "oskari-frontend": "file:../oskari-frontend"
   },
   "scripts": {
-    "build": "node ./node_modules/oskari-frontend/node_modules/webpack/bin/webpack.js --config ./node_modules/oskari-frontend/webpack.config.js --mode production",
+    "build": "node ./node_modules/oskari-frontend/node_modules/webpack/bin/webpack.js --config ./node_modules/oskari-frontend/webpack.config.js --mode production --progress",
     "start": "node ./node_modules/oskari-frontend/node_modules/webpack-dev-server/bin/webpack-dev-server.js --config ./node_modules/oskari-frontend/webpack.config.js --hot",
     "asdi": "npm run start -- --env.appdef=applications/asdi",
     "elf": "npm run start -- --env.appdef=applications/elf",
