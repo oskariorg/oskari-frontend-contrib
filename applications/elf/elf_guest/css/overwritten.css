@@ -41,7 +41,11 @@ table {
     }
 
     #maptools div.toolrow {
-        border-top-color: #666;
+        border-top-color: #bbb;
+    }
+
+    #maptools #login {
+        margin-top: 10px;
     }
 
     #contentMap {
@@ -58,7 +62,7 @@ table {
         min-height: 31px !important;
         line-height: 15px !important;
         border-bottom: 1px solid transparent !important;
-        border-top: 1px solid #666 !important;
+        border-top: 1px solid #bbb !important;
     }
 
     .oskari-tile-closed {
@@ -87,7 +91,8 @@ table {
         overflow: hidden;
         background-color: white;
         background-image: url("ELF_web_logo_2x.png");
-        background-size: 100%;
+        background-size: 87%;
+        background-position: 11px 6px;
         background-repeat: no-repeat;
     }
 
