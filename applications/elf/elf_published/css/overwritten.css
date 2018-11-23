@@ -32,7 +32,7 @@ table {
         width: 170px;
         overflow:auto;
         z-index: 2;
-        background-color: #0099CB;
+        background-color: #fff;
         margin-top: 0px;
     }
     #contentMap {
@@ -54,20 +54,23 @@ table {
         line-height: 15px !important;	
     }
     .oskari-tile-closed {
-        background-color: #0099CB !important;
-        border-bottom: 1px solid #0099CB !important;
-        border-top: 1px solid white !important;
+        background-color: #fff !important;
     }
+
+    .oskari-tile-closed .oskari-tile-title {
+        color: #000 !important;
+    }
+
     .oskari-tile-attached {
-        background-color: white !important;
-        border-bottom: 1px solid white !important;
-        border-top: 1px solid #0099CB !important;
+        background-color: #666 !important;
     }
+
+    .oskari-tile-attached .oskari-tile-title {
+        color: #fff !important;
+    }
+
     .oskari-flyouttoolbar {
-        background-color: #0099CB !important;
-    }
-    .oskari-flyout-title {
-        color: white !important;
+        background-color: #fff !important;
     }
 
     #logobar {
@@ -75,7 +78,8 @@ table {
         width: 100%;
         overflow: hidden;
         background-color: white;
-        background-image: url('ELF_web_logo_small.jpg');
+        background-image: url('ELF_web_logo_2x.png');
+        background-size: 100%;
         background-repeat: no-repeat;
     }
 
@@ -127,6 +131,7 @@ table {
 
 .logoplugin .icon {
     background-image: url('ELF-logo-small.png') !important;
+    background-size: 100%;
     display: inline-block;
     height: 25px;
     width: 25px;
