@@ -74,6 +74,21 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartView',
             // check if user have selections from many layers and notify about it
             var selectionsInManyLayers = this.checkFeatureSelections();
 
+            var cancelButton = Oskari.clazz.create(
+                'Oskari.userinterface.component.buttons.CancelButton'
+            );
+
+            cancelButton.setId('oskari_analysis_analyse_view_start_view_buttons_cancel');
+            cancelButton.setHandler(function () {
+                me.instance.sandbox.postRequestByName(
+                    'userinterface.UpdateExtensionRequest',
+                    [me.instance, 'close']
+                );
+            });
+            this.buttons.cancel = cancelButton;
+
+            cancelButton.insertTo(content.find('div.buttons'));
+            
             var continueButton = Oskari.clazz.create(
                 'Oskari.userinterface.component.Button'
             );
@@ -130,21 +145,6 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartView',
                 content.append('&nbsp;');
                 content.append(label);
             }
-
-            var cancelButton = Oskari.clazz.create(
-                'Oskari.userinterface.component.buttons.CancelButton'
-            );
-
-            cancelButton.setId('oskari_analysis_analyse_view_start_view_buttons_cancel');
-            cancelButton.setHandler(function () {
-                me.instance.sandbox.postRequestByName(
-                    'userinterface.UpdateExtensionRequest',
-                    [me.instance, 'close']
-                );
-            });
-            this.buttons.cancel = cancelButton;
-
-            cancelButton.insertTo(content.find('div.buttons'));
         },
 
         checkFeatureSelections: function (container) {
