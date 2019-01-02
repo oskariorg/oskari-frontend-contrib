@@ -3,12 +3,13 @@ Oskari.registerLocalization(
     "lang": "fr",
     "key": "MapAnalysis",
     "value": {
-        "title": "MapAnalysis",
+        "title": "Analyse des cartes",
         "desc": "",
-        "object-data": "Object data",
+        "object-data": "Données d'objet",
         "layer": {
-            "organization": "User's analysis",
-            "inspire": "User's analysis"
-        }
+            "organization": "Analyse de l'utilisateur",
+            "inspire": "Analyse de l'utilisateur"
+        },
+        "filterTooltip": "Filtrer les données"
     }
 });
