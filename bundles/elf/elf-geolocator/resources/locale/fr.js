@@ -28,6 +28,8 @@ Oskari.registerLocalization(
             "fuzzyResultsTitle": "Résultats de la recherche approximative",
             "filterResultsTitle": "Résultats de la recherche avec filtres de zone",
             "countryFilter": "Sélectionner un pays",
+            "locationFilter": "Type d'endroit",
+            "namelangFilter": "Langue du nom",
             "backButton": "Précédent",
             "geolocButton": "Trouver l'endroit le plus proche",
             "geolocDesc": "Cliquez sur la carte et localisez le nom de lieu le plus proche",

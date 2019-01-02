@@ -23,7 +23,7 @@ Oskari.registerLocalization(
             "ciRoleResourceProvider": "Fournisseur de ressources",
             "ciRoleCustodian": "Chercheur",
             "ciRoleOwner": "Propriétaire",
-            "ciRoleSponsor": "Sponsor",
+            "ciRoleSponsor": "Promoteur",
             "ciRoleDistributor": "Distributeur",
             "ciRoleOriginator": "Créateur",
             "ciRolePointOfContact": "PointDeContact",
