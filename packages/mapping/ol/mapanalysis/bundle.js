@@ -49,7 +49,7 @@ Oskari.clazz.define(
             }, {
                 "lang": "fr",
                 "type": "text/javascript",
-                "src": "../../../../bundles/mapping/mapanalysis/resources/locale/en.js"
+                "src": "../../../../bundles/mapping/mapanalysis/resources/locale/fr.js"
             }]
         },
         "bundle": {

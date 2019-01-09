@@ -60,7 +60,7 @@ Oskari.clazz.define("Oskari.projection.change", function() {
             }, {
                 "lang": "fr",
                 "type": "text/javascript",
-                "src": "../../../../bundles/asdi/asdi-projection-change/resources/locale/sv.js"
+                "src": "../../../../bundles/asdi/asdi-projection-change/resources/locale/fr.js"
             }
         ]
     },
