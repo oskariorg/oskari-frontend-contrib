@@ -24,11 +24,17 @@ Oskari.clazz.define("Oskari.asdiguidedtour.Bundle", function() {
             "type" : "text/javascript",
             "src" : "../../../../bundles/asdi/asdi-guided-tour/instance.js"
         }],
-        "locales" : [{
-            "lang": "en",
-            "type": "text/javascript",
-            "src": "../../../../bundles/asdi/asdi-guided-tour/resources/locale/en.js"
-        }]
+        "locales" : [
+            {
+                "lang": "en",
+                "type": "text/javascript",
+                "src": "../../../../bundles/asdi/asdi-guided-tour/resources/locale/en.js"
+            }, {
+                "lang": "fr",
+                "type": "text/javascript",
+                "src": "../../../../bundles/asdi/asdi-guided-tour/resources/locale/fr.js"
+            }
+        ]
     },
     "bundle" : {
         "manifest" : {
