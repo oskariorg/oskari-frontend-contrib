@@ -152,7 +152,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.terrain-profile.TerrainProfileBu
             'Toolbar.ToolSelectedEvent': function (event) {
                 if (event.getToolId() === 'TerrainProfile') {
                     this.setActive(true);
-                } else {
+                } else if (event.getSticky()) {
                     this.setActive(false);
                 }
             }
