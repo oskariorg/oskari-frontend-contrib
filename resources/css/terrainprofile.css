@@ -38,3 +38,6 @@
 .terrainprofile-graph .cursor circle {
     fill: #00c3ff;
 }
+.oskari-flyoutcontent.terrain-profile {
+    padding: 5px;
+}
