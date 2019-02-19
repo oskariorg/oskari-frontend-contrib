@@ -255,3 +255,10 @@ div.asdiLoginInputField {
     float: left;
 }
 
+div.mapplugin.indexmap .indexmapToggle[class$=-default] div.icon,
+div.mapplugin.indexmap .indexmapToggle[class$=-dark] div.icon {
+	background-image: url('northpole_dark.svg') !important;
+}
+div.mapplugin.indexmap .indexmapToggle[class$=-light] div.icon {
+	background-image: url('northpole_light.svg') !important;
+}
