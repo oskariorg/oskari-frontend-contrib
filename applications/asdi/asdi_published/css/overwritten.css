@@ -186,10 +186,18 @@ div.mapplugin.timeseries div.playback-button button.pause:before {
 }
 
 /**
- * logoplugin with asdi logo
- */
- .logoplugin .icon {
+* logoplugin with asdi logo
+*/
+.logoplugin .icon {
     background-image: url('asdi_logoplugin_logo.png') !important;
     width: 23px !important;
     height: 27px !important;
- }
+}
+
+div.mapplugin.indexmap .indexmapToggle[class$=-default] div.icon,
+div.mapplugin.indexmap .indexmapToggle[class$=-dark] div.icon {
+	background-image: url('northpole_dark.svg') !important;
+}
+div.mapplugin.indexmap .indexmapToggle[class$=-light] div.icon {
+	background-image: url('northpole_light.svg') !important;
+}

@@ -213,3 +213,15 @@ table.elf-metadata-table-no-border td {
     border: none !important;
     width: 50%;
 }
+
+div.mapplugin.indexmap .indexmapToggle div.icon {
+	background-size: 42px 42px;
+}
+
+div.mapplugin.indexmap .indexmapToggle[class$=-default] div.icon,
+div.mapplugin.indexmap .indexmapToggle[class$=-dark] div.icon {
+	background-image: url('europe_dark.svg') !important;
+}
+div.mapplugin.indexmap .indexmapToggle[class$=-light] div.icon {
+	background-image: url('europe_light.svg') !important;
+}
