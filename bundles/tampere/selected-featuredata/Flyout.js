@@ -337,7 +337,8 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
         createShowManyOrOneLink: function () {
             var me = this;
             return jQuery('<a />', {
-                'href': 'JavaScript:void(0);',
+                'href': '#',
+                'onclick': 'return false;',
                 'data-many': 'many',
                 'class': 'selected_featuredata_howmany_show',
                 'text': me._getLocalization('tabs_pick_one'),
@@ -363,7 +364,8 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
         createLinkShowOnMap: function (mapobject) {
             var me = this;
             return jQuery('<a />', {
-                'href': 'JavaScript:void(0);',
+                'href': '#',
+                'onclick': 'return false;',
                 'class': 'selected_featuredata_accpanel_showonmap',
                 'text': me._getLocalization('accordion-show-onmap'),
                 click: function (e) {
@@ -390,7 +392,8 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
         createLinkShowTabOnMap: function (tabContent, layerId) {
             var me = this;
             return jQuery('<a />', {
-                'href': 'JavaScript:void(0);',
+                'href': '#',
+                'onclick': 'return false;',
                 'class': 'selected_featuredata_show_all_on_map',
                 'text': me._getLocalization('show_all_on_map'),
                 click: function () {
@@ -398,9 +401,11 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
 
                     var wfs = false,
                         featureIds = [],
-                        wfsvectors = new OpenLayers.Layer.Vector('fakeVectorLayer'),
                         mapModule = me.sandbox.findRegisteredModuleInstance('MainMapModule'),
                         _map = mapModule.getMap();
+
+                    var x = [];
+                    var y = [];
 
                     // loop accordion headers
                     var header = tabContent.find('.accordion_panel .header');
@@ -409,21 +414,25 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
                         if (el.data('type') === 'WFS') {
                             wfs = true;
                             featureIds.push(el.data('featureid'));
-                            var point = new OpenLayers.Geometry.Point(el.data('x'), el.data('y'));
-                            wfsvectors.addFeatures([new OpenLayers.Feature.Vector(point)]);
                         } else {
                             me.showWmsMarker(el.data('x'), el.data('y'));
                         }
+
+                        x.push(parseFloat(el.data('x')));
+                        y.push(parseFloat(el.data('y')));
                     });
 
                     // handle the right zooming
                     if (wfs) {
-                        me.zoomMapToCertainExtent(wfsvectors.getDataExtent());
                         me.highlightWFSFeature(layerId, featureIds);
-                    } else {
-                        var layer = _map.getLayersByName('Markers');
-                        me.zoomMapToCertainExtent(layer[0].getDataExtent());
                     }
+
+                    me.zoomMapToCertainExtent({
+                        left: Math.min.apply(null, x),
+                        bottom: Math.min.apply(null, y),
+                        right: Math.max.apply(null, x),
+                        top: Math.max.apply(null,y)
+                    });
 
                     return false;
                 }});
@@ -437,7 +446,8 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
         createLinkAddLayerToMap: function (tabContent, layerId) {
             var me = this;
             return jQuery('<a />', {
-                'href': 'JavaScript:void(0);',
+                'href': '#',
+                'onclick': 'return false;',
                 'class': 'selected_featuredata_add_layer_to_map hidden',
                 'text': me._getLocalization('add_layer_to_map'),
                 click: function (e) {
@@ -494,13 +504,8 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
          */
         zoomMapToCertainExtent: function (dataextent) {
             var me = this,
-                mapModule = me.sandbox.findRegisteredModuleInstance('MainMapModule'),
-                _map = mapModule.getMap(),
-                newZoom = 0;
-
-            _map.zoomToExtent(dataextent);
-            newZoom = _map.getZoom() - 1;
-            _map.zoomTo(newZoom);
+                mapModule = me.sandbox.findRegisteredModuleInstance('MainMapModule');
+            mapModule.zoomToExtent(dataextent);
         },
         /**
          * [highlightWFSFeature highlight wfs object on map]
