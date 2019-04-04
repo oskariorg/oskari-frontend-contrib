@@ -26,7 +26,7 @@ Oskari.clazz.define(
         layertype: 'analysislayer',
 
         getLayerTypeSelector: function () {
-            return 'ANALYSIS';
+            return this.layertype; // 'ANALYSIS';
         },
 
         /**
