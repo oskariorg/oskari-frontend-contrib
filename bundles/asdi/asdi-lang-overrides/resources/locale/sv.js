@@ -1,5 +1,13 @@
 Oskari.registerLocalization(
 {
+    "lang": "en",
+    "key": "Search",
+    "value": {
+        "searchDescription": "Sök ortnamn."
+    }
+}, true);
+Oskari.registerLocalization(
+{
     "lang": "sv",
     "key": "PersonalData",
     "value": {
