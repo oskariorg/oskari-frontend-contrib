@@ -892,38 +892,10 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
          * @return {Object}
          */
         getStyleValues: function () {
-            var me = this,
-                values = {};
-
             // Sets random color values for visualization form
             // if the checkbox is checked.
-            me.randomizeColors();
-
-            var formValues = me.visualizationForm.getValues();
-            if (formValues) {
-                values.dot = {
-                    size: formValues.dot.size,
-                    color: formValues.dot.color,
-                    shape: formValues.dot.shape
-                };
-                values.line = {
-                    size: formValues.line.width,
-                    color: formValues.line.color,
-                    cap: formValues.line.cap,
-                    corner: formValues.line.corner,
-                    style: formValues.line.style
-                };
-                values.area = {
-                    size: formValues.area.lineWidth,
-                    lineColor: formValues.area.lineColor === null ? null : formValues.area.lineColor,
-                    fillColor: formValues.area.fillColor === null ? null : formValues.area.fillColor,
-                    lineStyle: formValues.area.lineStyle,
-                    fillStyle: formValues.area.fillStyle,
-                    lineCorner: formValues.area.lineCorner
-                };
-            }
-
-            return values;
+            this.randomizeColors();
+            return this.visualizationForm.getOskariStyle();
         },
 
         /**
