@@ -1,6 +1,6 @@
 Oskari.registerLocalization(
 {
-    "lang": "en",
+    "lang": "sv",
     "key": "Search",
     "value": {
         "searchDescription": "Sök ortnamn."

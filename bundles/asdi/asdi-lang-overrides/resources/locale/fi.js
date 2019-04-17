@@ -1,6 +1,6 @@
 Oskari.registerLocalization(
 {
-    "lang": "en",
+    "lang": "fi",
     "key": "Search",
     "value": {
         "searchDescription": "Hae paikkoja paikannimen perusteella."
