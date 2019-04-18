@@ -36,6 +36,10 @@ Oskari.clazz.define("Oskari.asdi.lang.overrides", function() {
                 "lang": "sv",
                 "type": "text/javascript",
                 "src": "../../../../bundles/asdi/asdi-lang-overrides/resources/locale/sv.js"
+            },            {
+                "lang": "fr",
+                "type": "text/javascript",
+                "src": "../../../../bundles/asdi/asdi-lang-overrides/resources/locale/fr.js"
             }
         ]
     }
