@@ -11,7 +11,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.mapanalysis.domain.AnalysisLayer
  */
     function () {
     /* Layer Type */
-        this._layerType = 'ANALYSIS';
+        this._layerType = 'analysislayer'; // 'ANALYSIS';
         this._metaType = 'ANALYSIS';
     }, {
         /* Layer type specific functions */
@@ -80,6 +80,9 @@ Oskari.clazz.define('Oskari.mapframework.bundle.mapanalysis.domain.AnalysisLayer
      */
         getOverrideSld: function () {
             return this._override_sld;
+        },
+        isFilterSupported: function () {
+            return true;
         }
 
     }, {
