@@ -63,4 +63,6 @@ import 'oskari-loader!oskari-frontend/packages/framework/bundle/userguide/bundle
 
 import 'oskari-loader!oskari-frontend/packages/framework/bundle/language-selector/bundle.js';
 
+import 'oskari-loader!oskari-frontend/packages/framework/bundle/printout/bundle.js';
+
 import './css/overwritten.css';
