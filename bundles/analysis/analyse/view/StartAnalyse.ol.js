@@ -5,6 +5,7 @@ import olFormatGeoJSON from 'ol/format/GeoJSON';
  * Analyses data  and save results
  *
  */
+
 Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
 
     /**
@@ -102,6 +103,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
         me._param_footer.append(this.loc.aggregate.footer);
         me._showFeatureDataAfterAnalysis = null;
         me._showFeatureDataWithoutSaving = null;
+        me._unsupportedWfsLayerVersion = '3.0.0';
     }, {
         __templates: {
             content: '<div class="layer_data"></div>',
@@ -1200,8 +1202,13 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
         },
 
         _eligibleForAnalyse: function (layer) {
-            return ((layer.hasFeatureData && layer.hasFeatureData()) ||
-                layer.isLayerOfType(this.contentPanel.getLayerType()));
+            return (((layer.hasFeatureData && layer.hasFeatureData()) ||
+                layer.isLayerOfType(this.contentPanel.getLayerType())) && 
+                    this._wfsLayerHasSupportedVersion(layer));
+        },
+
+        _wfsLayerHasSupportedVersion(layer){
+            return layer.getLayerType() === 'wfs' && layer.getVersion() !== this._unsupportedWfsLayerVersion;
         },
 
         /**
