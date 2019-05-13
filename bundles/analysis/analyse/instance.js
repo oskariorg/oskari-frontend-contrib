@@ -31,6 +31,7 @@ Oskari.clazz.define(
         this.conf = {};
         this.personalDataTab = undefined;
         this._log = Oskari.log(this.getName());
+        this._unsupportedWfsLayerVersion = '3.0.0';
     }, {
         /**
          * @static @property __name
@@ -234,7 +235,14 @@ Oskari.clazz.define(
             },
             AfterMapLayerAddEvent: function (event) {
                 this.isMapStateChanged = true;
-                if (this.analyse && this.analyse.isEnabled) {
+                const loc = this.getLocalization('AnalyseView');
+                if (this.analyse && this.analyse.isEnabled && this._wfsLayerHasUnsupportedVersion(event.getMapLayer())) {
+                    this.showMessage(
+                        loc.error.title,
+                        loc.error.invalidSetup
+                    );
+                    this._log.warn('tried to add unsupported wfs version to analysis');
+                } else if (this.analyse && this.analyse.isEnabled) {
                     this.analyse.refreshAnalyseData(event.getMapLayer().getId());
                 }
             },
@@ -275,6 +283,10 @@ Oskari.clazz.define(
 
                 me.displayContent(isOpen);
             }
+        },
+
+        _wfsLayerHasUnsupportedVersion(layer){
+            return layer.getLayerType() === 'wfs' && layer.getVersion() === this._unsupportedWfsLayerVersion;
         },
         /**
          * @public @method stop
