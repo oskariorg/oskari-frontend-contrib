@@ -33,6 +33,10 @@ Oskari.clazz.define("Oskari.asdiguidedtour.Bundle", function() {
                 "lang": "fr",
                 "type": "text/javascript",
                 "src": "../../../../bundles/asdi/asdi-guided-tour/resources/locale/fr.js"
+            }, {
+                "lang": "ru",
+                "type": "text/javascript",
+                "src": "../../../../bundles/asdi/asdi-guided-tour/resources/locale/ru.js"
             }
         ]
     },

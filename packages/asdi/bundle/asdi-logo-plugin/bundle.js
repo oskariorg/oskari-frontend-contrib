@@ -36,6 +36,9 @@ Oskari.clazz.define("Oskari.asdi.logo.Bundle", function() {
           }, {
             "type" : "text/javascript",
             "src" : "../../../../bundles/asdi/asdi-logo-plugin/resources/locale/fr.js"
+          }, {
+            "type" : "text/javascript",
+            "src" : "../../../../bundles/asdi/asdi-logo-plugin/resources/locale/ru.js"
           }
         ]
     },
