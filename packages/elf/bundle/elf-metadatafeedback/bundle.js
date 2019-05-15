@@ -112,11 +112,15 @@ function() {
             "lang" : "fr",
             "type" : "text/javascript",
             "src" : "../../../../bundles/elf/elf-metadatafeedback/resources/locale/fr.js"
-          }, {
-              "lang" : "nn",
-              "type" : "text/javascript",
-              "src" : "../../../../bundles/elf/elf-metadatafeedback/resources/locale/nn.js"
-          }]
+        }, {
+            "lang" : "nn",
+            "type" : "text/javascript",
+            "src" : "../../../../bundles/elf/elf-metadatafeedback/resources/locale/nn.js"
+        }, {
+            "lang" : "ru",
+            "type" : "text/javascript",
+            "src" : "../../../../bundles/elf/elf-metadatafeedback/resources/locale/ru.js"
+        }]
     },
     "bundle" : {
         "manifest" : {
