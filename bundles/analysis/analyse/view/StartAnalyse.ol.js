@@ -2821,7 +2821,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 me.instance.sandbox.postRequestByName(rq);
                 // Store temp geometry layer
                 var title = me.mainPanel.find('.settings_name_field').val() ? me.mainPanel.find('.settings_name_field').val() : '_';
-                contentPanel.addGeometry(me._getOLGeometry(geojson), title);
+                contentPanel.addFeature(me._getOLGeometry(geojson), title);
                 me._showFeatureDataWithoutSaving = false;
                 popup.close(true);
             });
