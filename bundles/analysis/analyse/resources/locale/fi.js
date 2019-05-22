@@ -372,7 +372,8 @@ Oskari.registerLocalization(
                 "Unable_to_get_analysisLayer_data": "Analyysin lähtötietoja ei voitu hakea.",
                 "timeout": "Analyysin laskenta keskeytyi aikakatkaisun vuoksi.",
                 "error": "Analyysi epäonnistui.",
-                "parsererror": "Analyysin lopputuloksessa on virheitä."
+                "parsererror": "Analyysin lopputuloksessa on virheitä.",
+                "not_supported_WFS_3_0_maplayer" : "Tätä karttatasoa (WFS 3.0) ei valitettavasti tueta analyysissä."
             },
             "infos": {
                 "title": "Liikaa ominaisuustietoja",
