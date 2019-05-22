@@ -239,7 +239,7 @@ Oskari.clazz.define(
                 if (this.analyse && this.analyse.isEnabled && this._wfsLayerHasUnsupportedVersion(event.getMapLayer())) {
                     this.showMessage(
                         loc.error.title,
-                        loc.error.invalidSetup
+                        loc.error.not_supported_WFS_3_0_maplayer
                     );
                     this._log.warn('tried to add unsupported wfs version to analysis');
                 } else if (this.analyse && this.analyse.isEnabled) {

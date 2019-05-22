@@ -372,7 +372,8 @@ Oskari.registerLocalization(
                 "Unable_to_get_analysisLayer_data": "The source data could not be retrieved.",
                 "timeout": "Processing the analysis could not be finished because of a time-out error.",
                 "error": "The analysis failed.",
-                "parsererror": "The result data are invalid."
+                "parsererror": "The result data are invalid.",
+                "not_supported_WFS_3_0_maplayer": "This map layer (WFS 3.0) is unfortunately not supported in analysis."
             },
             "infos": {
                 "title": "Too many attributes",

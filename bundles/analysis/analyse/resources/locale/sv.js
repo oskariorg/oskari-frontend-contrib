@@ -372,7 +372,8 @@ Oskari.registerLocalization(
                 "Unable_to_get_analysisLayer_data": "Ursprungsdata kunde inte laddas.",
                 "timeout": "Analys misslyckades beroende på tidsutlösning.",
                 "error": "Analys misslyckades.",
-                "parsererror": "Det finns fel i resultaten."
+                "parsererror": "Det finns fel i resultaten.",
+                "not_supported_WFS_3_0_maplayer": "Tyvärr stöder analysen inte detta kartlager (WFS 3.0)."
             },
             "infos": {
                 "title": "För många attributer",
