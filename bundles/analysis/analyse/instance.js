@@ -136,7 +136,9 @@ Oskari.clazz.define(
             me._createUi();
 
             // Load analysis layers
-            me.analyseService.loadAnalyseLayers();
+            if (Oskari.user().isLoggedIn()) {
+                me.analyseService.loadAnalyseLayers();
+            }
 
             /* stateful */
             if (conf && conf.stateful === true) {
