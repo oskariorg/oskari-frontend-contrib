@@ -224,7 +224,18 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
         eventHandlers: {
             GetInfoResultEvent: function (evt) {
                 if (this.sideContentEditor != null) {
-                    this.sideContentEditor._handleInfoResult(evt.getData());
+                    var data = evt.getData();
+                    var featuresIds = [];
+                    data.features.forEach(function(feature){
+                        featuresIds.push(feature[0]);
+                    });
+
+                    var eventBuilder = Oskari.eventBuilder('WFSFeaturesSelectedEvent');
+                    if (eventBuilder) {
+                        var layer = this.sandbox.findMapLayerFromSelectedMapLayers(data.layerId);
+                        var event = eventBuilder(featuresIds, layer, true);
+                        this.sandbox.notifyAll(event);
+                    }
                 }
             },
             WFSFeatureGeometriesEvent: function (evt) {
@@ -232,7 +243,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
                     this.sideContentEditor.parseWFSFeatureGeometries(evt);
                 }
             },
-            'MapClickedEvent': function (event) {
+            MapClickedEvent: function (event) {
                 if (this.sideContentEditor != null) {
                     this.sideContentEditor.setClickCoords({
                         x: event.getLonLat().lon,
@@ -240,7 +251,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
                     });
                 }
             },
-            'MapLayerEvent': function (event) {
+            MapLayerEvent: function (event) {
                 if (event.getOperation() !== 'add') {
                     // only handle add layer
                     return;
@@ -250,6 +261,22 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
                 } else {
                     // ajax call for all layers
                     this.__setupLayerTools();
+                }
+            },
+            WFSFeaturesSelectedEvent: function (evt) {
+                if (this.sideContentEditor != null) {
+                    var maplayer = evt.getMapLayer();
+                    var featureIds = evt.getWfsFeatureIds();
+                    var features = [];
+                    featureIds.forEach(function(fid) {
+                        var filtered = maplayer.getActiveFeatures().filter(function(feature){
+                            return feature[0] === fid;
+                        });
+                        filtered.forEach(function(feature){
+                            features.push(feature);
+                        });
+                    });
+                    this.sideContentEditor._handleInfoResult({layerId: maplayer.getId(), features: features});
                 }
             }
         },

@@ -156,6 +156,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
             }
         },
 
+        //TODO: make this one better to also include handling of GeometryPropertyType
         /**
          * Gets drawtool geometry type
          * @method @public getDrawToolsGeometryType
@@ -272,7 +273,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
         _addNewFeature: function () {
             var me = this;
             if (me.selectedLayerId) {
-                me._highlighGeometries([], me._getLayerById(me.selectedLayerId), true);
+                me._removeHighligh(me.selectedLayerId);
             }
             me.getLayerGeometryType();
             me.sendStopDrawRequest(true);
@@ -468,7 +469,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
             });
             var addFeatureButtonContainer = jQuery('<div />');
 
-            //Modify multiple features.
+            // Modify multiple features.
             me.editMultipleFeaturesButton = Oskari.clazz.create('Oskari.userinterface.component.Button');
             me.editMultipleFeaturesButton.setTitle(me.loc.buttons.editMultipleFeatures);
             me.editMultipleFeaturesButton.setEnabled(false);
@@ -548,7 +549,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
 
             var fillGeometries = function (geom) {
                 if (geom != null) {
-                    if (geom.type == 'MultiPoint') {
+                    if (geom.type === 'MultiPoint') {
                         geometries.type = 'multipoint';
                         geom.coordinates.forEach(function (coordinates) {
                             geometries.data.push({x: coordinates[0], y: coordinates[1]});
@@ -574,39 +575,48 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                     } else if (geom.type == 'Point') {
                         var tmp = [];
                         geometries.type = 'multipoint';
-                        geom.coordinates.forEach(function (coordinates) {
-                            tmp.data.push({x: coordinates[0], y: coordinates[1]});
-                        });
-                        geometries.data.push([tmp]);
-                    } else if (geom.type == 'LineString') {
-                        var tmp = [];
-                        geometries.type = 'multilinestring';
+                        geometries.data.push({x: geom.coordinates[0], y: geom.coordinates[1]});
 
-                        geom.coordinates.forEach(function (coordinates) {
-                            tmp.data.push({x: coordinates[0], y: coordinates[1]});
-                        });
-                        geometries.data.push([tmp]);
+                    } else if (geom.type == 'LineString') {
+                        geometries.type = 'multilinestring';
+                        geometries.data.push(me._getLineString(geom.coordinates));
+
                     } else if (geom.type == 'Polygon') {
                         var tmp = [];
                         geometries.type = 'multipolygon';
-
                         geom.coordinates.forEach(function (coordinates) {
                             coordinates.forEach(function (lineCoordinates) {
                                 tmp.push({x:lineCoordinates[0], y:lineCoordinates[1]});
                             });
                         });
                         geometries.data.push([tmp]);
+
                     }
                 }
             };
 
-            if(this.operationMode == 'edit' && me.layerGeometries != null && me.layerGeometries.geometry != null) {
-                    fillGeometries(me._geojson.features[0].geometry);
-            }
-            if(this.operationMode == 'create' && me._geojson && me._geojson.features[0] && me._geojson.features[0].geometry) {
-                    me._geojson.features.forEach(function(feature) {
-                        fillGeometries(feature.geometry);
-                    });
+            var hasCreatedGeoJSON = function () {
+                return (me._geojson && me._geojson.features[0] && me._geojson.features[0].geometry) ? true : false;
+            };
+
+            if (this.operationMode == 'edit' && hasCreatedGeoJSON() ) {
+                me._geojson.features.forEach(function(feature) {
+                    fillGeometries(feature.geometry);
+                });
+            } else if(this.operationMode == 'edit' && me.layerGeometries != null && me.layerGeometries.geometry != null) {
+                    var type = me.layerGeometries.geometry.getType();
+                    var coordinates = me.layerGeometries.geometry.getCoordinates();
+
+                    var geoms = {
+                        type: type,
+                        coordinates: coordinates,
+                        data: []
+                    };
+                    fillGeometries(geoms);
+            } else if (this.operationMode == 'create' && hasCreatedGeoJSON() ) {
+                me._geojson.features.forEach(function(feature) {
+                    fillGeometries(feature.geometry);
+                });
 
             }
 
@@ -651,20 +661,20 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
 
             okButton.setTitle(me.loc.buttons.ok);
             var multipleFeaturesData = [];
+
             if (me.operationMode === 'create' && !me.editMultipleFeatures) {
                 url = Oskari.urls.getRoute('InsertFeature');
             } else if(!me.editMultipleFeatures) {
                 url = Oskari.urls.getRoute('SaveFeature');
             } else if(me.editMultipleFeatures) {
-                var multipleGeometriesTemp = me._cloneObject(requestData.geometries);
-                url = ajaxUrl + 'action_route=SaveMultipleFeatures';
+                url = Oskari.urls.getRoute('SaveFeature');
                 var elements = jQuery('.getinforesult_table');
                 var index = 0;
                 jQuery.each(elements || [], function(k1, v1) {
                     //Skip first element since we have that already in requestData.
                     if(index > 0) {
                         //Copy requestData object for each of the selected features.
-                        var tempFeature = me._cloneObject(requestData);
+                        var tempFeature = me._cloneObject(requestData[0]);
                         var tempFeatureFields = [];
                         var tds = jQuery(v1).children('tr').children('td');
                         //Go through all the tds to assign tempFeature the correct values.
@@ -689,7 +699,9 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                     }
                     ++index;
                 });
+                requestData = multipleFeaturesData;
             }
+
             var dialog = {};
             if (deleteFeature == true) {
                 dialog.header = me.loc.geometryDelete.header;
@@ -707,7 +719,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
             me._geojson = null;
             jQuery.ajax({
                 type: 'POST',
-                data : {'featureData':(me.editMultipleFeatures) ? JSON.stringify(multipleFeaturesData) : JSON.stringify(requestData)},
+                data : {'featureData': JSON.stringify(requestData)},
                 url: url,
                 success: function (response) {
                     spinner.stop();
@@ -720,7 +732,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
 
                     me._clearFeaturesList();
                     var layer = me._getLayerById(me.layerId);
-                    me._highlighGeometries([], layer, true);
+                    me._removeHighligh(me.layerId);
                     wfsLayerPlugin.deleteTileCache(me.layerId, layer.getCurrentStyle().getName());
                     // wfsLayerPlugin.refreshLayer(me.layerId);
                     var evt = me.sandbox.getEventBuilder('AfterChangeMapLayerStyleEvent')(layer);
@@ -799,23 +811,26 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
          */
         prepareRequest: function (geometries, deleteFeature) {
             var me = this;
-            var requestData = {};
-            requestData.featureFields = [];
+            var requestData = [];
+
+            var feature = {};
+            feature.featureFields = [];
             var featureData = me._getFeatureData();
             featureData.splice(0, 1);
-            requestData.featureFields = featureData;
+            feature.featureFields = featureData;
 
-            requestData.featureId = (me._getFeatureData().length > 0 ? me._getFeatureData()[0].value : null);
-            requestData.layerId = me.selectedLayerId;
-            requestData.srsName = this.sandbox.getMap().getSrsName();
-            requestData.geometries = {};
-            requestData.geometries.data = [];
+            feature.featureId = (me._getFeatureData().length > 0 ? me._getFeatureData()[0].value : null);
+            feature.layerId = me.selectedLayerId;
+            feature.srsName = this.sandbox.getMap().getSrsName();
+            feature.geometries = {};
+            feature.geometries.data = [];
             if (!me.editMultipleFeatures && (me.operationMode == 'edit' || me.operationMode == 'create' || deleteFeature == true)) {
-                me._fillLayerGeometries(requestData.geometries);
+                me._fillLayerGeometries(feature.geometries);
             } else if(me.editMultipleFeatures) {
                 // not allowed change geometries when multiple edit
-                delete requestData.geometries;
+                delete feature.geometries;
             }
+            requestData.push(feature);
             me.sendRequest(requestData, deleteFeature);
         },
 
@@ -928,11 +943,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
          */
         _getLayerById: function (layerId) {
             var me = this;
-            for (var i = 0; i < me.allLayers.length; i++) {
-                if (me.allLayers[i].getId() == layerId) {
-                    return me.allLayers[i];
-                }
-            }
+            return me.sandbox.findMapLayerFromAllAvailable(layerId);
         },
 
         /**
@@ -968,7 +979,6 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
 
             if (!me.processGFIRequest) {
                 if (me.GFIFirstRequestProcessed == true) {
-                    me._highlighGeometries(me.highlightFeaturesIds, layer, true);
                     me.getLayerGeometryType();
                     return;
                 } else {
@@ -982,8 +992,6 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                     if ((editableFeatureFid === undefined || data.features[i][0] == editableFeatureFid) && (data.features[i] != '')) { me.highlightFeaturesIds.push(data.features[i][0].split('.')[1]); }
                 }
             }
-
-            this._highlighGeometries(me.highlightFeaturesIds, layer, true);
 
             var isVisibleLayer = false;
             for (i = 0; i < this.allVisibleLayers.length; i++) {
@@ -1337,7 +1345,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                         cancelButton.setHandler(function () {
                             me._cancelFeature();
                             me._enableGFIRequestProcess();
-                            me._highlighGeometries([], me._getLayerById(me.selectedLayerId), true);
+                            me._removeHighligh(me.selectedLayerId);
                         });
                         var drawToolsContainer = jQuery('<div/>').addClass('content-draw-tools');
                         drawToolsContainer.append(me._addDrawTools());
@@ -1595,30 +1603,17 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
         },
 
         /**
-         * [_highlighGeometries description]
-         * @method  _highlighGeometries
-         * @param   {Array}            featuresIds  feature id's
-         * @param   {String}           layer
-         * @param   {Boolean}          keepPrevious keep previous
+         * Remove highlight
+         * @method  _removeHighligh
+         * @param   {String}           layerId layer id
          * @private
          */
-        _highlighGeometries: function (featuresIds, layer, keepPrevious) {
-            if (this.selectedLayerId == layer.getId()) {
-                var isCorrect = true;
-                for (var i = 0; i < featuresIds.length; i++) {
-                    if (featuresIds[i] === undefined) {
-                        isCorrect = false;
-                        break;
-                    }
-                }
-
-                if (isCorrect) {
-                    var eventBuilder = Oskari.eventBuilder('WFSFeaturesSelectedEvent');
-                    if (eventBuilder) {
-                        var event = eventBuilder(featuresIds, layer, true);
-                        this.sandbox.notifyAll(event);
-                    }
-                }
+        _removeHighligh: function (layerId) {
+            var me = this;
+            var eventBuilder = Oskari.eventBuilder('WFSFeaturesSelectedEvent');
+            if (eventBuilder) {
+                var event = eventBuilder([], me._getLayerById(layerId), true);
+                this.sandbox.notifyAll(event);
             }
         },
 
@@ -1652,7 +1647,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                     me._clearFeaturesList();
                     // remove old tiles
                     var layer = me._getLayerById(me.selectedLayerId);
-                    me._highlighGeometries([], me._getLayerById(me.selectedLayerId), true);
+                    me._removeHighligh(me.selectedLayerId);
                     wfsLayerPlugin.deleteTileCache(me.selectedLayerId, layer.getCurrentStyle().getName());
                     var evt = Oskari.eventBuilder('AfterChangeMapLayerStyleEvent')(layer);
                     me.sandbox.notifyAll(evt);
@@ -1750,7 +1745,6 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                     action: function () {
                         var request = Oskari.requestBuilder('InfoBox.HideInfoBoxRequest')('contentEditor');
                         me.sandbox.request(me, request);
-                        me._highlighGeometries(me.highlightFeaturesIds, me._getLayerById(me.selectedLayerId), true);
                     }
                 };
                 contentActions.push(cancelButton);
