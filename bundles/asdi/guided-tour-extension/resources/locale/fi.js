@@ -4,16 +4,16 @@ Oskari.registerLocalization(
     "key": "guided-tour-extension",
     "value": {
         "maplegends": {
-            "title": "TODO",
-            "message": "TODO"
+            "title": "Karttaselitteet",
+            "message": "Karttaselitteet selventävät näkyvissä olevien tasojen symboleja ja merkitystä."
         },
         "userguide": {
-            "title": "TODO",
-            "message": "TODO"
+            "title": "Käyttöohje",
+            "message": "Käyttöohjeesta löydät opastusta tämän palvelun käyttöön."
         },
         "registration": {
-            "title": "TODO",
-            "message": "TODO"
+            "title": "Rekisteröidy",
+            "message": "Rekisteröitymällä pääset tekemään esimerkiksi karttajulkaisuja ja tallentamaan karttanäkymiä."
         }
     }
 });

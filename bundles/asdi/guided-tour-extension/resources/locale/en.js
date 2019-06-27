@@ -5,11 +5,11 @@ Oskari.registerLocalization(
     "value": {
         "maplegends": {
             "title": "Map Legends",
-            "message": "See the legends of the currently added layers to get a better understanding of the data."
+            "message": "Map legends are visual explanations of the symbols and colours used on the map."
         },
         "userguide": {
             "title": "User Guide",
-            "message": "Learn more about how to use the Arctic SDI Geoportal by reading the User Guide."
+            "message": "Learn more about how to use this service by reading the User Guide."
         },
         "registration": {
             "title": "Registration",
