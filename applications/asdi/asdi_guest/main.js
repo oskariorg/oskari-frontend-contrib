@@ -65,6 +65,4 @@ import 'oskari-loader!oskari-frontend/packages/framework/bundle/language-selecto
 
 import 'oskari-loader!oskari-frontend/packages/framework/bundle/printout/bundle.js';
 
-import 'oskari-loader!../../../packages/asdi/bundle/guided-tour-extension/bundle.js';
-
 import './css/overwritten.css';
