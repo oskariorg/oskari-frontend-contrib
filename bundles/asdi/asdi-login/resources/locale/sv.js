@@ -12,6 +12,10 @@ Oskari.registerLocalization(
             "login": "Logga in",
             "cancel": "Avbryt",
             "passwdreset": "Glömt ditt lösenord?"
+        },
+        "guidedTour": {
+            "title": "Skapa konto",
+            "message": "Genom att registrera kan du använda de extra funktionerna i tjänsten, t.ex. kartpublicering och spara kartvyer."
         }
     }
 });

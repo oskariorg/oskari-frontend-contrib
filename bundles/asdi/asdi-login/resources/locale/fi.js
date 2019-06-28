@@ -12,6 +12,10 @@ Oskari.registerLocalization(
             "login": "Kirjaudu",
             "cancel": "Peruuta",
             "passwdreset": "Unohditko tunnuksesi?"
+        },
+        "guidedTour": {
+            "title": "Rekisteröidy",
+            "message": "Rekisteröitymällä pääset tekemään esimerkiksi karttajulkaisuja ja tallentamaan karttanäkymiä."
         }
     }
 });

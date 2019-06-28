@@ -53,7 +53,7 @@ import 'oskari-loader!oskari-frontend/packages/framework/bundle/timeseries/bundl
 
 import 'oskari-loader!../../../packages/asdi/bundle/asdi-login/bundle.js';
 
-import 'oskari-loader!../../../packages/asdi/bundle/asdi-guided-tour/bundle.js';
+import 'oskari-loader!oskari-frontend/packages/framework/bundle/guidedtour/bundle.js';
 
 import 'oskari-loader!../../../packages/asdi/bundle/asdi-projection-change/bundle.js';
 
