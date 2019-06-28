@@ -74,6 +74,9 @@ Oskari.registerLocalization(
             "modifyMultipleFeaturesConfirmation": {
                 "title": "Vahvista",
                 "text": "Haluatko asettaa kaikkien valitsemiesi kohteiden kenttien arvoksi antamasi arvot?"
+            },
+            "messages": {
+                "cannot_save_all_features": "Kaikkia kohteita ei saatu tallennettua"
             }
         }
     }

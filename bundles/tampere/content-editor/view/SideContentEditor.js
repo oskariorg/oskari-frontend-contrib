@@ -747,7 +747,12 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                         }, 500);
                         me.closeDialog();
                     });
-                    me.showMessage(dialog.header, dialog.success, [okButton]);
+
+                    if(response.messageKey) {
+                        me.showMessage(dialog.header, me.loc.messages[response.messageKey], [okButton]);
+                    } else {
+                        me.showMessage(dialog.header, dialog.success, [okButton]);
+                    }
                     me.clickedGeometryNumber = null;
                 },
                 error: function (error) {

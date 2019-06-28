@@ -74,6 +74,9 @@ Oskari.registerLocalization(
             "modifyMultipleFeaturesConfirmation": {
                 "title": "Confirm",
                 "text": "Are you sure you want to set the given value for all the selected features?"
+            },
+            "messages": {
+                "cannot_save_all_features": "Cannot save all features"
             }
         }
     }
