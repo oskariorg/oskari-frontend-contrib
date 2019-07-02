@@ -369,8 +369,8 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
             var cancelMultipleFeaturesButton = Oskari.clazz.create('Oskari.userinterface.component.Button');
             cancelMultipleFeaturesButton.setTitle(me.loc.buttons.cancel);
             cancelMultipleFeaturesButton.setHandler(function () {
-                jQuery('.content-editor-multiple').html('');
-                jQuery('.content-editor-multiple-buttons').html('');
+                jQuery('.content-editor-multiple').clear();
+                jQuery('.content-editor-multiple-buttons').clear();
             });
             var buttonsContainer = jQuery('<div/>').addClass('content-editor-multiple-buttons').addClass('content-editor-buttons');
             saveMultipleFeaturesButton.insertTo(buttonsContainer);
@@ -660,46 +660,11 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                 wfsLayerPlugin = me.sandbox.findRegisteredModuleInstance('MainMapModule').getPluginInstances('WfsLayerPlugin');
 
             okButton.setTitle(me.loc.buttons.ok);
-            var multipleFeaturesData = [];
 
             if (me.operationMode === 'create' && !me.editMultipleFeatures) {
                 url = Oskari.urls.getRoute('InsertFeature');
-            } else if(!me.editMultipleFeatures) {
+            } else  {
                 url = Oskari.urls.getRoute('SaveFeature');
-            } else if(me.editMultipleFeatures) {
-                url = Oskari.urls.getRoute('SaveFeature');
-                var elements = jQuery('.getinforesult_table');
-                var index = 0;
-                jQuery.each(elements || [], function(k1, v1) {
-                    //Skip first element since we have that already in requestData.
-                    if(index > 0) {
-                        //Copy requestData object for each of the selected features.
-                        var tempFeature = me._cloneObject(requestData[0]);
-                        var tempFeatureFields = [];
-                        var tds = jQuery(v1).children('tr').children('td');
-                        //Go through all the tds to assign tempFeature the correct values.
-                        jQuery.each(tds || [], function(k2, v2) {
-                            var td = jQuery(v2);
-                            if(td.data().key) {
-                                var featureKey = td.data().key;
-                                if(featureKey === '__fid') {
-                                    tempFeature.featureId = td.text();
-                                } else {
-                                    var tempObj = {};
-                                    tempObj.key = featureKey;
-                                    tempObj.value = td.text();
-                                    tempFeatureFields.push(tempObj);
-                                }
-                            }
-                        });
-                        tempFeature.featureFields = tempFeatureFields;
-                        delete tempFeature.geometries;
-
-                        multipleFeaturesData.push(tempFeature);
-                    }
-                    ++index;
-                });
-                requestData = multipleFeaturesData;
             }
 
             var dialog = {};
@@ -734,14 +699,11 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                     var layer = me._getLayerById(me.layerId);
                     me._removeHighligh(me.layerId);
                     wfsLayerPlugin.deleteTileCache(me.layerId, layer.getCurrentStyle().getName());
-                    // wfsLayerPlugin.refreshLayer(me.layerId);
-                    var evt = me.sandbox.getEventBuilder('AfterChangeMapLayerStyleEvent')(layer);
-                    me.sandbox.notifyAll(evt);
                     me.sendStopDrawRequest(true);
 
                     okButton.setHandler(function () {
                         setTimeout(function() {
-                            var visibilityRequestBuilder = me.sandbox.getRequestBuilder('MapModulePlugin.MapLayerUpdateRequest'),
+                            var visibilityRequestBuilder = Oskari.requestBuilder('MapModulePlugin.MapLayerUpdateRequest'),
                                 request = visibilityRequestBuilder(me.layerId, true);
                             me.sandbox.request(me.instance.getName(), request);
                         }, 500);
@@ -817,6 +779,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
         prepareRequest: function (geometries, deleteFeature) {
             var me = this;
             var requestData = [];
+            var multipleFeaturesData = null;
 
             var feature = {};
             feature.featureFields = [];
@@ -836,7 +799,44 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                 delete feature.geometries;
             }
             requestData.push(feature);
-            me.sendRequest(requestData, deleteFeature);
+
+            // multiple edit
+            if (me.editMultipleFeatures) {
+                multipleFeaturesData = [];
+                var elements = jQuery('.getinforesult_table');
+                var index = 0;
+                jQuery.each(elements || [], function(k1, v1) {
+                    // Skip first element since we have that already in requestData.
+                    if(index > 0) {
+                        // Copy requestData object for each of the selected features.
+                        var tempFeature = me._cloneObject(requestData[0]);
+                        var tempFeatureFields = [];
+                        var tds = jQuery(v1).children('tr').children('td');
+                        // Go through all the tds to assign tempFeature the correct values.
+                        jQuery.each(tds || [], function(k2, v2) {
+                            var td = jQuery(v2);
+                            if(td.data().key) {
+                                var featureKey = td.data().key;
+                                if(featureKey === '__fid') {
+                                    tempFeature.featureId = td.text();
+                                } else {
+                                    var tempObj = {};
+                                    tempObj.key = featureKey;
+                                    tempObj.value = td.text();
+                                    tempFeatureFields.push(tempObj);
+                                }
+                            }
+                        });
+                        tempFeature.featureFields = tempFeatureFields;
+                        delete tempFeature.geometries;
+
+                        multipleFeaturesData.push(tempFeature);
+                    }
+                    ++index;
+                });
+            }
+
+            me.sendRequest(multipleFeaturesData || requestData, deleteFeature);
         },
 
         /**
