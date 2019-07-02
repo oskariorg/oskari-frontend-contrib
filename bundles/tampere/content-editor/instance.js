@@ -226,9 +226,11 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
                 if (this.sideContentEditor != null) {
                     var data = evt.getData();
                     var featuresIds = [];
-                    data.features.forEach(function(feature){
-                        featuresIds.push(feature[0]);
-                    });
+                    if(data.features) {
+                        data.features.forEach(function(feature){
+                            featuresIds.push(feature[0]);
+                        });
+                    }
 
                     var eventBuilder = Oskari.eventBuilder('WFSFeaturesSelectedEvent');
                     if (eventBuilder) {

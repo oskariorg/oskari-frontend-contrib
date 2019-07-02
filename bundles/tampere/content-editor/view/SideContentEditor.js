@@ -345,14 +345,19 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                 yesButton.setTitle(me.loc.buttons.yes);
                 yesButton.setHandler(function () {
                     var templateInputs = jQuery('input.template-feature');
-                    jQuery.each(templateInputs || [], function(key, value){
+                    // Set multiple feature data to all editable feature fields
+                    // Used later for when gathering data
+                    jQuery.each(templateInputs || [], function(key, value) {
                         var input = jQuery(value);
+
                         if(input.val()) {
                             var dataKey = input.data('key');
                             var newValue = input.val();
                             var elements = jQuery('.getinforesult_table td[data-key='+dataKey+']');
-                                jQuery.each(elements || [], function(k, v){
-                                jQuery(v).text(newValue);
+
+                            // Set multiple feature data to single feature data
+                            jQuery.each(elements || [], function () {
+                                jQuery(this).text(newValue);
                             });
                         }
                     });
@@ -369,8 +374,8 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
             var cancelMultipleFeaturesButton = Oskari.clazz.create('Oskari.userinterface.component.Button');
             cancelMultipleFeaturesButton.setTitle(me.loc.buttons.cancel);
             cancelMultipleFeaturesButton.setHandler(function () {
-                jQuery('.content-editor-multiple').clear();
-                jQuery('.content-editor-multiple-buttons').clear();
+                jQuery('.content-editor-multiple').empty();
+                jQuery('.content-editor-multiple-buttons').empty();
             });
             var buttonsContainer = jQuery('<div/>').addClass('content-editor-multiple-buttons').addClass('content-editor-buttons');
             saveMultipleFeaturesButton.insertTo(buttonsContainer);
@@ -539,13 +544,16 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
         },
 
         /**
-         * Fills layer geometries
-         * @method  _fillLayerGeometries
-         * @param   {Object}             geometries geometries object
+         * Gets edited layer geometries
+         * @method  _getEditedGeometries
          * @private
          */
-        _fillLayerGeometries: function (geometries) {
+        _getEditedGeometries: function () {
             var me = this;
+            var geometries = {
+                type: '',
+                data: []
+            };
 
             var fillGeometries = function (geom) {
                 if (geom != null) {
@@ -590,7 +598,6 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                             });
                         });
                         geometries.data.push([tmp]);
-
                     }
                 }
             };
@@ -620,24 +627,8 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
 
             }
 
-        },
+            return geometries;
 
-        /**
-         * Performs a deep clone of an object recursively.
-         * @todo This should be in tool functions or somewhere else?
-         * @param  object clonee The object to be cloned
-         * @return object Cloned object
-         */
-        _cloneObject: function(clonee) {
-            var me = this;
-            if (clonee === null || typeof clonee !== 'object') {
-                return clonee;
-            }
-            var cloned = clonee.constructor();
-            for (var key in clonee) {
-                cloned[key] = me._cloneObject(clonee[key]);
-            }
-            return cloned;
         },
 
         /**
@@ -682,6 +673,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                 dialog.error = me.loc.featureUpdate.error;
             }
             me._geojson = null;
+
             jQuery.ajax({
                 type: 'POST',
                 data : {'featureData': JSON.stringify(requestData)},
@@ -699,6 +691,11 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                     var layer = me._getLayerById(me.layerId);
                     me._removeHighligh(me.layerId);
                     wfsLayerPlugin.deleteTileCache(me.layerId, layer.getCurrentStyle().getName());
+
+                    // Style not changed, but need to be send anyway so at geometries edit shows
+                    var evt = Oskari.eventBuilder('AfterChangeMapLayerStyleEvent')(layer);
+                    me.sandbox.notifyAll(evt);
+
                     me.sendStopDrawRequest(true);
 
                     okButton.setHandler(function () {
@@ -732,36 +729,6 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
         },
 
         /**
-         * Clones the geometries drawn for the request formed for backend.
-         * @method  @private _cloneGeometries
-         * @param  {Object} requestData the request data for backend
-         * @param  {Object} geometries the OL geometries drawn.
-         */
-        _cloneGeometries: function (requestData, geometries) {
-            var me = this;
-
-            if (geometries.type === 'FeatureCollection') {
-                geometries.features.forEach(function (feature) {
-                    if (feature.geometry.type.indexOf('Point') > -1) {
-                        requestData.geometries.type = 'multipoint';
-                        requestData.geometries.data.push({x: feature.geometry.coordinates[0], y: feature.geometry.coordinates[1]});
-                    } else if (feature.geometry.type.indexOf('LineString') > -1) {
-                        requestData.geometries.type = 'multilinestring';
-                        requestData.geometries.data.push(me._getLineString(feature.geometry.coordinates));
-                    } else if (feature.geometry.type.indexOf('Polygon') > -1) {
-                        requestData.geometries.type = 'multipolygon';
-                        var coordinatesMultiPolygon = feature.geometry.coordinates;
-                        var tmpPolygon = [];
-                        coordinatesMultiPolygon.forEach(function (coordinates) {
-                            tmpPolygon.push(me._getLineString(coordinates));
-                        });
-                        requestData.geometries.data.push(tmpPolygon);
-                    }
-                });
-            }
-        },
-
-        /**
          * Sets current geojson (when drawtool finished)
          * @method setCurrentGeoJson
          * @param  {Object}          geojson
@@ -771,72 +738,72 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
         },
 
         /**
+         * Get request data
+         * @method  _getRequestData
+         * @return  {JSONArray}  gathered edited data
+         * @private
+         */
+        _getRequestData: function () {
+            var me = this;
+            var data = null;
+
+            var getSingleData = function () {
+                // single feature has only  one form data
+                var gatheredData = me._gatherFormData()[0];
+
+                var feature = {
+                    featureFields: gatheredData.data,
+                    featureId: gatheredData.featureId,
+                    layerId: me.selectedLayerId,
+                    srsName: me.sandbox.getMap().getSrsName()
+                };
+
+                if (!me.editMultipleFeatures && (me.operationMode == 'edit' || me.operationMode == 'create' || deleteFeature == true)) {
+                    feature.geometries = me._getEditedGeometries();
+                }
+                return [feature];
+            };
+
+            var getMultipleEditData = function () {
+                var gatheredData = me._gatherFormData();
+                var features = [];
+
+                gatheredData.forEach(function (fields) {
+                    var feature = {
+                        featureFields: fields.data,
+                        featureId: fields.featureId,
+                        layerId: me.selectedLayerId,
+                        srsName: me.sandbox.getMap().getSrsName()
+                    };
+
+                    features.push(feature);
+
+                });
+
+                return features;
+            };
+
+
+            // single edit
+            if (!me.editMultipleFeatures) {
+                data = getSingleData();
+            }
+            // multiple edit
+            else if (me.editMultipleFeatures) {
+                data = getMultipleEditData();
+            }
+
+            return data;
+        },
+
+        /**
          * Prepare request
          * @method prepareRequest
-         * @param  {Array}       geometries    geometries array
          * @param  {Boolean}     deleteFeature delete geometry ?
          */
-        prepareRequest: function (geometries, deleteFeature) {
+        prepareRequest: function (deleteFeature) {
             var me = this;
-            var requestData = [];
-            var multipleFeaturesData = null;
-
-            var feature = {};
-            feature.featureFields = [];
-            var featureData = me._getFeatureData();
-            featureData.splice(0, 1);
-            feature.featureFields = featureData;
-
-            feature.featureId = (me._getFeatureData().length > 0 ? me._getFeatureData()[0].value : null);
-            feature.layerId = me.selectedLayerId;
-            feature.srsName = this.sandbox.getMap().getSrsName();
-            feature.geometries = {};
-            feature.geometries.data = [];
-            if (!me.editMultipleFeatures && (me.operationMode == 'edit' || me.operationMode == 'create' || deleteFeature == true)) {
-                me._fillLayerGeometries(feature.geometries);
-            } else if(me.editMultipleFeatures) {
-                // not allowed change geometries when multiple edit
-                delete feature.geometries;
-            }
-            requestData.push(feature);
-
-            // multiple edit
-            if (me.editMultipleFeatures) {
-                multipleFeaturesData = [];
-                var elements = jQuery('.getinforesult_table');
-                var index = 0;
-                jQuery.each(elements || [], function(k1, v1) {
-                    // Skip first element since we have that already in requestData.
-                    if(index > 0) {
-                        // Copy requestData object for each of the selected features.
-                        var tempFeature = me._cloneObject(requestData[0]);
-                        var tempFeatureFields = [];
-                        var tds = jQuery(v1).children('tr').children('td');
-                        // Go through all the tds to assign tempFeature the correct values.
-                        jQuery.each(tds || [], function(k2, v2) {
-                            var td = jQuery(v2);
-                            if(td.data().key) {
-                                var featureKey = td.data().key;
-                                if(featureKey === '__fid') {
-                                    tempFeature.featureId = td.text();
-                                } else {
-                                    var tempObj = {};
-                                    tempObj.key = featureKey;
-                                    tempObj.value = td.text();
-                                    tempFeatureFields.push(tempObj);
-                                }
-                            }
-                        });
-                        tempFeature.featureFields = tempFeatureFields;
-                        delete tempFeature.geometries;
-
-                        multipleFeaturesData.push(tempFeature);
-                    }
-                    ++index;
-                });
-            }
-
-            me.sendRequest(multipleFeaturesData || requestData, deleteFeature);
+            me.sendRequest(me._getRequestData(), deleteFeature);
         },
 
         /**
@@ -1217,7 +1184,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                             valInput.prop('type', 'text');
                             break;
                         }
-                        //If multiple features are modified at the same time, add also blur for modifying those values.
+                        // If multiple features are modified at the same time, add also blur for modifying those values.
                         if(me.editMultipleFeatures) {
                             valInput.on('blur.modifyMultipleFeatures', function(event){
                                 var thisInput = jQuery(this);
@@ -1268,7 +1235,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                     me.sendStopDrawRequest();
                 }
 
-                me.prepareRequest(me._geojson);
+                me.prepareRequest();
                 me.featureDuringEdit = false;
                 me._storeFormData();
             } else {
@@ -1420,27 +1387,44 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
         },
 
         /**
-         * Gets feature data
-         * @method  _getFeatureData
-         * @return  {Array}        array of objects {key:key, value:val}
+         * Gathers form data
+         * @method  _gatherFormData
+         * @return  {Array}  multiarray array of form objects [{key:key, value:val}]
          * @private
          */
-        _getFeatureData: function () {
-            var result = [];
-            var me = this;
-            me.mainPanel.find('.edit-feature .getinforesult_table').first().find('tr').each(function () {
-                var key = jQuery(this).find('td').eq(0).html();
-                var val = null;
-                if (jQuery(this).find('td').eq(1).find('input').length > 0) {
-                    val = jQuery(this).find('td').eq(1).find('input').val();
-                } else {
-                    val = jQuery(this).find('td').eq(1).html();
-                }
+        _gatherFormData: function () {
+            var results = [];
 
-                result.push({key: key, value: val});
+            var me = this;
+            me.mainPanel.find('div.getinforesult_container table.getinforesult_table').each(function (){
+                var result = {
+                    featureId: null,
+                    data: []
+                };
+
+                jQuery(this).find('tr').each(function () {
+                    var key = jQuery(this).find('td').eq(0).html();
+                    var val = null;
+                    if (jQuery(this).find('td').eq(1).find('input').length > 0) {
+                        val = jQuery(this).find('td').eq(1).find('input').val();
+                    } else {
+                        val = jQuery(this).find('td').eq(1).text();
+                    }
+
+                    if (key === '__fid') {
+                        result.featureId = val;
+                    }
+                    else if (me.operationMode === 'create' && val !== '') {
+                        result.data.push({ key: key, value: val });
+                    } else if (me.operationMode !== 'create') {
+                        result.data.push({ key: key, value: val });
+                    }
+
+                });
+                results.push(result);
             });
 
-            return result;
+            return results;
         },
 
         /**
@@ -1768,7 +1752,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                         });
 
                         me.layerGeometries.geometry.setCoordinates(newCoords);
-                        me.prepareRequest(null, true);
+                        me.prepareRequest(true);
                         var request = Oskari.requestBuilder('InfoBox.HideInfoBoxRequest')('contentEditor');
                         me.sandbox.request(me, request);
                         me._enableGFIRequestProcess();
