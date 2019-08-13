@@ -607,11 +607,11 @@ Oskari.clazz.define(
                 fragment.find('[name=details-default]').prop('checked', channel.is_default);
                 // TODO: setup config properly
                 fragment.find('[name=details-isaddress]').prop('checked', !!channel.config.handler);
-                $.each(channel.locale, function (lang, text) {
+                jQuery.each(channel.locale, function (lang, text) {
                     fragment.find('[name=details-topic-' + lang + ']').val(text.name);
                     fragment.find('[name=details-desc-' + lang + ']').val(text.desc);
                 });
-                $.each(channel.params_for_search, function (index, text) {
+                jQuery.each(channel.params_for_search, function (index, text) {
                     if (index > 0) {
                         fragment.find('.new-params-btn').trigger('click');
                     }
