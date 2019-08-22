@@ -2763,6 +2763,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                         }
                     }
                 }
+                me.refreshAnalyseData(mapLayer.getId());
             }
         },
 
