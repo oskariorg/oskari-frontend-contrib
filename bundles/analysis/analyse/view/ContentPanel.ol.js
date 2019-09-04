@@ -654,6 +654,10 @@ Oskari.clazz.define(
                         formattedFeature.properties = {};
                     }
                     return formattedFeature;
+                },
+                getVersion: function (){
+                    // Version is added just to make fake layer compatible with other layers
+                    return '0.0.1';
                 }
             };
         },
