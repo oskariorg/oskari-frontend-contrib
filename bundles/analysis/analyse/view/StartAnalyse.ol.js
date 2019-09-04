@@ -1204,16 +1204,15 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
         _eligibleForAnalyse: function (layer) {
             return (((layer.hasFeatureData && layer.hasFeatureData()) ||
                 layer.isLayerOfType(this.contentPanel.getLayerType())) && 
-                    this._layerTypeIsEligibleForAnalyse(layer.getLayerType()) &&
-                    this._wfsLayerHasSupportedVersion(layer.getVersion()));
+                    this._layerHasSupportedVersion(layer.getLayerType(),layer.getVersion()));
         },
 
-        _layerTypeIsEligibleForAnalyse(layerType) {
-            return layerType === 'wfs' || layerType === 'analysislayer';
-        },
-
-        _wfsLayerHasSupportedVersion(layerVersion){
-            return layerVersion !== this._unsupportedWfsLayerVersion;
+        _layerHasSupportedVersion(layerType,layerVersion){
+            if(layerType === 'wfs' &&
+                layerVersion === this._unsupportedWfsLayerVersion){
+                    return false;
+            }
+            return true;
         },
 
         /**
