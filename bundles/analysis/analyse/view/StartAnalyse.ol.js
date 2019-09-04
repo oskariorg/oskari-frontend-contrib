@@ -1208,7 +1208,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
         },
 
         _layerHasSupportedVersion(layerType,layerVersion){
-            if(layerType === 'wfs' &&
+            if((layerType === 'wfs' || layerType === 'analysislayer') &&
                 layerVersion === this._unsupportedWfsLayerVersion){
                     return false;
             }
