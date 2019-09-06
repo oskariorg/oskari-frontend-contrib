@@ -34,42 +34,26 @@ Oskari.clazz.define(
         me._defaultStyle = {
             draw: {
                 fill: {
-                    color: 'rgba(255,255,255,0.4)'
+                    color: 'rgba(35,216,194,0.3)'
                 },
                 stroke: {
-                    color: '#3399CC',
+                    color: 'rgba(35,216,194,1)',
                     width: 2
                 },
                 image: {
                     radius: 4,
                     fill: {
-                        color: '#3399CC'
+                        color: 'rgba(35,216,194,0.7)'
                     }
                 }
             },
             modify: {
                 fill: {
-                    color: 'rgba(255,255,255,0.4)'
+                    color: 'rgba(0,0,238,0.3)'
                 },
                 stroke: {
-                    color: '#3399CC',
+                    color: 'rgba(0,0,238,1)',
                     width: 2
-                },
-                image: {
-                    radius: 4,
-                    fill: {
-                        color: 'rgba(0,0,0,1)'
-                    }
-                }
-            },
-            intersect: {
-                fill: {
-                    color: 'rgba(255,255,255,0.4)'
-                },
-                stroke: {
-                    color: '#3399CC',
-                    width: 2,
-                    lineDash: 5
                 },
                 image: {
                     radius: 4,
@@ -581,7 +565,7 @@ Oskari.clazz.define(
             this._deactivateSelectControls();
             this.drawLayerId = this.analyseHelper.generateDrawLayerId();
 
-            this.sandbox.postRequestByName('DrawTools.StartDrawingRequest', [this.drawLayerId, requestGeometryType, {style: this._defaultStyle, allowMultipleDrawing: 'multiGeom'}]);
+            this.sandbox.postRequestByName('DrawTools.StartDrawingRequest', [this.drawLayerId, requestGeometryType, {style: this._defaultStyle, allowMultipleDrawing: 'multiGeom', showMeasureOnMap: true}]);
         },
 
         /**
