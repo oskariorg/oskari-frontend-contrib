@@ -23,14 +23,10 @@ Oskari.clazz.define('Oskari.projection.change.instance',
 
             this.createPlugin();
             this.createUi();
-            this.sandbox.requestHandler('ShowProjectionChangerRequest', this);
             this._overrideUnsupportedLayerActions();
         },
         getViews: function () {
             return this.getAppViews();
-        },
-        handleRequest: function (core, request) {
-            this.plugin.getFlyout().show();
         },
         createPlugin: function () {
             var params = {
@@ -47,7 +43,6 @@ Oskari.clazz.define('Oskari.projection.change.instance',
         stopPlugin: function () {
             this._mapmodule.unregisterPlugin(this.plugin);
             this._mapmodule.stopPlugin(this.plugin);
-            this.sandbox.removeRequestHandler('ShowProjectionChangerRequest', this);
             this.plugin = null;
         },
         createUi: function () {
