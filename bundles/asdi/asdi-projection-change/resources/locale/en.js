@@ -49,7 +49,8 @@ Oskari.registerLocalization(
                     "name": "North Pole LAEA Russia",
                     "desc": "Suitable for studies of Russian Arctic area."
                 }
-            }
+            },
+            "changeProjection": "Change map projection"
         }
     }
 )
