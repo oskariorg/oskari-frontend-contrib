@@ -1,3 +1,4 @@
+const UnsupportedLayerSrs = Oskari.clazz.get('Oskari.mapframework.domain.UnsupportedLayerSrs');
 /**
  * @class Oskari.projection.change.instance
  * 
@@ -22,8 +23,8 @@ Oskari.clazz.define('Oskari.projection.change.instance',
 
             this.createPlugin();
             this.createUi();
-
             this.sandbox.requestHandler('ShowProjectionChangerRequest', this);
+            this._overrideUnsupportedLayerActions();
         },
         getViews: function () {
             return this.getAppViews();
@@ -58,5 +59,11 @@ Oskari.clazz.define('Oskari.projection.change.instance',
         },
         getAppViews: function () {
             return Oskari.app.getSystemDefaultViews();
+        },
+        _overrideUnsupportedLayerActions(){
+            const srs = new UnsupportedLayerSrs();
+            srs.setAction(() => this.plugin.getFlyout().show());
+            srs.setActionText(this.loc.changeProjection);
+            this.sandbox.getMap().addLayerSupportCheck(srs);
         }
     });
