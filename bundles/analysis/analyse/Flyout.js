@@ -44,11 +44,11 @@ Oskari.clazz.define(
          *      container size(?) - not used
          *
          */
-        setEl: function (el, width, height) {
-            this.container = el[0];
-            if (!jQuery(this.container).hasClass('analyse')) {
-                jQuery(this.container).addClass('analyse');
-            }
+        setEl: function (el, flyout) {
+            this.container = jQuery(el[0]);
+            this.flyout = flyout;
+            this.container.addClass('analyse');
+            this.flyout.addClass('analyse');
         },
 
         /**
@@ -132,7 +132,7 @@ Oskari.clazz.define(
          *
          */
         refresh: function () {
-            var flyout = jQuery(this.container),
+            var flyout = this.container,
                 sandbox = this.instance.getSandbox(),
                 WFSSelections = sandbox.getService('Oskari.mapframework.bundle.mapwfs2.service.WFSLayerService').getWFSSelections(),
                 layersWithFeaturesCount = _.map(WFSSelections, 'layerId').length;
