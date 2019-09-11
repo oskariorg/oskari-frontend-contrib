@@ -49,6 +49,7 @@ Oskari.registerLocalization(
                 "name": "Projection équivalente de Lambert de la Russie centrée sur le pôle Nord",
                 "desc": "Convient aux études de la région de l'Arctique russe."
             }
-        }
+        },
+        "changeProjection": "Modifer la projection cartographique",
     }
 });

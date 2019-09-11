@@ -650,10 +650,13 @@ Oskari.clazz.define(
                 },
                 getFeature: function () {
                     var formattedFeature = formatter.writeFeatureObject(featureSource.getFeatureById(id));
-                    if (formattedFeature.properties === null) {
-                        formattedFeature.properties = {};
-                    }
+                    // Clear properties, only geometry is needed
+                    formattedFeature.properties = {};
                     return formattedFeature;
+                },
+                getVersion: function (){
+                    // Version is added just to make fake layer compatible with other layers
+                    return '0.0.1';
                 }
             };
         },

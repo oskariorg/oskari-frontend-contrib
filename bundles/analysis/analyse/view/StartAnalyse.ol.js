@@ -1204,11 +1204,15 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
         _eligibleForAnalyse: function (layer) {
             return (((layer.hasFeatureData && layer.hasFeatureData()) ||
                 layer.isLayerOfType(this.contentPanel.getLayerType())) && 
-                    this._wfsLayerHasSupportedVersion(layer));
+                    this._layerHasSupportedVersion(layer.getLayerType(),layer.getVersion()));
         },
 
-        _wfsLayerHasSupportedVersion(layer){
-            return layer.getLayerType() === 'wfs' && layer.getVersion() !== this._unsupportedWfsLayerVersion;
+        _layerHasSupportedVersion(layerType,layerVersion){
+            if((layerType === 'wfs' || layerType === 'analysislayer') &&
+                layerVersion === this._unsupportedWfsLayerVersion){
+                    return false;
+            }
+            return true;
         },
 
         /**
@@ -2763,7 +2767,6 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                         }
                     }
                 }
-                me.refreshAnalyseData(mapLayer.getId());
             }
         },
 
