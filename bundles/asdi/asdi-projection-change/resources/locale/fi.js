@@ -49,7 +49,8 @@ Oskari.registerLocalization(
                     "name": "North Pole LAEA Russia",
                     "desc": "Sopii Venäjän arktisen alueen kuvaukseen."
                 }
-            }     
+            },
+            "changeProjection": "Vaihda karttaprojektiota",
         }
     }
 )
