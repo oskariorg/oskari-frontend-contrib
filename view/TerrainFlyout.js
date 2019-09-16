@@ -184,11 +184,11 @@ Oskari.clazz.define('Oskari.mapframework.bundle.terrain-profile.TerrainFlyout',
             var bisectX = d3.bisector(function (d) { return d.distance; }).left;
 
             function mousemove () {
-                var x0 = x.invert(d3.mouse(this)[0]),
-                    i = bisectX(processed[0], x0, 1),
-                    d0 = processed[0][i - 1],
-                    d1 = processed[0][i],
-                    d = x0 - d0.distance > d1.distance - x0 ? d1 : d0;
+                var x0 = x.invert(d3.mouse(this)[0]);
+                var i = bisectX(processed[0], x0, 1);
+                var d0 = processed[0][i - 1];
+                var d1 = processed[0][i];
+                var d = x0 - d0.distance > d1.distance - x0 ? d1 : d0;
                 if (d.height < y.domain()[0]) { // below minimum
                     cursor.style('display', 'none');
                 } else {
