@@ -6,13 +6,24 @@
     "Oskari"
   ],
   "dependencies": {
-    "oskari-frontend": "file:../oskari-frontend"
+    "oskari-frontend": "git+https://git@github.com/oskariorg/oskari-frontend.git#develop"
   },
   "scripts": {
-    "build": "node ./node_modules/oskari-frontend/node_modules/webpack/bin/webpack.js --config ./node_modules/oskari-frontend/webpack.config.js --mode production --progress",
-    "start": "node ./node_modules/oskari-frontend/node_modules/webpack-dev-server/bin/webpack-dev-server.js --config ./node_modules/oskari-frontend/webpack.config.js --hot",
+    "dev-mode": "node ./node_modules/oskari-frontend/scripts/oskari-dev-mode",
+    "dev-mode:off": "npm run dev-mode -- disabled",
+    "dev-mode:on": "npm run dev-mode -- enabled",
+    "dev-mode:disable": "npm run dev-mode:on && npm run dev-mode:clean && npm i git+https://git@github.com/oskariorg/oskari-frontend.git#develop",
+    "dev-mode:enable": "npm run dev-mode:off && npm run dev-mode:available && npm run dev-mode:clean && npm i ../oskari-frontend",
+    "dev-mode:available": "node ./node_modules/oskari-frontend/scripts/oskari-dev-mode-requirements",
+    "dev-mode:clean": "(rm -r node_modules || true) && (rm package-lock.json || true)",
+    "build": "npm run dev-mode:off && webpack --config ./node_modules/oskari-frontend/webpack.config.js --mode production --progress",
+    "start": "npm run dev-mode:off && webpack-dev-server --config ./node_modules/oskari-frontend/webpack.config.js --hot",
+    "build:dev": "npm run dev-mode:on && node ./node_modules/oskari-frontend/node_modules/webpack/bin/webpack.js --config ./node_modules/oskari-frontend/webpack.config.js --mode production --progress",
+    "start:dev": "npm run dev-mode:on && node ./node_modules/oskari-frontend/node_modules/webpack-dev-server/bin/webpack-dev-server.js --config ./node_modules/oskari-frontend/webpack.config.js --hot",
     "asdi": "npm run start -- --env.appdef=applications/asdi",
     "elf": "npm run start -- --env.appdef=applications/elf",
+    "asdi:dev": "npm run start:dev -- --env.appdef=applications/asdi",
+    "elf:dev": "npm run start:dev -- --env.appdef=applications/elf",
     "sprite": "node ./node_modules/oskari-frontend/webpack/sprite.js"
   },
   "repository": {
