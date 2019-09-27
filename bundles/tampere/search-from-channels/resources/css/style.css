@@ -1,11 +1,8 @@
 div.searchFromChannelsDescription {
   margin: 0;
   margin-bottom: 8px; }
-div.searchFromChannelsContainer {
-  height: 90%; }
 div.searchFromChannelsContainer div.main {
-  width: 100%;
-  height: 100%; }
+  width: 100%; }
 div.searchFromChannelsContainer div.moreLess {
   padding: 10px 0; }
 div.searchFromChannelsContainer a.showLink {
