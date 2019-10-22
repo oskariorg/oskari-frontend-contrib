@@ -15,22 +15,22 @@
         "metadata": {
             "Import-Bundle" : {
                 "mapmodule" : {
-                    "bundlePath" : "oskari-frontend/packages/mapping/ol3/"
+                    "bundlePath" : "oskari-frontend/packages/mapping/ol/"
                 },
                 "mapwmts" : {
-                    "bundlePath" : "oskari-frontend/packages/mapping/ol3/"
+                    "bundlePath" : "oskari-frontend/packages/mapping/ol/"
                 },
                 "mapwfs2" : {
-                    "bundlePath" : "oskari-frontend/packages/mapping/ol3/"
+                    "bundlePath" : "oskari-frontend/packages/mapping/ol/"
                 },
                 "maparcgis": {
-                    "bundlePath": "oskari-frontend/packages/mapping/ol3/"
+                    "bundlePath": "oskari-frontend/packages/mapping/ol/"
                 },
                 "mapuserlayers" : {
-                    "bundlePath" : "oskari-frontend/packages/mapping/ol3/"
+                    "bundlePath" : "oskari-frontend/packages/mapping/ol/"
                 },
                 "mapmyplaces": {
-                    "bundlePath": "oskari-frontend/packages/mapping/ol3/"
+                    "bundlePath": "oskari-frontend/packages/mapping/ol/"
                 },
                 "oskariui" : {
                     "bundlePath" : "oskari-frontend/packages/framework/bundle/"
@@ -48,7 +48,7 @@
         "metadata": {
             "Import-Bundle": {
                 "toolbar": {
-                    "bundlePath": "oskari-frontend/packages/mapping/ol3/"
+                    "bundlePath": "oskari-frontend/packages/mapping/ol/"
                 }
             }
         }
@@ -86,7 +86,7 @@
         "metadata" : {
             "Import-Bundle" : {
                 "infobox" : {
-                    "bundlePath" : "oskari-frontend/packages/mapping/ol3/"
+                    "bundlePath" : "oskari-frontend/packages/mapping/ol/"
                 }
             }
         }
@@ -96,7 +96,7 @@
         "metadata" : {
             "Import-Bundle" : {
                 "drawtools" : {
-                    "bundlePath" : "oskari-frontend/packages/mapping/ol3/"
+                    "bundlePath" : "oskari-frontend/packages/mapping/ol/"
                 }
             }
         }
@@ -105,7 +105,7 @@
         "metadata": {
             "Import-Bundle": {
                 "maprotator": {
-                    "bundlePath": "oskari-frontend/packages/mapping/ol3/"
+                    "bundlePath": "oskari-frontend/packages/mapping/ol/"
                 }
             }
         }
