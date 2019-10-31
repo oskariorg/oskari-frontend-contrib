@@ -27,7 +27,7 @@ After this setup, you can reference bundles in this repo in your application's m
     "metadata": {
         "Import-Bundle": {
             "analyse": {
-                "bundlePath": "oskari-frontend-contrib/packages/analysis/ol3/"
+                "bundlePath": "oskari-frontend-contrib/packages/analysis/ol/"
             }
     }
 }
