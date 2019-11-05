@@ -108,7 +108,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartView',
                         });
                     });
                 }
-                me.instance.setAnalyseMode(true);
+                me.instance.enableAnalyseMode();
             });
             this.buttons['continue'] = continueButton;
             continueButton.insertTo(content.find('div.buttons'));

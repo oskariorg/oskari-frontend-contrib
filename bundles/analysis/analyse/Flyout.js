@@ -143,13 +143,12 @@ Oskari.clazz.define(
                 this.view = Oskari.clazz.create('Oskari.analysis.bundle.analyse.view.NotLoggedIn',
                     this.instance,
                     this.instance.getLocalization('NotLoggedView'));
-            }
-            // Show info or not
-            if (jQuery.cookie('analyse_info_seen') !== '1' || layersWithFeaturesCount > 1) {
+                this.view.render(flyout);
+            } else if (jQuery.cookie('analyse_info_seen') !== '1' || layersWithFeaturesCount > 1) {
                 this.view.render(flyout);
                 flyout.parent().parent().css('display', '');
             } else {
-                this.instance.setAnalyseMode(true);
+                this.instance.enableAnalyseMode();
             }
         }
     }, {
