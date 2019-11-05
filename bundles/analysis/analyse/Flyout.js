@@ -148,7 +148,7 @@ Oskari.clazz.define(
                 this.view.render(flyout);
                 flyout.parent().parent().css('display', '');
             } else {
-                this.instance.setAnalyseMode(true);
+                this.instance.enableAnalyseMode();
             }
         }
     }, {

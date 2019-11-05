@@ -398,63 +398,70 @@ Oskari.clazz.define(
             this.plugins['Oskari.userinterface.Tile'].refresh();
         },
 
-        /**
-         * @public @method setAnalyseMode
-         * Starts analyse mode
-         *
-         * @param {Boolean} blnEnabled
+         /**
+         * @public @method enableAnalyseMode
          *
          */
-        setAnalyseMode: function (blnEnabled) {
-            var me = this,
-                map = jQuery('#contentMap');
+        enableAnalyseMode: function() {
+            const map = jQuery('#contentMap');
+            map.addClass('mapAnalyseMode');
+            this.sandbox.mapMode = 'mapAnalyseMode';
+            // Hide flyout, it's not needed...
+            jQuery(this.plugins['Oskari.userinterface.Flyout'].container).parent().parent().hide();
 
-            if (blnEnabled) {
-                map.addClass('mapAnalyseMode');
-                me.sandbox.mapMode = 'mapAnalyseMode';
-                // Hide flyout, it's not needed...
-                jQuery(me.plugins['Oskari.userinterface.Flyout'].container).parent().parent().hide();
-
-                // proceed with analyse view
-                if (!this.analyse) {
-                    this.analyse = Oskari.clazz.create(
-                        'Oskari.analysis.bundle.analyse.view.StartAnalyse',
-                        this,
-                        this.getLocalization('AnalyseView')
-                    );
-                    this.analyse.render(map);
-                } else {
-                    // Update data UI
-                    this.analyse.refreshAnalyseData();
-                    this.analyse.refreshExtraParameters();
-                }
-                if (this.state) {
-                    this.analyse.setState(this.state);
-                }
-                this.analyse.show();
-                this.analyse.setEnabled(true);
-                me.WFSLayerService.setSelectFromAllLayers(false);
+            // proceed with analyse view
+            if (!this.analyse) {
+                this.analyse = Oskari.clazz.create(
+                    'Oskari.analysis.bundle.analyse.view.StartAnalyse',
+                    this,
+                    this.getLocalization('AnalyseView')
+                );
+                this.analyse.render(map);
             } else {
-                map.removeClass('mapAnalyseMode');
-                if (me.sandbox._mapMode === 'mapAnalyseMode') {
-                    delete me.sandbox._mapMode;
-                }
-                if (this.analyse) {
-                    // Reset tile state
-                    var request = Oskari.requestBuilder('userinterface.UpdateExtensionRequest')(me, 'close', me.getName());
-                    me.sandbox.request(me.getName(), request);
-                    this.analyse.setEnabled(false);
-                    this.analyse.hide();
-                }
-                me.WFSLayerService.setAnalysisWFSLayerId(null);
+                // Update data UI
+                this.analyse.refreshAnalyseData();
+                this.analyse.refreshExtraParameters();
             }
-            // resize map to fit screen with expanded/normal sidebar
-            var reqBuilder = Oskari.requestBuilder('MapFull.MapSizeUpdateRequest');
-            if (reqBuilder) {
-                me.sandbox.request(me, reqBuilder(true));
+            if (this.state) {
+                this.analyse.setState(this.state);
             }
+            this.analyse.show();
+            this.analyse.setEnabled(true);
+            this.WFSLayerService.setSelectFromAllLayers(false);
+            this._resizeMap();
         },
 
+        /**
+         * @public @method disableAnalyseMode
+         *
+         */
+        disableAnalyseMode: function() {
+            const map = jQuery('#contentMap');
+            map.removeClass('mapAnalyseMode');
+
+            if (this.sandbox._mapMode === 'mapAnalyseMode') {
+                delete this.sandbox._mapMode;
+            }
+            if (this.analyse) {
+                // Reset tile state
+                const request = Oskari.requestBuilder('userinterface.UpdateExtensionRequest')(this, 'close', this.getName());
+                this.sandbox.request(this.getName(), request);
+                this.analyse.setEnabled(false);
+                this.analyse.hide();
+            }
+            this.WFSLayerService.setAnalysisWFSLayerId(null);
+            this._resizeMap();
+        },
+        /**
+         * @private @method _resizeMap
+         * Resize map to fit screen with expanded/normal sidebar
+         */
+        _resizeMap() {
+            const reqBuilder = Oskari.requestBuilder('MapFull.MapSizeUpdateRequest');
+            if (reqBuilder) {
+                this.sandbox.request(this, reqBuilder(true));
+            }
+        },
         /**
          * @public @method displayContent
          *
