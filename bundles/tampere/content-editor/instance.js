@@ -222,6 +222,11 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
          * @static
          */
         eventHandlers: {
+            FeatureEvent: function (event) {
+                if (this.sideContentEditor != null && event.getOperation() == 'click') {
+                    this.sideContentEditor.parseWFSFeatureGeometries(event);
+                }
+            },
             GetInfoResultEvent: function (evt) {
                 if (this.sideContentEditor != null) {
                     var data = evt.getData();
@@ -238,11 +243,6 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
                         var event = eventBuilder(featuresIds, layer, true);
                         this.sandbox.notifyAll(event);
                     }
-                }
-            },
-            WFSFeatureGeometriesEvent: function (evt) {
-                if (this.sideContentEditor != null) {
-                    this.sideContentEditor.parseWFSFeatureGeometries(evt);
                 }
             },
             MapClickedEvent: function (event) {
@@ -270,6 +270,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
                     var maplayer = evt.getMapLayer();
                     var featureIds = evt.getWfsFeatureIds();
                     var features = [];
+
                     featureIds.forEach(function(fid) {
                         var filtered = maplayer.getActiveFeatures().filter(function(feature){
                             return feature[0] === fid;
@@ -279,6 +280,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
                         });
                     });
                     this.sideContentEditor._handleInfoResult({layerId: maplayer.getId(), features: features});
+                    
                 }
             }
         },
