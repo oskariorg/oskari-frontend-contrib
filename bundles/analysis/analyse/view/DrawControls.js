@@ -195,6 +195,7 @@ Oskari.clazz.define(
                     'id': 'oskari_analysis_analyse_view_analyse_content_features_' + tool
                 });
                 toolDiv.on('click', function () {
+                    me.closeHelpDialog();
                     // if selection tool is left active, deactivate it
                     me.deactivateSelectTools();
 
@@ -375,10 +376,7 @@ Oskari.clazz.define(
         closeHelpDialog: function () {
             if (this.helpDialog) {
                 this.helpDialog.close(true);
-                delete this.helpDialog;
-                if (this.mapModule.getDrawingMode()) {
-                    this.drawStopper(true);
-                }
+                this.helpDialog = null;
             }
         },
 
