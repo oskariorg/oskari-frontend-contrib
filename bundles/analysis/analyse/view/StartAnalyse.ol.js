@@ -2289,7 +2289,6 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
         refreshAnalyseData: function (layer_id) {
             // Remove old
             this.contentPanel.emptyLayers();
-            this.contentPanel._activateSelectControls();
             this._addAnalyseData(this.contentPanel, layer_id);
         },
 

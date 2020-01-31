@@ -29,6 +29,7 @@ Oskari.clazz.define(
         me.helpDialog = undefined;
         me.WFSLayerService = undefined;
         me.stopDrawing = false;
+        me.selectActivated = false;
 
         // styles for drawing request
         me._defaultStyle = {
@@ -247,11 +248,15 @@ Oskari.clazz.define(
                 if (me.drawFilterMode) {
                     return;
                 }
-                if (event.getWfsFeatureIds().length === 0 && layerId === me.WFSLayerService.getAnalysisWFSLayerId()) {
-                    me.selectedGeometry = null;
-                    // TODO: enable when geometryeditor is integrated
-                    // me._disableAllDrawFilterButtons();
-                    this.drawControls.toggleEmptySelectionBtn(false);
+                if (layerId === me.WFSLayerService.getAnalysisWFSLayerId()) {
+                    if (event.getWfsFeatureIds().length === 0) {
+                        me.selectedGeometry = null;
+                        // TODO: enable when geometryeditor is integrated
+                        // me._disableAllDrawFilterButtons();
+                        this.drawControls.toggleEmptySelectionBtn(false);
+                    } else {
+                        this.drawControls.toggleEmptySelectionBtn(true);
+                    }
                 }
             },
 
@@ -538,13 +543,6 @@ Oskari.clazz.define(
          *
          */
         _startNewDrawing: function (config) {
-            if (this.drawControls.helpDialog) {
-                this._stopDrawing(true);
-                this.drawControls.closeHelpDialog();
-                this.drawControls.activateWFSLayer(true);
-                return;
-            }
-
             // Disable WFS highlight and GFI dialog
             this.drawControls.activateWFSLayer(false);
 
@@ -576,7 +574,7 @@ Oskari.clazz.define(
          */
         _stopDrawing: function (isCancel) {
             var suppressEvent = false;
-            this.stopDrawing = true;
+            this.stopDrawing = !isCancel;
             this.getDrawToolsPanelContainer()
                 .find('div.toolContainer div.buttons')
                 .remove();
@@ -584,7 +582,7 @@ Oskari.clazz.define(
             if (isCancel) {
                 suppressEvent = true;
             }
-
+            this._activateSelectControls();
             this.sandbox.postRequestByName('DrawTools.StopDrawingRequest', [this.drawLayerId, isCancel, suppressEvent]);
         },
 
@@ -696,8 +694,12 @@ Oskari.clazz.define(
          * @private
          */
         _activateSelectControls: function () {
+            if (this.selectActivated) {
+                return;
+            }
             this.mapModule.getMap().addInteraction(this.hoverInteraction);
             this.mapModule.getMap().addInteraction(this.selectInteraction);
+            this.selectActivated = true;
         },
         /**
          * Deactivates featureLayer Highlight and Select Controls
@@ -708,6 +710,7 @@ Oskari.clazz.define(
         _deactivateSelectControls: function () {
             this.mapModule.getMap().removeInteraction(this.hoverInteraction);
             this.mapModule.getMap().removeInteraction(this.selectInteraction);
+            this.selectActivated = false;
         },
         /**
          * Destroys the feature layer and removes it from the map.
@@ -735,7 +738,6 @@ Oskari.clazz.define(
             var me = this,
                 selectionToolsToolContainer = jQuery('div.toolContainerToolDiv'),
                 analysisWFSLayerSelected = (me.WFSLayerService.getAnalysisWFSLayerId() !== undefined && me.WFSLayerService.getAnalysisWFSLayerId() !== null);
-
             if (analysisWFSLayerSelected) {
                 selectionToolsToolContainer.find('div[class*=selection-]').removeClass('disabled');
                 if (!_.isEmpty(me.WFSLayerService.getSelectedFeatureIds(me.WFSLayerService.getAnalysisWFSLayerId()))) {
