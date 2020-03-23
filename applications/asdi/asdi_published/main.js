@@ -24,6 +24,7 @@ import 'oskari-loader!oskari-frontend/packages/framework/bundle/coordinatetool/b
 
 import 'oskari-loader!oskari-frontend/packages/framework/bundle/timeseries/bundle.js';
 
+import 'oskari-lazy-loader?maplegend!oskari-frontend/packages/framework/bundle/maplegend/bundle.js';
 import 'oskari-lazy-loader?statsgrid!oskari-frontend/packages/statistics/statsgrid/bundle.js';
 
 import 'oskari-loader!oskari-frontend/packages/framework/bundle/rpc/bundle.js';
