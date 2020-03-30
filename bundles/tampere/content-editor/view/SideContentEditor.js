@@ -192,15 +192,16 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
         parseWFSFeatureGeometries: function (evt) {
             var me = this;
             var layerIndex = this.allVisibleLayers.findIndex(function (layer) {
-                return layer.getId() == evt.getMapLayer().getId();
+                return layer.getId() == evt._features[0].layerId;
             });
 
             if (layerIndex === -1) {
                 // Not handle event
                 return;
             }
-            evt.getGeometries().forEach(function (geometry) {
-                me._addClickedFeature(geometry);
+            var features = evt._features[0].geojson.features;
+            features.forEach(function (feature) {
+                me._addClickedFeature(feature);
             });
         },
 
@@ -212,32 +213,24 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
          * @private
          */
         _findGeometryByFid: function (fid) {
+            var me = this;
+                
             for (var i = 0; i < this.allClickedFeatures.length; i++) {
                 if (this.allClickedFeatures[i].fid == fid) {
                     return this.allClickedFeatures[i];
                 }
-            }
-            // did not find from own clicked features, try searching wfs layer
-            return this._findGeometryByFidFromLayer(fid);
-        },
-
-        /**
-         * Find geometry by id from selected wfs maplayer id
-         * @method  _findGeometryByFidFromLayer
-         * @param   {String}                    fid feature identifier
-         * @return  {Object}               clicked feature object, like {id:0, geometry:geom}
-         * @private
-         */
-        _findGeometryByFidFromLayer: function (fid) {
-            var layer = this.sandbox.findMapLayerFromSelectedMapLayers(this.selectedLayerId);
-            var geometries = layer.getClickedGeometries();
-            var wkt = new olFormatWKT();
-            for (var j = 0; j < geometries.length; j++) {
-                if (geometries[j][0] === fid) {
-                    return {fid: fid, geometry: wkt.readGeometry(geometries[j][1])};
+                else {
+                    var okButton = Oskari.clazz.create('Oskari.userinterface.component.Button');
+                    okButton.setTitle(me.loc.buttons.ok);
+                    var dialog = {};
+                    dialog.header = me.loc.findGeometryByFid.header;
+                    dialog.error = me.loc.findGeometryByFid.error;
+                    okButton.setHandler(function () {
+                        me.closeDialog();
+                    });
+                    me.showMessage(dialog.header, dialog.error, [okButton]);
                 }
             }
-            return null;
         },
         /**
          * Add clicked feature
@@ -247,21 +240,21 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
          */
         _addClickedFeature: function (clickedFeature) {
             var me = this;
-            var wkt = new olFormatWKT();
-            var geometry = wkt.readGeometry(clickedFeature[1]);
+            var gjson= new olFormatGeoJSON();
+            var geometry = gjson.readGeometry(clickedFeature.geometry);
             if (me.allClickedFeatures.length > 0) {
                 var isNewFeature = true;
                 for (var i = 0; i < me.allClickedFeatures.length; i++) {
-                    if (me.allClickedFeatures[i].fid == clickedFeature[0]) {
+                    if (me.allClickedFeatures[i].fid == clickedFeature.id) {
                         isNewFeature = false;
                         me.allClickedFeatures[i].geometry = geometry;
                     }
                 }
                 if (isNewFeature == true) {
-                    me.allClickedFeatures.push({fid: clickedFeature[0], geometry: geometry});
+                    me.allClickedFeatures.push({fid: clickedFeature.id, geometry: geometry});
                 }
             } else {
-                me.allClickedFeatures.push({fid: clickedFeature[0], geometry: geometry});
+                me.allClickedFeatures.push({fid: clickedFeature.id, geometry: geometry});
             }
         },
 
@@ -690,7 +683,8 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                     me._clearFeaturesList();
                     var layer = me._getLayerById(me.layerId);
                     me._removeHighligh(me.layerId);
-                    wfsLayerPlugin.deleteTileCache(me.layerId, layer.getCurrentStyle().getName());
+                    //TODO: deleteTileCache  does nothing atm
+                    //wfsLayerPlugin.deleteTileCache(me.layerId, layer.getCurrentStyle().getName());
 
                     // Style not changed, but need to be send anyway so at geometries edit shows
                     var evt = Oskari.eventBuilder('AfterChangeMapLayerStyleEvent')(layer);
@@ -743,7 +737,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
          * @return  {JSONArray}  gathered edited data
          * @private
          */
-        _getRequestData: function () {
+        _getRequestData: function (deleteFeature) {
             var me = this;
             var data = null;
 
@@ -803,7 +797,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
          */
         prepareRequest: function (deleteFeature) {
             var me = this;
-            me.sendRequest(me._getRequestData(), deleteFeature);
+            me.sendRequest(me._getRequestData(deleteFeature), deleteFeature);
         },
 
         /**
@@ -1235,7 +1229,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                     me.sendStopDrawRequest();
                 }
 
-                me.prepareRequest();
+                me.prepareRequest(false);
                 me.featureDuringEdit = false;
                 me._storeFormData();
             } else {
@@ -1588,7 +1582,6 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
          */
         setClickCoords: function (coords) {
             this.clickCoords = coords;
-            this._handleInfoResult({layerId: this.layerId, features: []});
         },
 
         /**
@@ -1637,7 +1630,8 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                     // remove old tiles
                     var layer = me._getLayerById(me.selectedLayerId);
                     me._removeHighligh(me.selectedLayerId);
-                    wfsLayerPlugin.deleteTileCache(me.selectedLayerId, layer.getCurrentStyle().getName());
+                    //TODO: deleteTileCache  does nothing atm
+                    //wfsLayerPlugin.deleteTileCache(me.selectedLayerId, layer.getCurrentStyle().getName());
                     var evt = Oskari.eventBuilder('AfterChangeMapLayerStyleEvent')(layer);
                     me.sandbox.notifyAll(evt);
                     okButton.setHandler(function () {
