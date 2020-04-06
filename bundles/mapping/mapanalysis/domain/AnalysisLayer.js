@@ -6,7 +6,7 @@ const WFSLayer = Oskari.clazz.get('Oskari.mapframework.bundle.mapwfs2.domain.WFS
  */
 export class AnalysisLayer extends WFSLayer {
     constructor () {
-        super();
+        super(...arguments);
         /* Layer Type */
         this._layerType = 'analysislayer'; // 'ANALYSIS';
         this._metaType = 'ANALYSIS';
