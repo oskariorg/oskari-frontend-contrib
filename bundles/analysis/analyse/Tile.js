@@ -101,26 +101,6 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.Tile',
          * Creates the UI for a fresh start
          */
         refresh: function () {
-        },
-
-        clickHandler: function (extensionState) {
-            var i = this.instance,
-                s = i.getSandbox();
-            if (extensionState === 'close') {
-                // Close statsgrid... trying to close all breaks things.
-                s.postRequestByName(
-                    'userinterface.UpdateExtensionRequest',
-                    [{
-                        getName: function () {
-                            return 'StatsGrid';
-                        }
-                    }, 'close']
-                );
-            }
-            s.postRequestByName(
-                'userinterface.UpdateExtensionRequest',
-                [i, 'toggle']
-            );
         }
     }, {
         /**
