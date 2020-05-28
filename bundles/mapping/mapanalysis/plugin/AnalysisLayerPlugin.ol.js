@@ -1,5 +1,6 @@
 import olLayerImage from 'ol/layer/Image';
 import olSourceImageWMS from 'ol/source/ImageWMS';
+import { getZoomLevelHelper } from '../../mapmodule/util/scale';
 
 /**
  * @class Oskari.mapframework.bundle.mapanalysis.plugin.AnalysisLayerPlugin
@@ -76,9 +77,6 @@ Oskari.clazz.define(
         addMapLayerToMap: function (layer, keepLayerOnTop, isBaseMap) {
             var me = this,
                 imgUrl = layer.getWpsUrl() + layer.getWpsLayerId(),
-                // minresolution === maxscale and vice versa...
-                minResolution = this.getMapModule().getResolutionForScale(layer.getMaxScale()),
-                maxResolution = this.getMapModule().getResolutionForScale(layer.getMinScale()),
                 wms = {
                     'URL': imgUrl,
                     'LAYERS': layer.getWpsName(),
@@ -95,11 +93,13 @@ Oskari.clazz.define(
                         },
                         crossOrigin: layer.getAttributes('crossOrigin')
                     }),
-                    minResolution: minResolution,
-                    maxResolution: maxResolution,
                     visible: visible,
                     opacity: opacity
                 });
+
+            const zoomLevelHelper = getZoomLevelHelper(this.getMapModule().getScaleArray());
+            // Set min max zoom levels that layer should be visible in
+            zoomLevelHelper.setOLZoomLimits(openlayer, layer.getMinScale(), layer.getMaxScale());
 
             this._registerLayerEvents(openlayer, layer);
             this.getMapModule().addLayer(openlayer, !keepLayerOnTop);
