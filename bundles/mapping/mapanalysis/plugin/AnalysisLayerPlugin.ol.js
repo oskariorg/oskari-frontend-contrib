@@ -1,6 +1,6 @@
 import olLayerImage from 'ol/layer/Image';
 import olSourceImageWMS from 'ol/source/ImageWMS';
-import { getZoomLevelHelper } from '../../mapmodule/util/scale';
+import { getZoomLevelHelper } from 'oskari-frontend/bundles/mapping/mapmodule/util/scale';
 
 /**
  * @class Oskari.mapframework.bundle.mapanalysis.plugin.AnalysisLayerPlugin
