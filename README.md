@@ -2,51 +2,50 @@
 
 These are unofficial bundles for Oskari created by the Oskari community. Many of them add value to your Oskari install, but they come with no official support from the core Oskari team.
 
-## Setup
+## Using contrib bundles in your application
 
-This repository and the main oskari-frontend repository should be located side by side on your filesystem. Here are the steps to setup the build environment:
+To use bundles from this repo in your application (see `sample-application` as a template for customized application repository):
 
-1. Make sure you have the command line programs `git`, and `node` version 8 or greater
+1) Add dependency like `oskari-frontend` in your applications `package.json`:
+```
+    "oskari-frontend-contrib": "https://git@github.com/oskariorg/oskari-frontend-contrib.git#2.0.0"
+``` 
+Where `2.0.0` at the end is a tag in the repository. Tags are used to mark versions. Use the same version that you use for `oskari-frontend` for best compatibility.
+
+2) Run `npm install` on your app
+
+3) In your applications `main.js` import the bundles the same way you would import bundles from `oskari-frontend` but just with a different path:
+
+```javascript
+import 'oskari-loader!oskari-frontend-contrib/packages/analysis/ol/analyse/bundle.js';
+import 'oskari-loader!oskari-frontend-contrib/packages/mapping/ol/mapanalysis/bundle.js';
+```
+
+## Developing bundles that are in contrib repository
+
+If you want to develop the contrib bundles or contribute a new one you will need to set up the dependency in `dev-mode` like you would do with `oskari-frontend`.
+
+### Setup for development environment
+
+This repository, the main oskari-frontend repository and your applications repository should be located side by side on your filesystem. Here are the steps to setup the build environment:
+
+1. Make sure you have the command line programs `git`, and `node` version 10 or greater
 2. Clone the main frontend repository: `git clone https://github.com/oskariorg/oskari-frontend.git`
 3. Clone the contrib repository (this one): `git clone https://github.com/oskariorg/oskari-frontend-contrib.git`
     - Now we have directories `oskari-frontend` and `oskari-frontend-contrib` side by side
-4. Run `npm install` in both above repo directories
-
-Running `npm install` in this repo will create symlinks to the `oskari-frontend` directory under node_modules.
+4. Run `npm install` in `oskari-frontend` folder
+5. Run `npm install ../oskari-frontend` in this (`oskari-frontend-contrib`) folder
+6. Run `npm install ../oskari-frontend` in your applications folder (for example `sample-application`)
+7. Run `npm install ../oskari-frontend-contrib` in your applications folder (for example `sample-application`)
 
 In this model, it's left to the developer to checkout the correct branches/versions of the above repos.
-
-## Using bundles in your application
-
-To use bundles from this repo in your application, set up the application project directory side by side with the above repos. Add `"oskari-frontend-contrib": "file:../oskari-frontend-contrib"` under dependencies in your package.json and run `npm install`. If you don't use NPM and package.json for dependency management, you can just create a directory named `node_modules` inside your project directory, and within create symbolic links to `oskari-frontend` (created in step 2 above) and `oskari-frontend-contrib` (created in step 3 above) directories.
-
-After this setup, you can reference bundles in this repo in your application's minifierAppSetup with `oskari-frontend-contrib`:
-```
-{
-    "bundlename": "analyse",
-    "metadata": {
-        "Import-Bundle": {
-            "analyse": {
-                "bundlePath": "oskari-frontend-contrib/packages/analysis/ol/"
-            }
-    }
-}
-```
-
-## Building applications
-
-This repository also houses some application configurations (under `applications/`). After you have done the basic setup (above), applications can be built directly from this repo with eg. `npm run build -- --env.appdef=1.48:applications/asdi`. The output will be under `dist/`. See the main [oskari-frontend repo](https://github.com/oskariorg/oskari-frontend#readme) for detailed instructions about the build parameters.
-
+With the symlinks in place import-statements and other path references to `oskari-frontend` will resolve to the appropriate directories. 
 
 ## Contributing
 
 If you would like to contribute your own bundles to this repo, please make a Pull request. Each bundle should have a README stating:
 1. Which versions of Oskari the bundle is compatible with
 2. Who is the maintainer of the bundle (contact information)
-
-### Managing dependencies
-
-With the symlinks in place import-statements and other path references to `oskari-frontend` will resolve to the appropriate directories. This means you can reference bundles in `oskari-frontend` repo with eg. `"bundlePath": "oskari-frontend/packages/statistics/"` in minifierAppSetup.json. The same principle works in bundle.js for defining bundle dependencies.
 
 ### Libraries
 

@@ -8,7 +8,15 @@
   "dependencies": {
     "oskari-frontend": "git+https://git@github.com/oskariorg/oskari-frontend.git#2.1.0"
   },
+  "engines": {
+    "node": ">=10.12.0",
+    "npm": ">=6.0.0"
+  },
   "scripts": {},
+  "homepage": "https://oskari.org",
+  "bugs": {
+    "url": "https://github.com/oskariorg/oskari-docs/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/oskariorg/oskari-frontend-contrib.git"
