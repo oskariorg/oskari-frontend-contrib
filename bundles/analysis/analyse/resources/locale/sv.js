@@ -373,7 +373,7 @@ Oskari.registerLocalization(
                 "timeout": "Analys misslyckades beroende på tidsutlösning.",
                 "error": "Analys misslyckades.",
                 "parsererror": "Det finns fel i resultaten.",
-                "not_supported_WFS_3_0_maplayer": "Tyvärr stöder analysen inte detta kartlager (WFS 3.0)."
+                "not_supported_wfs_maplayer": "Analysen är för tillfället endast tillgänglig med WFS-versioner 1.0.0 och 1.1.0. Tyvärr är gränssnittstypen du använder inte ännu stödd i tjänsten."
             },
             "infos": {
                 "title": "För många attributer",

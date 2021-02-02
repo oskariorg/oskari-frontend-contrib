@@ -373,7 +373,7 @@ Oskari.registerLocalization(
                 "timeout": "Analyysin laskenta keskeytyi aikakatkaisun vuoksi.",
                 "error": "Analyysi epäonnistui.",
                 "parsererror": "Analyysin lopputuloksessa on virheitä.",
-                "not_supported_WFS_3_0_maplayer" : "Tätä karttatasoa (WFS 3.0) ei valitettavasti tueta analyysissä."
+                "not_supported_wfs_maplayer" : "Analyysi toimii tällä hetkellä vain WFS:n versioilla 1.0.0 ja 1.1.0. Valitettavasti analyysi ei vielä toimi nyt käyttämälläsi rajapintatyypillä."
             },
             "infos": {
                 "title": "Liikaa ominaisuustietoja",
