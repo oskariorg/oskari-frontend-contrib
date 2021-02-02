@@ -31,7 +31,7 @@ Oskari.clazz.define(
         this.conf = {};
         this.personalDataTab = undefined;
         this._log = Oskari.log(this.getName());
-        this._unsupportedWfsLayerVersion = '3.0.0';
+        this._unsupportedWfsLayerVersions = ['2.0.0', '3.0.0'];
     }, {
         /**
          * @static @property __name
@@ -237,15 +237,18 @@ Oskari.clazz.define(
             },
             AfterMapLayerAddEvent: function (event) {
                 this.isMapStateChanged = true;
-                const loc = this.getLocalization('AnalyseView');
-                if (this.analyse && this.analyse.isEnabled && this._wfsLayerHasUnsupportedVersion(event.getMapLayer())) {
-                    this.showMessage(
-                        loc.error.title,
-                        loc.error.not_supported_WFS_3_0_maplayer
-                    );
-                    this._log.warn('tried to add unsupported wfs version to analysis');
-                } else if (this.analyse && this.analyse.isEnabled) {
-                    this.analyse.refreshAnalyseData(event.getMapLayer().getId());
+                if (this.analyse && this.analyse.isEnabled) {
+                    const maplayer = event.getMapLayer();
+                    if (this._wfsLayerHasUnsupportedVersion(maplayer)) {
+                        const loc = this.getLocalization('AnalyseView');
+                        this.showMessage(
+                            loc.error.title,
+                            loc.error.not_supported_wfs_maplayer
+                        );
+                        this._log.warn('tried to add unsupported layer to analysis');
+                    } else {
+                        this.analyse.refreshAnalyseData(maplayer.getId());
+                    }
                 }
             },
             AfterMapLayerRemoveEvent: function (event) {
@@ -288,7 +291,7 @@ Oskari.clazz.define(
         },
 
         _wfsLayerHasUnsupportedVersion(layer){
-            return layer.getLayerType() === 'wfs' && layer.getVersion() === this._unsupportedWfsLayerVersion;
+            return layer.getLayerType() === 'wfs' && this._unsupportedWfsLayerVersions.includes(layer.getVersion());
         },
         /**
          * @public @method stop

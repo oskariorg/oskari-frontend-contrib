@@ -373,7 +373,7 @@ Oskari.registerLocalization(
                 "timeout": "Processing the analysis could not be finished because of a time-out error.",
                 "error": "The analysis failed.",
                 "parsererror": "The result data are invalid.",
-                "not_supported_WFS_3_0_maplayer": "This map layer (WFS 3.0) is unfortunately not supported in analysis."
+                "not_supported_wfs_maplayer": "Analysis works currently only with WFS 1.0.0 and 1.1.0. Unfortunately analysis does not work yet with the API version you have selected."
             },
             "infos": {
                 "title": "Too many attributes",
