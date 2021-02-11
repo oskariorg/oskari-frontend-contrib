@@ -103,7 +103,6 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
         me._param_footer.append(this.loc.aggregate.footer);
         me._showFeatureDataAfterAnalysis = null;
         me._showFeatureDataWithoutSaving = null;
-        me._unsupportedWfsLayerVersion = '3.0.0';
     }, {
         __templates: {
             content: '<div class="layer_data"></div>',
@@ -324,8 +323,6 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             );
 
             me._addAnalyseData(contentPanel);
-            // Show the possible warning of exceeding the feature property count.
-            me.showInfos();
         },
 
         /**
@@ -1202,18 +1199,12 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
         },
 
         _eligibleForAnalyse: function (layer) {
-            return (((layer.hasFeatureData && layer.hasFeatureData()) ||
-                layer.isLayerOfType(this.contentPanel.getLayerType())) && 
-                    this._layerHasSupportedVersion(layer.getLayerType(),layer.getVersion()));
+            if (layer.isLayerOfType(this.contentPanel.getLayerType())) {
+                return true;
+            }
+            return layer.hasFeatureData() && !this.instance.wfsLayerHasUnsupportedVersion(layer);
         },
 
-        _layerHasSupportedVersion(layerType,layerVersion){
-            if((layerType === 'wfs' || layerType === 'analysislayer') &&
-                layerVersion === this._unsupportedWfsLayerVersion){
-                    return false;
-            }
-            return true;
-        },
 
         /**
          * @private @method _addExtraParameters
@@ -3161,6 +3152,11 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 return;
             }
 
+            if (selectedLayer.isLayerOfType('userlayer')) {
+                me.instance.showMessage(me.loc.infos.title, me.loc.infos.userlayer);
+                // no need to count fields for userlayer
+                return;
+            }
             exceedsFieldsCount = (selectedLayer.getFields &&
                 selectedLayer.getFields().length > me.max_analyse_layer_fields);
 
@@ -3192,7 +3188,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 this._disableAllParamsSelection();
             } else if (selectedLayer) {
                 var layerType = selectedLayer.getLayerType();
-                if (layerType === 'temp') {
+                if (layerType === 'temp' || layerType === 'userlayer') {
                     this._disableParamsIfNoList();
                 }
             } else {
@@ -3330,6 +3326,8 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
 
         show: function () {
             this.mainPanel.show();
+            // Show the possible warnings for selected layer.
+            this.showInfos();
         },
 
         setEnabled: function (enabled) {

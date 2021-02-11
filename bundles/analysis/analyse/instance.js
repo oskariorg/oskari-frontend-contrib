@@ -239,7 +239,7 @@ Oskari.clazz.define(
                 this.isMapStateChanged = true;
                 if (this.analyse && this.analyse.isEnabled) {
                     const maplayer = event.getMapLayer();
-                    if (this._wfsLayerHasUnsupportedVersion(maplayer)) {
+                    if (this.wfsLayerHasUnsupportedVersion(maplayer)) {
                         const loc = this.getLocalization('AnalyseView');
                         this.showMessage(
                             loc.error.title,
@@ -290,7 +290,7 @@ Oskari.clazz.define(
             }
         },
 
-        _wfsLayerHasUnsupportedVersion(layer){
+        wfsLayerHasUnsupportedVersion(layer){
             return layer.getLayerType() === 'wfs' && this._unsupportedWfsLayerVersions.includes(layer.getVersion());
         },
         /**
@@ -523,8 +523,8 @@ Oskari.clazz.define(
             var dialog = Oskari.clazz.create(
                 'Oskari.userinterface.component.Popup'
             );
-            dialog.show(title, message);
-            dialog.fadeout(5000);
+            dialog.show(title, message, [dialog.createCloseButton()]);
+            dialog.fadeout(8000);
         },
 
         /**
