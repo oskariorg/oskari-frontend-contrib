@@ -376,9 +376,10 @@ Oskari.registerLocalization(
                 "not_supported_wfs_maplayer": "Analysis works currently only with WFS 1.0.0 and 1.1.0. Unfortunately analysis does not work yet with the API version you have selected."
             },
             "infos": {
-                "title": "Too many attributes",
+                "title": "Attributes",
                 "layer": "Features on the layer",
-                "over10": "have over ten attributes. Please select at most ten attributes into the analysis result. The attributes you can select in the parameters."
+                "over10": "have over ten attributes. Please select at most ten attributes into the analysis result. The attributes you can select in the parameters.",
+                "userlayer": "The attribute data from own datasets cannot be used in analyses. Geometries can still be used (buffer, union, clip)."
             },
             "aggregatePopup": {
                 "title": "Analysis results",

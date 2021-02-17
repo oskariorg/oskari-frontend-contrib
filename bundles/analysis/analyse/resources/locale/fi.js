@@ -376,9 +376,10 @@ Oskari.registerLocalization(
                 "not_supported_wfs_maplayer" : "Analyysi toimii tällä hetkellä vain WFS:n versioilla 1.0.0 ja 1.1.0. Valitettavasti analyysi ei vielä toimi nyt käyttämälläsi rajapintatyypillä."
             },
             "infos": {
-                "title": "Liikaa ominaisuustietoja",
+                "title": "Ominaisuustiedot",
                 "layer": "Tason",
-                "over10": "kohteilla on yli 10 ominaisuustietoa. Valitse analyysin lopputulokseen enintään 10 ominaisuustietoa. Valinnan voit tehdä parametrien valinnan yhteydessä."
+                "over10": "kohteilla on yli 10 ominaisuustietoa. Valitse analyysin lopputulokseen enintään 10 ominaisuustietoa. Valinnan voit tehdä parametrien valinnan yhteydessä.",
+                "userlayer": "Omien aineistojen ominaisuustietoja ei voida käyttää analyyseissä, kohteiden geometrioilla voi kuitenkin tehdä analyysejä (vyöhyke, yhdiste, leikkaus)."
             },
             "aggregatePopup": {
                 "title": "Analyysin tulokset",
