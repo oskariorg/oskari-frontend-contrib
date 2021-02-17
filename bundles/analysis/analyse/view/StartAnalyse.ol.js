@@ -1106,6 +1106,8 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             me.refreshExtraParameters();
             me._checkParamsSelection();
             me._checkMethodSelection();
+            // Show the possible warnings for selected layer.
+            me.showInfos();
         },
         /**
          * @private @method _determineAnalysisWFSLayer
@@ -3326,8 +3328,6 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
 
         show: function () {
             this.mainPanel.show();
-            // Show the possible warnings for selected layer.
-            this.showInfos();
         },
 
         setEnabled: function (enabled) {

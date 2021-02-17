@@ -523,8 +523,8 @@ Oskari.clazz.define(
             var dialog = Oskari.clazz.create(
                 'Oskari.userinterface.component.Popup'
             );
-            dialog.show(title, message, [dialog.createCloseButton()]);
-            dialog.fadeout(8000);
+            dialog.show(title, message);
+            dialog.fadeout(5000);
         },
 
         /**
