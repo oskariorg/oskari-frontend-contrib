@@ -181,7 +181,7 @@ Oskari.clazz.define(
          *
          */
         _getWFSLayerPropertiesAndTypes: function (layer_id, success2, failure) {
-            var url = Oskari.urls.getRoute('GetWFSDescribeFeature') + '&simple=true&layer_id=' + layer_id;
+            var url = Oskari.urls.getRoute('GetWFSLayerFields') + '&layer_id=' + layer_id;
             jQuery.ajax({
                 type: 'GET',
                 dataType: 'json',
@@ -202,15 +202,15 @@ Oskari.clazz.define(
          *
          *
          */
-        loadWFSLayerPropertiesAndTypes: function (layer_id) {
+        loadWFSLayerPropertiesAndTypes: function (layerId) {
             var me = this;
 
             // Request analyis layers via the backend
-            me._getWFSLayerPropertiesAndTypes(layer_id,
+            me._getWFSLayerPropertiesAndTypes(layerId,
                 // Success callback
                 function (response) {
                     if (response) {
-                        me._handleWFSLayerPropertiesAndTypesResponse(response);
+                        me._handleWFSLayerPropertiesAndTypesResponse(layerId, response);
                     }
                 },
                 // Error callback
@@ -226,18 +226,10 @@ Oskari.clazz.define(
          * @param {JSON} propertyJson properties and property types of WFS layer JSON returned by server.
          *
          */
-        _handleWFSLayerPropertiesAndTypesResponse: function (propertyJson) {
-            var me = this,
-                layer = null;
-
-            if (propertyJson.layer_id) {
-                layer = me.instance.getSandbox().findMapLayerFromSelectedMapLayers(propertyJson.layer_id);
-            }
+        _handleWFSLayerPropertiesAndTypesResponse: function (layerId, propertyJson) {
+            const layer = this.instance.getSandbox().findMapLayerFromSelectedMapLayers(layerId);
             if (layer) {
-                layer.setPropertyTypes(propertyJson.propertyTypes);
-                if (propertyJson.wps_params) {
-                    layer.setWpsLayerParams(propertyJson.wps_params);
-                }
+                layer.setPropertyTypes(propertyJson.types);
             }
         }
     }, {
