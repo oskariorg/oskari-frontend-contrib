@@ -10,6 +10,9 @@ export class AnalysisLayer extends WFSLayer {
         /* Layer Type */
         this._layerType = 'analysislayer'; // 'ANALYSIS';
         this._metaType = 'ANALYSIS';
+        this._wpsUrl = null;
+        this._wpsName = null;
+        this._wpsLayerId = null;
     }
     /**
      * Sets the WPS url where the layer images are fetched from
@@ -57,23 +60,6 @@ export class AnalysisLayer extends WFSLayer {
      */
     getWpsLayerId () {
         return this._wpsLayerId;
-    }
-    /**
-     * @method setOverrideSld
-     * @param {String} override_sld override sld style name in geoserver
-     */
-    setOverrideSld (override_sld) {
-        this._override_sld = override_sld;
-    }
-    /**
-     * @method  getOverrideSld override sld style name in geoserver
-     * @return {String}
-     */
-    getOverrideSld () {
-        return this._override_sld;
-    }
-    isFilterSupported () {
-        return true;
     }
 };
 

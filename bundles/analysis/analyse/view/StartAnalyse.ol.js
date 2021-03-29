@@ -193,22 +193,22 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 '  <div class="extra_title_label"></div>' +
                 '</div>',
             icon_colors: '<div class="icon-menu"></div>',
-            featureListSelect:
+            featurePropertySelectButton:
                 '<div class="analyse-select-featurelist">' +
                 '  <a href="#">...</a>' +
                 '</div>',
-            featureList:
+            featurePropertyList:
                 '<div class="analyse-featurelist">' +
                 '  <ul></ul>' +
                 '</div>',
-            featureListElement:
+            featurePropertyListItem:
                 '<li>' +
                 '  <label>' +
                 '    <input type="checkbox" />' +
                 '    <span></span>' +
                 '  </label>' +
                 '</li>',
-            featureListRadioElement:
+            featurePropertyRadioButton:
                 '<li>' +
                 '  <label>' +
                 '    <input type="radio" />' +
@@ -397,6 +397,9 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             }
             return ret;
         },
+        _layerHasProperties: function (layer) {
+            return layer && typeof layer.getPropertyTypes === 'function' && Object.keys(layer.getPropertyTypes()).length;
+        },
 
         _createLabel: function (option, toolContainer, className) {
             // TODO does any option actually have width & height?
@@ -551,7 +554,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                     });
                     tool.selected = true;
 
-                    // Show analyse featurelist if tool is analyse_select
+                    // Show analyse featurepropertieslist if tool is analyse_select
                     columnsContainer.find('.analyse-featurelist').toggle(
                         tool.id === 'oskari_analyse_select'
                     );
@@ -568,7 +571,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 }
 
                 if (option.id === 'oskari_analyse_select') {
-                    me._appendFeatureList(toolContainer);
+                    me._appendFeaturePropertyList(toolContainer);
                 }
 
                 columnsContainer.append(toolContainer);
@@ -593,19 +596,20 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
          * @param {jQuery object} toolContainer
          *
          */
-        _appendFeatureList: function (toolContainer) {
-            var featureListSelect = this.template.featureListSelect.clone(),
-                featureList = this.template.featureList.clone();
+        _appendFeaturePropertyList: function (toolContainer) {
+            const selectButton = this.template.featurePropertySelectButton.clone();
+            const listContainer = this.template.featurePropertyList.clone();
 
-            featureListSelect.append(featureList);
-            toolContainer.append(featureListSelect);
-            featureList.hide();
-            featureList.find('ul').empty();
-            this._appendFields(featureList);
+            selectButton.append(listContainer);
+            toolContainer.append(selectButton);
+            listContainer.hide();
+            const listElem = listContainer.find('ul')
+            listElem.empty();
+            this._appendItemsToFeaturePropertyList(listElem);
 
-            featureListSelect.find('a').on('click', function (e) {
+            selectButton.find('a').on('click', function (e) {
                 e.preventDefault();
-                featureList.toggle();
+                listContainer.toggle();
             });
         },
 
@@ -613,39 +617,30 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
          * @method _appendFields
          * Appeds the fields from the layer to the feature list
          *
-         * @param {jQuery object} featureList
+         * @param {jQuery object} listElem
          */
-        _appendFields: function (featureList) {
-            var me = this,
-                selectedLayer = this._getSelectedMapLayer();
-
-            if (!selectedLayer) {
+        _appendItemsToFeaturePropertyList: function (listElem) {
+            const layer = this._getSelectedMapLayer();
+            if (!layer) {
                 return;
             }
-            var featureListElement,
-                featureListList = featureList.find('ul'),
-                layerFields = me._getLayerServiceFields(selectedLayer);
-
-            layerFields.forEach(
-                function (serviceField) {
-                    featureListElement = me.template.featureListElement.clone();
-                    featureListElement
+            // get names from types because labels may be empty
+            const types = layer.getPropertyTypes();
+            const labels = layer.getPropertyLabels();
+            Object.keys(types).forEach( name => {
+                    const listItem = this.template.featurePropertyListItem.clone();
+                    listItem
                         .find('input')
                         .prop('name', 'analyse-feature-property')
-                        .val(serviceField.id);
-
-                    featureListElement
+                        .val(name);
+                    listItem
                         .find('span')
-                        .html(serviceField.label);
-                    featureListList.append(featureListElement);
+                        .html(labels[name] || name);
+                    listItem.on('change', ()  => this._checkPropertyList(listElem));
+                    listElem.append(listItem);
                 }
             );
-            me._preselectProperties(featureListList);
-            featureListList
-                .find('li')
-                .on('change', function () {
-                    me._checkPropertyList(featureListList);
-                });
+            this._preselectProperties(listElem);
         },
         /**
          * @private @method _preselectProperties
@@ -744,9 +739,9 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
          *
          */
         _refreshFields: function () {
-            var featureList = jQuery('div.analyse-featurelist');
-            featureList.find('ul').empty();
-            this._appendFields(featureList);
+            const listElem = this.mainPanel.find('div.analyse-featurelist ul');
+            listElem.empty();
+            this._appendItemsToFeaturePropertyList(listElem);
         },
 
         /**
@@ -1008,7 +1003,6 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                     selectedLayer = null;
                 }
             }
-
             if (!selectedLayer && contentOptions.length) {
                 var checkedOptionsFound = _.find(contentOptions, {'checked': 'checked'});
                 if (!checkedOptionsFound) {
@@ -1022,7 +1016,6 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 map[option.id] = option;
                 return map;
             }, {});
-
             contentOptionDivs = _.foldl(contentOptions, function (divs, datum) {
                 var opt = templateOpt.clone(),
                     isTemp = datum.temp,
@@ -1091,7 +1084,6 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 divs[datum.id] = opt;
                 return divs;
             }, {});
-
             _.each(contentOptionDivs, function (div) {
                 layersContainer.append(div);
             });
@@ -1679,10 +1671,10 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 // Field for first layer, it's well possible that the layer doesn't have any...
                 // TODO select matching field in second layer if possible (and if there's no user selection)
                 me._addTitle(extraParams, loc.field, loc.firstLayerFieldTooltip);
-                if (targetLayer && targetLayer.getFields) {
-                    featureList = me.template.featureList.clone();
+                if (me._layerHasProperties(targetLayer)) {
+                    featureList = me.template.featurePropertyList.clone();
                     featureList.attr('id', 'analyse-layer1-field');
-                    firstField = me._addFeatureList(
+                    firstField = me._addFeaturePropertyList(
                         targetLayer,
                         featureList.find('ul'),
                         'analyse-layer1-field-property'
@@ -1744,10 +1736,10 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
 
                 // Second layer field selection
                 me._addTitle(extraParams, loc.field, loc.secondLayerFieldTooltip);
-                featureList = me.template.featureList.clone();
+                featureList = me.template.featurePropertyList.clone();
                 featureList.attr('id', 'analyse-layer2-field');
-                if (me.differenceLayer && me.differenceLayer.getFields) {
-                    me._addFeatureList(
+                if (me._layerHasProperties(me.differenceLayer)) {
+                    me._addFeaturePropertyList(
                         me.differenceLayer,
                         featureList.find('ul'),
                         'analyse-layer2-field-property',
@@ -1859,10 +1851,10 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 // Field for first layer, it's well possible that the layer doesn't have any...
                 // TODO select matching field in second layer if possible (and if there's no user selection)
                 me._addTitle(extraParams, me.loc.params.label, loc.firstLayerFieldTooltip);
-                if (targetLayer && targetLayer.getFields) {
-                    featureList = me.template.featureList.clone();
+                if (me._layerHasProperties(targetLayer)) {
+                    featureList = me.template.featurePropertyList.clone();
                     featureList.attr('id', 'analyse-layer1-field');
-                    me._addFeatureList(
+                    me._addFeaturePropertyList(
                         targetLayer,
                         featureList.find('ul'),
                         'analyse-layer1-field-property',
@@ -1886,7 +1878,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                         });
                         tool.selected = true;
                         var featureList = jQuery('#analyse-layer2-field ul');
-                        me._addFeatureList(
+                        me._addFeaturePropertyList(
                             me._getLayerByPrefixedId(tool.id),
                             featureList,
                             'analyse-layer2-field-property',
@@ -1936,10 +1928,10 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
 
                 // Second layer field selection
                 me._addTitle(extraParams, me.loc.params.label, loc.secondLayerFieldTooltip);
-                featureList = me.template.featureList.clone();
+                featureList = me.template.featurePropertyList.clone();
                 featureList.attr('id', 'analyse-layer2-field');
-                if (me.differenceLayer && me.differenceLayer.getFields) {
-                    me._addFeatureList(
+                if (me._layerHasProperties(me.differenceLayer)) {
+                    me._addFeaturePropertyList(
                         me.differenceLayer,
                         featureList.find('ul'),
                         'analyse-layer2-field-property',
@@ -2008,7 +2000,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 targetParams,
                 me = this;
 
-            featureList = me.template.featureList.clone();
+            featureList = me.template.featurePropertyList.clone();
             featureList.attr('id', 'analyse-key-field');
             if ((me.differenceLayer) && (targetLayer)) {
                 diffParams = me.differenceLayer.getWpsLayerParams();
@@ -2023,7 +2015,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             if ((diffJoinKey) && (targetJoinKey) && (diffJoinKey === targetJoinKey)) {
                 featureList.find('ul').append(diffJoinKey);
             } else {
-                me._addFeatureList(
+                me._addFeaturePropertyList(
                     targetLayer,
                     featureList.find('ul'),
                     'analyse-key-field-property'
@@ -2032,37 +2024,35 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             return featureList;
         },
 
-        _addFeatureList: function (layer, container, name, preselectId, multiSelect) {
-            var me = this,
-                firstElement,
-                featureListElement,
-                preselection = false,
-                serviceFields = me._getLayerServiceFields(layer),
-                elementTemplate = multiSelect ? me.template.featureListElement : me.template.featureListRadioElement;
-
+        _addFeaturePropertyList: function (layer, container, elemName, preselectId, multiSelect) {
+            const me = this;
             // Make sure the container is empty
             container.empty();
-
-            serviceFields.forEach(function (serviceField, idx) {
-                featureListElement = elementTemplate.clone();
+            let firstElement;
+            let preselection = false;
+            const elementTemplate = multiSelect ? this.template.featurePropertyList : this.template.featurePropertyRadioButton;
+            const properties = layer.getPropertyTypes();
+            const labels = layer.getPropertyLabels();
+            Object.keys(properties).forEach(function (name, idx) {
+                const elem = elementTemplate.clone();
                 // Store first element so we can check it if there's no preselection found
                 if (idx === 0) {
-                    firstElement = featureListElement;
+                    firstElement = elem;
                 }
 
-                if (!preselection && serviceField.id === preselectId) {
+                if (!preselection && name === preselectId) {
                     preselection = true;
                 }
 
-                featureListElement
+                elem
                     .find('input')
-                    .prop('name', name)
-                    .prop('checked', preselection && serviceField.id === preselectId)
-                    .val(serviceField.id);
+                    .prop('name', elemName)
+                    .prop('checked', preselection && name === preselectId)
+                    .val(name);
 
-                featureListElement
+                elem
                     .find('label span')
-                    .html(serviceField.label);
+                    .html(labels[name] || name);
 
                 if (!multiSelect && !preselection) {
                     firstElement
@@ -2070,9 +2060,9 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                         .prop('checked', true);
                 }
 
-                container.append(featureListElement);
+                container.append(elem);
             });
-            container.find('input:radio[name="' + name + '"]').on('change', function () {
+            container.find('input:radio[name="' + name + '"]').on('change', () => {
                 var i,
                     j,
                     labels,
@@ -2156,25 +2146,15 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             if (!layer.isLayerOfType('ANALYSIS')) {
                 return false;
             }
-            // does the layer have the same fields as the selected layer
-            var fields1 = (selectedLayer.getFields ? selectedLayer.getFields().slice() : []),
-                fields2 = (layer.getFields ? layer.getFields().slice() : []),
-                f1Len = fields1.length,
-                f2Len = fields2.length,
-                i;
+            // does the layer have the same properties as the selected layer
+            const props1 = (this._layerHasProperties(selectedLayer) ? Object.keys(selectedLayer.getPropertyTypes()) : []);
+            const props2 = (this._layerHasProperties(layer) ? Object.keys(layer.getPropertyTypes()) : []);
 
             // arrays are of different lengths
-            if (f1Len !== f2Len) {
+            if (props1.length !== props1.length) {
                 return false;
             }
-            // compare the elemets
-            for (i = 0; i < f1Len; i += 1) {
-                if (fields1[i] !== fields2[i]) {
-                    return false;
-                }
-            }
-
-            return true;
+            return props1.every(p => props2.includes(p))
         },
 
         /**
@@ -2247,33 +2227,6 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
         },
 
         /**
-         * @private @method _getLayerServiceFields
-         * Get only the fields which originate from the service,
-         * that is, exclude those which are added by Oskari (starts with '__').
-         *
-         * @param {Oskari.Layer} layer Layer
-         *
-         * @return {Object[]}
-         */
-        _getLayerServiceFields: function (layer) {
-            var fields = ((layer && layer.getFields && layer.getFields()) ? layer.getFields().slice() : []),
-                i,
-                j = fields.length,
-                locales = ((layer && layer.getLocales && layer.getLocales()) ? layer.getLocales().slice() : []),
-                ret = [];
-
-            for (i = 0; i < j; i += 1) {
-                if (!fields[i].match(/^__/)) {
-                    ret.push({
-                        id: fields[i],
-                        label: locales[i] || fields[i]
-                    });
-                }
-            }
-            return ret;
-        },
-
-        /**
          * @private @method refreshAnalyseData
          * refresh analyse data layers in selection box
          *
@@ -2315,58 +2268,53 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
          * @return {Object}
          */
         _gatherSelections: function () {
-            var me = this,
-                container = me.mainPanel,
-                selectedMethod = me._getSelectedMethod(),
-                methodName = selectedMethod && selectedMethod.replace(me.id_prefix, ''),
-                layer = me._getSelectedMapLayer();
-
+            const layer = this._getSelectedMapLayer();
             // No layers
             if (!layer) {
                 return;
             }
+            const container = this.mainPanel;
+            const selectedMethod = this._getSelectedMethod();
+            const method = selectedMethod ? selectedMethod.replace(this.id_prefix, '') : '';
 
             // Get the feature fields
-            var selectedColumnmode = container.find('input[name=params]:checked').val(),
-                fields = selectedColumnmode && selectedColumnmode.replace(me.id_prefix, '');
+            var selectedColumnmode = container.find('input[name=params]:checked').val();
+            const fieldSelection = selectedColumnmode && selectedColumnmode.replace(this.id_prefix, '');
+            const fieldTypes = this._layerHasProperties(layer) ? layer.getPropertyTypes() : {};
+            let fields = [];
             // All fields
-            if (fields === 'all') {
-                fields = ((layer && layer.getFields && layer.getFields()) ? layer.getFields().slice() : [0]);
-            } else if (fields === 'select') {
+            if (fieldSelection === 'all') {
+                fields = Object.keys(fieldTypes);
+            } else if (fieldSelection === 'select') {
                 // Selected fields
                 var fieldsList = jQuery('div.analyse-featurelist').find('ul li input:checked');
-                fields = jQuery.map(fieldsList, function (val, i) {
+                fields = jQuery.map(fieldsList, function (val) {
                     return val.value;
                 });
-            } else {
-                // None
-                fields = [];
             }
 
-            var title = container.find('.settings_name_field').val() ? container.find('.settings_name_field').val() : '_',
-                defaults = {
-                    name: title,
-                    method: methodName,
+            var name = container.find('.settings_name_field').val() ? container.find('.settings_name_field').val() : '_';
+            const defaults = {
+                    name,
+                    fields,
+                    fieldTypes,
+                    method,
                     layerType: layer.getLayerType()
                 };
 
-            if (layer.isLayerOfType(me.contentPanel.getLayerType())) {
-                defaults.fields = [];
-                defaults.fieldTypes = {};
+            if (layer.isLayerOfType(this.contentPanel.getLayerType())) {
                 defaults.layerId = -1;
                 defaults.features = [layer.getFeature()];
             } else {
-                defaults.fields = fields;
-                defaults.fieldTypes = layer.getPropertyTypes();
                 defaults.layerId = layer.getId();
             }
             // Get method specific selections
-            var selections = me._getMethodSelections(layer, defaults);
+            var selections = this._getMethodSelections(layer, defaults);
 
             // Styles
-            selections.style = me.getStyleValues();
+            selections.style = this.getStyleValues();
             // Bbox
-            selections.bbox = me.instance.getSandbox().getMap().getBbox();
+            selections.bbox = this.instance.getSandbox().getMap().getBbox();
 
             // Override style - :TODO make UI for this and get override from there
             if (defaults.method === 'difference') {
@@ -3045,7 +2993,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
 
             layers.forEach(function (layer) {
                 if (layer.hasFeatureData()) {
-                    if (jQuery.isEmptyObject(layer.getPropertyTypes())) {
+                    if (Object.keys(layer.getPropertyTypes()).length === 0) {
                         analyseService.loadWFSLayerPropertiesAndTypes(
                             layer.getId()
                         );
@@ -3061,21 +3009,12 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
          * @param fieldName  property name
          *
          */
-        _isNumericField: function (fieldName) {
-            var me = this,
-                isIt = false,
-                selectedLayer = me._getSelectedMapLayer(),
-                data = selectedLayer.getPropertyTypes();
-
-            jQuery.each(data, function (key, value) {
-                if (fieldName === key) {
-                    if (value === 'numeric') {
-                        isIt = true;
-                    }
-                }
-            });
-
-            return isIt;
+        _isNumericField: function (name) {
+            const layer = this._getSelectedMapLayer();
+            if (!layer) {
+                return false;
+            }
+            return layer.getPropertyTypes()[name] === 'number';
         },
 
         /**
@@ -3097,14 +3036,13 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 return no_data;
             }
             var params = selectedLayer.getWpsLayerParams();
-            if (params) {
-                jQuery.each(params, function (key, value) {
+            if (typeof params === 'object') {
+                Object.keys(params).forEach (key => {
                     if (key === 'no_data') {
-                        no_data = value;
+                        no_data = params[key];
                     }
                 });
             }
-
             return no_data;
         },
 
@@ -3159,8 +3097,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 // no need to count fields for userlayer
                 return;
             }
-            exceedsFieldsCount = (selectedLayer.getFields &&
-                selectedLayer.getFields().length > me.max_analyse_layer_fields);
+            exceedsFieldsCount = (Object.keys(selectedLayer.getPropertyTypes()).length > me.max_analyse_layer_fields);
 
             if (exceedsFieldsCount) {
                 tooManyFieldsMsg = (me.loc.infos.layer +
@@ -3179,13 +3116,10 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
          *
          */
         _checkParamsSelection: function () {
-            var selectedLayer = this._getSelectedMapLayer(),
-                exceedsFieldsCount = (
-                    selectedLayer &&
-                    selectedLayer.getFields &&
-                    (selectedLayer.getFields().length >
-                        this.max_analyse_layer_fields)
-                );
+            const selectedLayer = this._getSelectedMapLayer();
+            const exceedsFieldsCount = this._layerHasProperties(selectedLayer)
+                && Object.keys(selectedLayer.getPropertyTypes()).length > this.max_analyse_layer_fields;
+
             if (exceedsFieldsCount) {
                 this._disableAllParamsSelection();
             } else if (selectedLayer) {
