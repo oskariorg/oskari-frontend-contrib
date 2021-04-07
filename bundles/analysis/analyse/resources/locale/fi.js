@@ -8,6 +8,7 @@ Oskari.registerLocalization(
         "desc": "",
         "btnTooltip": "Analyysi",
         "NotLoggedView": {
+            "discountedNotice": "Nykyinen analyysityökalu ei valitettavasti toimi enää täydellisesti. Emme pysty tarjoamaan sen käyttöön tukea.",
             "text": "Analyysi-toiminnon avulla voit tehdä yksinkertaisia paikkatietoanalyyseja kohdetietoja sisältäville karttatasoille. Toiminto edellyttää kirjautumista.",
             "signup": "Kirjaudu sisään",
             "register": "Rekisteröidy"
@@ -390,6 +391,7 @@ Oskari.registerLocalization(
             }
         },
         "StartView": {
+            "discountedNotice": "Nykyinen analyysityökalu ei valitettavasti toimi enää täydellisesti. Emme pysty tarjoamaan sen käyttöön tukea.",
             "text": "Analyysi-toiminnon avulla voit tehdä yksinkertaisia paikkatietoanalyyseja kohdetietoja sisältäville karttatasoille. Valmiit analyysit löytyvät Omat tiedot -valikon Analyysit-välilehdeltä.",
             "layersWithFeatures": "Analyysi-toiminnossa voit tehdä valintoja vain yhdelle valitsemallesi karttatasolle. Valitse, miltä tasolta haluat tehdä valinnat. Muiden tasojen valinnat poistetaan.",
             "infoseen": {

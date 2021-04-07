@@ -31,6 +31,10 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.NotLoggedIn',
             var content = this.template.clone();
             var login = this.loginTemplate.clone();
             var register = this.registerTemplate.clone();
+            const discounted = this.template.clone();
+
+            discounted.append(this.loc.discountedNotice);
+            container.prepend(discounted);
 
             content.append(this.loc.text);
             container.append(content);
