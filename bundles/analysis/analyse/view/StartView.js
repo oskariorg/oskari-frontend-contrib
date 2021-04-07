@@ -26,6 +26,10 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartView',
             '  <ul></ul>' +
             '</div>'
         );
+        this.templateAnalyseInfo = jQuery(
+            '<div class="analyse-info" style="padding: 10px;">' +
+            '</div>'
+        );
         this.templateInfo = jQuery('<div class="icon-info"></div>');
         this.checkboxTemplate = jQuery(
             '<input type="checkbox" name="analyse_info_seen" id="analyse_info_seen" value="1">'
@@ -63,12 +67,15 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartView',
             var me = this,
                 content = this.template.clone();
             this.content = content;
-            /* content.find('div.content').before(txt); */
             container.append(content);
 
-            this.alert.insertTo(container);
+            const startInfo = this.templateAnalyseInfo.clone();
+            startInfo.append(this.loc.text);
+            container.prepend(startInfo);
 
-            this.alert.setContent(this.loc.text, 'default', true);
+            const discounted = this.templateAnalyseInfo.clone();
+            discounted.append(this.loc.discountedNotice);
+            container.prepend(discounted);
 
             // in analyse mode features can be selected only from one layer at once
             // check if user have selections from many layers and notify about it
