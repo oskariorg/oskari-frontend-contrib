@@ -8,7 +8,7 @@ Oskari.registerLocalization(
         "desc": "",
         "btnTooltip": "Analys",
         "NotLoggedView": {
-            "discountedNotice": "Analysfunktionen fungerar i nuvarande läge bristfälligt. Vi kan tyvärr inte ge stöd i dess användning.",
+            "discountedNotice": "(!) Analysfunktionen fungerar i nuvarande läge bristfälligt. Vi kan tyvärr inte ge stöd i dess användning.",
             "text": "Med häjlp av Analys funktion man kan göra enkla geografiska analys. Analyser kan göras för data produkter. Endast inloggade användare kan göra analys. Logga in <a href=\"/web/sv/login\">här</a>.",
             "signup": "Logga in",
             "register": "Registrera dig"
@@ -391,7 +391,7 @@ Oskari.registerLocalization(
             }
         },
         "StartView": {
-            "discountedNotice": "Analysfunktionen fungerar i nuvarande läge bristfälligt. Vi kan tyvärr inte ge stöd i dess användning.",
+            "discountedNotice": "(!) Analysfunktionen fungerar i nuvarande läge bristfälligt. Vi kan tyvärr inte ge stöd i dess användning.",
             "text": "Med hjälp av Analys funktionen du kan göra enkla analys för kartlager som innehåller objekt data. Färdiga analys du kan hitta på \"Egna data\".",
             "layersWithFeatures": "Du kan göra välja objekt endast från ett kartlager. Välj ett kartlager. Märk att andra valen tas bort.",
             "infoseen": {
