@@ -8,7 +8,7 @@ Oskari.registerLocalization(
         "desc": "",
         "btnTooltip": "Analysis",
         "NotLoggedView": {
-            "discountedNotice": "Current Analysis tool is unfortunately not working properly. We are not able to provide user support for it.",
+            "discountedNotice": "(!) Current Analysis tool is unfortunately not working properly. We are not able to provide user support for it.",
             "text": "With Analysis function you can make simple spatial analysis for map layers including feature data. The function is available only for logged-in users.",
             "signup": "Log in",
             "register": "Register"
@@ -391,7 +391,7 @@ Oskari.registerLocalization(
             }
         },
         "StartView": {
-            "discountedNotice": "Current Analysis tool is unfortunately not working properly. We are not able to provide user support for it.",
+            "discountedNotice": "(!) Current Analysis tool is unfortunately not working properly. We are not able to provide user support for it.",
             "text": "With this function you can make simple spatial analysis for map layers including feature data. The finished analysis you can find at the tab Analysis in the menu Own data.",
             "layersWithFeatures": "You can make analysis only for one map layer. Select the map layer. Other selections are removed.",
             "infoseen": {
