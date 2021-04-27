@@ -1993,29 +1993,20 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
 
         _createJoinList: function (targetLayer) {
             // Check equal join keys
-            var diffJoinKey,
-                targetJoinKey,
-                featureList,
-                diffParams,
-                targetParams,
-                me = this;
-
-            featureList = me.template.featurePropertyList.clone();
+            const featureList = this.template.featurePropertyList.clone();
             featureList.attr('id', 'analyse-key-field');
-            if ((me.differenceLayer) && (targetLayer)) {
-                diffParams = me.differenceLayer.getWpsLayerParams();
-                if (typeof diffParams !== 'undefined') {
-                    diffJoinKey = diffParams.join_key;
-                }
-                targetParams = targetLayer.getWpsLayerParams();
-                if (typeof targetParams !== 'undefined') {
-                    targetJoinKey = targetParams.join_key;
+            let joinKey;
+            if (this.differenceLayer && targetLayer) {
+                const { data: diffData = {} } = this.differenceLayer.getAttributes();
+                const { data: targetData = {} } = targetLayer.getAttributes();
+                if (diffData.commonId === targetData.commonId) {
+                    joinKey = diffData.commonId;
                 }
             }
-            if ((diffJoinKey) && (targetJoinKey) && (diffJoinKey === targetJoinKey)) {
-                featureList.find('ul').append(diffJoinKey);
+            if (joinKey) {
+                featureList.find('ul').append(joinKey);
             } else {
-                me._addFeaturePropertyList(
+                this._addFeaturePropertyList(
                     targetLayer,
                     featureList.find('ul'),
                     'analyse-key-field-property'
@@ -3019,31 +3010,19 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
 
         /**
          * @private @method _getNoDataValue
-         * Get selected wfs layer's no_data value for wps analyse
-         * There is no no_value for selected layer, if return value is undefined
+         * Get selected layer's noDataValue value for wps analyse
+         * There isn't noDataValue for selected layer, if return value is undefined
          *
          *
          * @return no_data value
          */
         _getNoDataValue: function () {
-            var me = this,
-                no_data,
-                selectedLayer = me._getSelectedMapLayer();
+            const selectedLayer = this._getSelectedMapLayer();
             if (!selectedLayer) {
-                return no_data;
+                return;
             }
-            if (selectedLayer.getLayerType() !== 'wfs' && selectedLayer.getLayerType() !== 'analysis') {
-                return no_data;
-            }
-            var params = selectedLayer.getWpsLayerParams();
-            if (typeof params === 'object') {
-                Object.keys(params).forEach (key => {
-                    if (key === 'no_data') {
-                        no_data = params[key];
-                    }
-                });
-            }
-            return no_data;
+            const { data = {} } = selectedLayer.getAttributes();
+            return data.noDataValue;
         },
 
         /**
