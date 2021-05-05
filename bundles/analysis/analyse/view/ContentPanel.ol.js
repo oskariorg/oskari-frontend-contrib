@@ -627,6 +627,12 @@ Oskari.clazz.define(
                 hasFeatureData: function () {
                     return false;
                 },
+                getPropertyTypes: function () {
+                    return {};
+                },
+                getPropertyLabels: function () {
+                    return {};
+                },
                 getOpacity: function () {
                     return (featureLayer.opacity * 100);
                 },
