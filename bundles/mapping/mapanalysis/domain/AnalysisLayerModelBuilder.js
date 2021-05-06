@@ -7,20 +7,8 @@ Oskari.clazz.define('Oskari.mapframework.bundle.mapanalysis.domain.AnalysisLayer
     this.sandbox = sandbox;
     this.wfsBuilder = Oskari.clazz.create('Oskari.mapframework.bundle.mapwfs2.domain.WfsLayerModelBuilder', sandbox);
 }, {
-    /**
-     * @private @method _checkIfAggregateValuesAreAvailable
-     * function gives value to addLinkToAggregateValues (true/false)
-     *
-     * @return {Boolean}
-     */
-    _checkIfAggregateValuesAreAvailable: function () {
-        this.service = this.sandbox.getService(
-            'Oskari.analysis.bundle.analyse.service.AnalyseService'
-        );
-        if (!this.service) {
-            return false;
-        }
-        return true;
+    _getAnalyseService: function () {
+        return this.sandbox.getService('Oskari.analysis.bundle.analyse.service.AnalyseService');
     },
     /**
      * parses any additional fields to model
@@ -29,15 +17,16 @@ Oskari.clazz.define('Oskari.mapframework.bundle.mapanalysis.domain.AnalysisLayer
      * @param {Oskari.mapframework.service.MapLayerService} maplayerService not really needed here
      */
     parseLayerData: function (layer, mapLayerJson, maplayerService) {
-        var me = this;
+        const me = this;
         if (layer.isFilterSupported()) {
             var filterdataTool = Oskari.clazz.create('Oskari.mapframework.domain.Tool');
             filterdataTool.setName('filterdata');
             filterdataTool.setIconCls('show-filter-tool');
             filterdataTool.setTooltip(me.localization.filterTooltip);
             filterdataTool.setCallback(function () {
-                var isAggregateValueAvailable = me._checkIfAggregateValuesAreAvailable();
-                var fixedOptions = {
+                const service = me._getAnalyseService();
+                const isAggregateValueAvailable = !!service;
+                const fixedOptions = {
                     bboxSelection: true,
                     clickedFeaturesSelection: false,
                     addLinkToAggregateValues: isAggregateValueAvailable
@@ -50,7 +39,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.mapanalysis.domain.AnalysisLayer
                     me.sandbox.notifyAll(evt);
                 });
 
-                if (me.service) {
+                if (service) {
                     var aggregateAnalyseFilter = Oskari.clazz.create('Oskari.analysis.bundle.analyse.aggregateAnalyseFilter', null, filterDialog);
 
                     filterDialog.createFilterDialog(layer, null, function () {
