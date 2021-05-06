@@ -2865,7 +2865,6 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             );
             me.aggregateAnalyseFilter = Oskari.clazz.create(
                 'Oskari.analysis.bundle.analyse.aggregateAnalyseFilter',
-                me.instance,
                 me.filterDialog
             );
 

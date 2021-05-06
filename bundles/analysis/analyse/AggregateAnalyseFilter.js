@@ -11,8 +11,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.aggregateAnalyseFilter',
      * @param {Oskari.userinterface.component.FilterDialog} filterDialog
      */
 
-    function (instance, filterDialog) {
-        this.instance = instance;
+    function (filterDialog) {
         this.localization = filterDialog.loc;
         this.filterDialog = filterDialog;
     }, {
@@ -24,26 +23,29 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.aggregateAnalyseFilter',
          */
         addAggregateFilterFunctionality: function (aggregateAnalysis) {
             var me = this;
-            me.content = me.filterDialog.popup.dialog.find('.analyse-filter-popup-content');
+            const popup = this.filterDialog.popup.dialog;
+            this.content = popup.find('.analyse-filter-popup-content');
 
-            if (me.filterDialog.popup.dialog.find('.add-link')) {
-                me.filterDialog.popup.dialog.on('click', '.add-link', function (event) {
-                    if (aggregateAnalysis.length === 0) {
-                        me.aggregateAnalyseFilter.showAdvertisingText();
-                    } else {
-                        me.content.find('.input-blink').removeClass('input-blink');
-                        jQuery(event.target).parent().parent().find('input[name=attribute-value]').addClass('input-blink');
-                        var aggregateSelect = me.content.find('.filter-popup-multiselect');
-                        if (aggregateSelect) {
-                            aggregateSelect.remove();
-                        }
-                        me.aggregateAnalyseFilter.addAggregateValuesSelect(aggregateAnalysis, function (value) {
-                            jQuery(event.target).parent().parent().find('input').val(value);
-                            me.aggregateAnalyseFilter._blink(jQuery(event.target).parent().parent().find('input'));
-                        });
-                    }
-                });
+            if (!popup.find('.add-link').length) {
+                // no link -> can't bind to it
+                return;
             }
+            popup.on('click', '.add-link', function (event) {
+                if (aggregateAnalysis.length === 0) {
+                    me.showAdvertisingText();
+                } else {
+                    me.content.find('.input-blink').removeClass('input-blink');
+                    jQuery(event.target).parent().parent().find('input[name=attribute-value]').addClass('input-blink');
+                    var aggregateSelect = me.content.find('.filter-popup-multiselect');
+                    if (aggregateSelect) {
+                        aggregateSelect.remove();
+                    }
+                    me.addAggregateValuesSelect(aggregateAnalysis, function (value) {
+                        jQuery(event.target).parent().parent().find('input').val(value);
+                        me._blink(jQuery(event.target).parent().parent().find('input'));
+                    });
+                }
+            });
         },
 
         /**
@@ -51,10 +53,10 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.aggregateAnalyseFilter',
          * shows text advertising analyse aggregate values if user doesn't have any
          */
         showAdvertisingText: function () {
-            var dialog = Oskari.clazz.create('Oskari.userinterface.component.Popup'),
-                okBtn = Oskari.clazz.create('Oskari.userinterface.component.buttons.OkButton'),
-                title = this.localization.aggregateAnalysisFilter.noAggregateAnalysisPopupTitle,
-                content = this.localization.aggregateAnalysisFilter.noAggregateAnalysisPopupContent;
+            const dialog = Oskari.clazz.create('Oskari.userinterface.component.Popup');
+            const okBtn = Oskari.clazz.create('Oskari.userinterface.component.buttons.OkButton');
+            const title = this.localization.aggregateAnalysisFilter.noAggregateAnalysisPopupTitle;
+            const content = this.localization.aggregateAnalysisFilter.noAggregateAnalysisPopupContent;
             okBtn.setPrimary(true);
             okBtn.setHandler(function () {
                 dialog.close(true);
@@ -86,18 +88,17 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.aggregateAnalyseFilter',
          * @method addAggregateValuesSelect
          * renders MultiLevelSelect to content with aggregateValues
          */
-        addAggregateValuesSelect: function (aggregateAnalysis, callback) {
+        addAggregateValuesSelect: function (aggregateAnalysis = [], callback) {
             var me = this;
 
             me.content = me.filterDialog.popup.dialog.find('.analyse-filter-popup-content');
 
             // Get values for first select
-            var options = _.map(aggregateAnalysis, function (aggregateAnalyse) {
-                var analyse = {
+            var options = aggregateAnalysis.map(aggregateAnalyse => {
+                return {
                     title: aggregateAnalyse.name,
                     value: aggregateAnalyse.wpsLayerId
                 };
-                return analyse;
             });
             options.unshift({
                 title: me.localization.aggregateAnalysisFilter.selectAggregateAnalyse
@@ -120,24 +121,25 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.aggregateAnalyseFilter',
 
             me._cachedAggregateValue = [-1];
             me.aggregateValuesSelect.setHandler(function (value) {
-                var aggregateValue = value[0];
-                if (!_.isUndefined(aggregateValue)) {
-                    var _valueDifference = _.difference(me._cachedAggregateValue, value);
-                    // we always assume that _valueOfDifference returns an array with one value
-                    var indexofChangedValue = _.indexOf(me._cachedAggregateValue, _valueDifference[0]);
-                    me._cachedAggregateValue = value;
-                    if (indexofChangedValue === 0) {
-                        me.getAggregateAnalysisJSON(value[0]);
+                const aggregateValue = value[0];
+                if (typeof aggregateValue === 'undefined' || aggregateValue === null) {
+                    return;
+                }
+                const _valueDifference = _.difference(me._cachedAggregateValue, value);
+                // we always assume that _valueOfDifference returns an array with one value
+                const indexofChangedValue = _.indexOf(me._cachedAggregateValue, _valueDifference[0]);
+                me._cachedAggregateValue = value;
+                if (indexofChangedValue === 0) {
+                    me.getAggregateAnalysisJSON(value[0]);
+                }
+                if (indexofChangedValue === 1) {
+                    if (value[1] !== 'undefined') {
+                        me.parseLastSelect(value[1]);
                     }
-                    if (indexofChangedValue === 1) {
-                        if (value[1] !== 'undefined') {
-                            me.parseLastSelect(value[1]);
-                        }
-                    }
-                    if (indexofChangedValue === 2) {
-                        if (value[2] !== 'undefined') {
-                            me.useAggregateValue(value[2], callback);
-                        }
+                }
+                if (indexofChangedValue === 2) {
+                    if (value[2] !== 'undefined') {
+                        me.useAggregateValue(value[2], callback);
                     }
                 }
             });
@@ -148,8 +150,10 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.aggregateAnalyseFilter',
          * @param {integer} analyse_id
          */
         getAggregateAnalysisJSON: function (analyse_id) {
-            var me = this;
-            var url = Oskari.urls.getRoute('GetAnalysisData') + '&analyse_id=' + analyse_id;
+            const me = this;
+            const url = Oskari.urls.getRoute('GetAnalysisData', {
+                analyse_id: analyse_id
+            });
             jQuery.ajax({
                 type: 'GET',
                 dataType: 'json',
@@ -158,10 +162,9 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.aggregateAnalyseFilter',
                     me.handleResult(result);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-                    var error = me._getErrorText(jqXHR, textStatus, errorThrown);
                     me._openPopup(
                         me.localization.aggregateAnalysisFilter.getAggregateAnalysisFailed,
-                        error
+                        me._getErrorText(jqXHR, textStatus, errorThrown)
                     );
                 }
             });

@@ -32,11 +32,11 @@ Oskari.clazz.define('Oskari.mapframework.bundle.mapanalysis.domain.AnalysisLayer
             });
 
             if (isAggregateValueAvailable) {
-                const aggregateAnalyseFilter = Oskari.clazz.create('Oskari.analysis.bundle.analyse.aggregateAnalyseFilter', null, filterDialog);
+                const aggregateAnalyseFilter = Oskari.clazz.create('Oskari.analysis.bundle.analyse.aggregateAnalyseFilter', filterDialog);
 
                 filterDialog.createFilterDialog(layer, null, () =>  {
                     // FIXME: why is bind() used here? can it be removed?
-                    service._returnAnalysisOfTypeAggregate(_.bind(aggregateAnalyseFilter.addAggregateFilterFunctionality, this));
+                    service._returnAnalysisOfTypeAggregate((listOfAggregateAnalysis) => aggregateAnalyseFilter.addAggregateFilterFunctionality(listOfAggregateAnalysis));
                 });
             } else {
                 filterDialog.createFilterDialog(layer);
@@ -45,6 +45,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.mapanalysis.domain.AnalysisLayer
                 filterDialog.popup.dialog.off('click', '.add-link');
             });
         });
+        return filterdataTool;
     },
     /**
      * parses any additional fields to model
