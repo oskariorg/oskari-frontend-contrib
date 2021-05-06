@@ -10,6 +10,42 @@ Oskari.clazz.define('Oskari.mapframework.bundle.mapanalysis.domain.AnalysisLayer
     _getAnalyseService: function () {
         return this.sandbox.getService('Oskari.analysis.bundle.analyse.service.AnalyseService');
     },
+    _createFilterTool: function (layer) {
+        const filterdataTool = Oskari.clazz.create('Oskari.mapframework.domain.Tool');
+        filterdataTool.setName('filterdata');
+        filterdataTool.setIconCls('show-filter-tool');
+        filterdataTool.setTooltip(this.localization.filterTooltip);
+        filterdataTool.setCallback(() => {
+            const service = this._getAnalyseService();
+            const isAggregateValueAvailable = !!service;
+            const fixedOptions = {
+                bboxSelection: true,
+                clickedFeaturesSelection: false,
+                addLinkToAggregateValues: isAggregateValueAvailable
+            };
+
+            const filterDialog = Oskari.clazz.create('Oskari.userinterface.component.FilterDialog', fixedOptions);
+            filterDialog.setUpdateButtonHandler((filters) => {
+                // throw event to new wfs
+                const filteringChangeEvent = Oskari.eventBuilder('WFSSetPropertyFilter');
+                this.sandbox.notifyAll(filteringChangeEvent(filters, layer.getId()));
+            });
+
+            if (isAggregateValueAvailable) {
+                const aggregateAnalyseFilter = Oskari.clazz.create('Oskari.analysis.bundle.analyse.aggregateAnalyseFilter', null, filterDialog);
+
+                filterDialog.createFilterDialog(layer, null, () =>  {
+                    // FIXME: why is bind() used here? can it be removed?
+                    service._returnAnalysisOfTypeAggregate(_.bind(aggregateAnalyseFilter.addAggregateFilterFunctionality, this));
+                });
+            } else {
+                filterDialog.createFilterDialog(layer);
+            }
+            filterDialog.setCloseButtonHandler(() => {
+                filterDialog.popup.dialog.off('click', '.add-link');
+            });
+        });
+    },
     /**
      * parses any additional fields to model
      * @param {Oskari.mapframework.bundle.mapanalysis.domain.AnalysisLayer} layer partially populated layer
@@ -17,44 +53,10 @@ Oskari.clazz.define('Oskari.mapframework.bundle.mapanalysis.domain.AnalysisLayer
      * @param {Oskari.mapframework.service.MapLayerService} maplayerService not really needed here
      */
     parseLayerData: function (layer, mapLayerJson, maplayerService) {
-        const me = this;
         if (layer.isFilterSupported()) {
-            var filterdataTool = Oskari.clazz.create('Oskari.mapframework.domain.Tool');
-            filterdataTool.setName('filterdata');
-            filterdataTool.setIconCls('show-filter-tool');
-            filterdataTool.setTooltip(me.localization.filterTooltip);
-            filterdataTool.setCallback(function () {
-                const service = me._getAnalyseService();
-                const isAggregateValueAvailable = !!service;
-                const fixedOptions = {
-                    bboxSelection: true,
-                    clickedFeaturesSelection: false,
-                    addLinkToAggregateValues: isAggregateValueAvailable
-                };
-
-                var filterDialog = Oskari.clazz.create('Oskari.userinterface.component.FilterDialog', fixedOptions);
-                filterDialog.setUpdateButtonHandler(function (filters) {
-                    // throw event to new wfs
-                    var evt = Oskari.eventBuilder('WFSSetPropertyFilter')(filters, layer.getId());
-                    me.sandbox.notifyAll(evt);
-                });
-
-                if (service) {
-                    var aggregateAnalyseFilter = Oskari.clazz.create('Oskari.analysis.bundle.analyse.aggregateAnalyseFilter', null, filterDialog);
-
-                    filterDialog.createFilterDialog(layer, null, function () {
-                        me.service._returnAnalysisOfTypeAggregate(_.bind(aggregateAnalyseFilter.addAggregateFilterFunctionality, me));
-                    });
-                } else {
-                    filterDialog.createFilterDialog(layer);
-                }
-                filterDialog.setCloseButtonHandler(_.bind(function () {
-                    filterDialog.popup.dialog.off('click', '.add-link');
-                }));
-            });
-            layer.addTool(filterdataTool);
+            layer.addTool(this._createFilterTool(layer));
         }
-        var loclayer = me.localization.layer;
+        const loclayer = this.localization.layer;
 
         // call parent parseLayerData
         this.wfsBuilder.parseLayerData(layer, mapLayerJson, maplayerService);
