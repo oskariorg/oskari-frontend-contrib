@@ -224,9 +224,19 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
         eventHandlers: {
             FeatureEvent: function (event) {
                 if (this.sideContentEditor != null && event.getOperation() == 'click') {
+                    const layerId = event._features[0].layerId;
+                    const featureIds = event._features[0].geojson.features.map(feat => feat.id);
+
+                    var eventBuilder = Oskari.eventBuilder('WFSFeaturesSelectedEvent');
+                    if (eventBuilder) {
+                        var layer = this.sandbox.findMapLayerFromSelectedMapLayers(layerId);
+                        var event = eventBuilder(featureIds, layer, true);
+                        this.sandbox.notifyAll(event);
+                    }
                     this.sideContentEditor.parseWFSFeatureGeometries(event);
                 }
             },
+            /*
             GetInfoResultEvent: function (evt) {
                 if (this.sideContentEditor != null) {
                     var data = evt.getData();
@@ -245,6 +255,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
                     }
                 }
             },
+            */
             MapClickedEvent: function (event) {
                 if (this.sideContentEditor != null) {
                     this.sideContentEditor.setClickCoords({
@@ -266,22 +277,22 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
                 }
             },
             WFSFeaturesSelectedEvent: function (evt) {
-                if (this.sideContentEditor != null) {
-                    var maplayer = evt.getMapLayer();
-                    var featureIds = evt.getWfsFeatureIds();
-                    var features = [];
-
-                    featureIds.forEach(function(fid) {
-                        var filtered = maplayer.getActiveFeatures().filter(function(feature){
-                            return feature[0] === fid;
-                        });
-                        filtered.forEach(function(feature){
-                            features.push(feature);
-                        });
-                    });
-                    this.sideContentEditor._handleInfoResult({layerId: maplayer.getId(), features: features});
-                    
+                if (this.sideContentEditor == null) {
+                    return;
                 }
+                const maplayer = evt.getMapLayer();
+                const featureIds = evt.getWfsFeatureIds();
+
+                const wfsPlugin = this.getSandbox()
+                    .findRegisteredModuleInstance('MainMapModule')
+                    .getPluginInstances()
+                    .MainMapModuleWfsVectorLayerPlugin;
+
+                const viewPortFeatures = wfsPlugin.getLayerFeaturePropertiesInViewport(maplayer.getId());
+                const features = featureIds
+                    .map((fid) => viewPortFeatures.find(feat => feat.__fid === fid))
+                    .filter(feat => typeof feat !== 'undefined');
+                this.sideContentEditor._handleInfoResult({layerId: maplayer.getId(), features: features});
             }
         },
         /**

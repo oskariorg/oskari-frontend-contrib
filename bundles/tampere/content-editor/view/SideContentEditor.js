@@ -954,8 +954,13 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
 
             me.highlightFeaturesIds = [];
             if (data.features) {
+                const isEditIdUnknown = editableFeatureFid === undefined;
                 for (i = 0; i < data.features.length; i++) {
-                    if ((editableFeatureFid === undefined || data.features[i][0] == editableFeatureFid) && (data.features[i] != '')) { me.highlightFeaturesIds.push(data.features[i][0].split('.')[1]); }
+                    const currentId = data.features[i].__fid
+                    if ((isEditIdUnknown || currentId == editableFeatureFid)
+                        && data.features[i] != '') {
+                            me.highlightFeaturesIds.push(currentId.split('.')[1]);
+                    }
                 }
             }
 
