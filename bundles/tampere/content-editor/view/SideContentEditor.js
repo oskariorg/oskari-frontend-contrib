@@ -1,6 +1,7 @@
 import olFormatWKT from 'ol/format/WKT';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 import * as olProj from 'ol/proj';
+import { Helper } from './Helper';
 
 /**
  * @class Oskari.tampere.bundle.content-editor.view.SideContentEditor
@@ -18,7 +19,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
      */
     function (instance, localization, layerId) {
         var me = this;
-        me.layerId = layerId;
+        this.setCurrentLayer(layerId)
         me.layerGeometries = null;
         me.layerGeometryType = null;
         me.sandbox = instance.sandbox;
@@ -83,6 +84,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
         me._geojson = null;
         me.templateFeatureMarkup = null;
     }, {
+        DRAW_OPERATION_ID: 'ContentEditor',
         __name: 'ContentEditor',
         /**
          * @method @public getName
@@ -90,6 +92,27 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
          */
         getName: function () {
             return this.__name;
+        },
+        setCurrentLayer: function (layerId) {
+            this._currentLayer = {
+                id: layerId
+            };
+            this.layerId = layerId;
+            Helper.describeLayer(layerId).then(metadata => {
+                this._currentLayer.geometryType = metadata.geometryType;
+                this._currentLayer.fieldTypes = metadata.types;
+                // these are deprecated:
+                this.layerGeometryType = metadata.geometryType;
+                // NOTE! types are a bit different now
+                this.fieldsTypes = metadata.types;
+                this._addDrawTools();
+            }).catch((error) => {
+                // TODO: 
+                console.log(error);
+            });
+        },
+        getCurrentLayer: function () {
+            return this._currentLayer;
         },
 
         /**
@@ -125,35 +148,26 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
          * @method @public startNewDrawing
          */
         startNewDrawing: function () {
-            var me = this;
-            var geometry = null;
-            for (var i = 0; i < me.allClickedFeatures.length; ++i) {
-                if (me.allClickedFeatures[i].fid === me.currentEditFeatureFid) {
-                    geometry = me.allClickedFeatures[i].geometry;
-                }
-            }
-            if (geometry != null) {
-                var format = new olFormatGeoJSON();
-                var geomAsGeoJSON = format.writeGeometry(geometry);
-                if (me.layerGeometryType.indexOf('Multi') > -1) {
-                    me.sandbox.postRequestByName('DrawTools.StartDrawingRequest', [me.instance.getName(), me.getDrawToolsGeometryType(), {
-                        allowMultipleDrawing: 'multiGeom',
-                        geojson: geomAsGeoJSON,
-                        showMeasureOnMap: true
-                    }]);
+            const drawParams = {
+                allowMultipleDrawing: true,
+                showMeasureOnMap: true
+            };
+            const geometry = this.allClickedFeatures
+                .filter(feat => feat.fid === this.currentEditFeatureFid)
+                .map(feat => feat.geometry)
+                .shift();
+            if (typeof geometry !== 'undefined') {
+                // editing something
+                if (this.layerGeometryType.indexOf('Multi') > -1) {
+                    drawParams.allowMultipleDrawing = 'multiGeom';
                 } else {
-                    me.sandbox.postRequestByName('DrawTools.StartDrawingRequest', [me.instance.getName(), me.getDrawToolsGeometryType(), {
-                        allowMultipleDrawing: 'single',
-                        geojson: geomAsGeoJSON,
-                        showMeasureOnMap: true
-                    }]);
+                    drawParams.allowMultipleDrawing = 'single';
                 }
-            } else {
-                me.sandbox.postRequestByName('DrawTools.StartDrawingRequest', [me.instance.getName(), me.getDrawToolsGeometryType(), {
-                    allowMultipleDrawing: true,
-                    showMeasureOnMap: true
-                }]);
+                var format = new olFormatGeoJSON();
+                drawParams.geojson = format.writeGeometry(geometry);
             }
+            this.sandbox.postRequestByName('DrawTools.StartDrawingRequest',
+                [this.DRAW_OPERATION_ID, this.getDrawToolsGeometryType(), drawParams]);
         },
 
         //TODO: make this one better to also include handling of GeometryPropertyType
@@ -171,8 +185,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
          * @method @public sendStopDrawRequest
          */
         sendStopDrawRequest: function () {
-            var me = this;
-            me.sandbox.postRequestByName('DrawTools.StopDrawingRequest', [me.instance.getName(), true, true]);
+            this.sandbox.postRequestByName('DrawTools.StopDrawingRequest', [this.DRAW_OPERATION_ID, true, true]);
         },
 
         /**
@@ -181,7 +194,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
          * @param  {String}        geometryType geometry type
          */
         setGeometryType: function (geometryType) {
-            this._parseLayerGeometryResponse(geometryType);
+            this.layerGeometryType = Helper.detectGeometryType(geometryType);
         },
 
         /**
@@ -190,19 +203,14 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
          * @param  {Oskari.mapframework.bundle.mapwfs2.event.WFSFeatureGeometriesEvent}                  evt event
          */
         parseWFSFeatureGeometries: function (evt) {
-            var me = this;
-            var layerIndex = this.allVisibleLayers.findIndex(function (layer) {
-                return layer.getId() == evt._features[0].layerId;
-            });
+            const eventFeature = evt.getFeatures()[0];
+            var layerFound = this.allVisibleLayers.some((layer) => layer.getId() == eventFeature.layerId);
 
-            if (layerIndex === -1) {
+            if (!layerFound) {
                 // Not handle event
                 return;
             }
-            var features = evt._features[0].geojson.features;
-            features.forEach(function (feature) {
-                me._addClickedFeature(feature);
-            });
+            eventFeature.geojson.features.forEach((feature) => this._addClickedFeature(feature));
         },
 
         /**
@@ -436,9 +444,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
         render: function (container) {
             var me = this,
                 content = me.template.clone();
-            me.allLayers = me.sandbox.findAllSelectedMapLayers();
-            me.getLayerGeometryType();
-            me.getFieldsTypes();
+            
             me.mainPanel = content;
 
             container.append(content);
@@ -484,7 +490,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                 me.isLayerVisible = false;
                 me._changeLayerVisibility(me.layerId, true);
             }
-            me._hideLayers();
+            me._hideOtherVectorLayers(this.getCurrentLayer().id);
             me._disableGFI();
         },
 
@@ -493,6 +499,8 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
          * @method @public getLayerGeometryType
          */
         getLayerGeometryType: function () {
+            // /action?action_route=GetWFSLayerFields&layer_id=3324
+            // {"geometryName":"geom","types":{"nimi":"string","numero":"number","id":"number","teksti":"string"},"geometryType":"MultiPointPropertyType"}
             var me = this;
             jQuery.ajax({
                 type: 'GET',
@@ -500,26 +508,12 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                 dataType: 'text',
                 url: Oskari.urls.getRoute('GetWFSLayerGeometryType'),
                 success: function (response) {
-                    me._parseLayerGeometryResponse(response);
+                    me.layerGeometryType = Helper.detectGeometryType(response);
                     me._addDrawTools();
                 }
             });
         },
 
-        /**
-         * Gets layer fieldtypes
-         * @method @public getFieldsTypes
-         */
-        getFieldsTypes: function () {
-            var me = this;
-            jQuery.ajax({
-                type: 'GET',
-                url: Oskari.urls.getRoute('GetWFSDescribeFeature') + '&layer_id=' + me.layerId,
-                success: function (response) {
-                    me.fieldsTypes = response.propertyTypes;
-                }
-            });
-        },
 
         /**
          * Get linestring
@@ -806,7 +800,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
          */
         destroy: function () {
             var me = this;
-            me._showLayers();
+            me._restoreLayersHiddenByEditor();
 
             var gfiActivationRequestBuilder = Oskari.requestBuilder('MapModulePlugin.GetFeatureInfoActivationRequest');
             var request = gfiActivationRequestBuilder(true);
@@ -821,28 +815,17 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
 
         /**
          * Removes temporarily layers from map that the user cant publish
-         * @method _hideLayers
+         * @method _hideOtherVectorLayers
          * @private
          */
-        _hideLayers: function () {
-            var me = this,
-                i,
-                layer;
-
-            for (i = 0; i < me.allLayers.length; i++) {
-                if (me.allLayers[i].isVisible()) {
-                    me.allVisibleLayers.push(me.allLayers[i]);
-                }
-            }
-
-            if (me.allVisibleLayers) {
-                for (i = 0; i < me.allVisibleLayers.length; i += 1) {
-                    layer = me.allVisibleLayers[i];
-                    if (me.layerId != layer.getId() && layer.isLayerOfType('WFS')) {
-                        me._changeLayerVisibility(layer.getId(), false);
-                    }
-                }
-            }
+         _hideOtherVectorLayers: function (currentLayerId) {
+            const visibleSelectedLayers = this.sandbox.findAllSelectedMapLayers().filter(layer => layer.isVisible());
+            this.allVisibleLayers = visibleSelectedLayers;
+            // hide other WFS layers that are visible on the map
+            visibleSelectedLayers
+                .filter(layer => layer.getId() !== currentLayerId)
+                .filter(layer => layer.isLayerOfType('WFS'))
+                .forEach(layer => this._changeLayerVisibility(layer.getId(), false));
         },
 
         /**
@@ -850,11 +833,9 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
          * @method  _showLayers
          * @private
          */
-        _showLayers: function () {
-            var me = this;
-            me.allVisibleLayers.forEach(function (layer) {
-                me._changeLayerVisibility(layer.getId(), true);
-            });
+        _restoreLayersHiddenByEditor: function () {
+            this.allVisibleLayers
+                .forEach((layer) => this._changeLayerVisibility(layer.getId(), true));
         },
 
         /**
@@ -964,14 +945,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                 }
             }
 
-            var isVisibleLayer = false;
-            for (i = 0; i < this.allVisibleLayers.length; i++) {
-                if (this.allVisibleLayers[i].getId() == data.layerId) {
-                    isVisibleLayer = true;
-                    break;
-                }
-            }
-
+            var isVisibleLayer = this.allVisibleLayers.some(layer => layer.getId() == data.layerId);
             if (!isVisibleLayer) {
                 return;
             }
@@ -1424,28 +1398,6 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
             });
 
             return results;
-        },
-
-        /**
-         * Parse layer geometry response
-         * @method  _parseLayerGeometryResponse
-         * @param   {String}                    response geometry type
-         * @private
-         */
-        _parseLayerGeometryResponse: function (response) {
-            if (response == 'MultiPoint' || response == 'gml:MultiPointPropertyType') {
-                this.layerGeometryType = 'MultiPoint';
-            } else if (response == 'Point' || response == 'gml:PointPropertyType') {
-                this.layerGeometryType = 'Point';
-            } else if (response == 'MultiLineString' || response == 'gml:MultiLineStringPropertyType') {
-                this.layerGeometryType = 'MultiLineString';
-            } else if (response == 'MultiPolygon' || response == 'gml:MultiPolygonPropertyType' || response == 'gml:MultiSurfacePropertyType') {
-                this.layerGeometryType = 'MultiPolygon';
-            } else if (response == 'Polygon' || response == 'gml:PolygonPropertyType') {
-                this.layerGeometryType = 'Polygon';
-            } else if (response == 'gml:GeometryPropertyType') {
-                this.layerGeometryType = 'GeometryPropertyType';
-            }
         },
 
         /**
