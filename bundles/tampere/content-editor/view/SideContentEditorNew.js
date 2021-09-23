@@ -88,6 +88,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
         me._geojson = null;
         me.templateFeatureMarkup = null;
         Oskari.makeObservable(this);
+        this.on('loading', () => this.update());
         this.setCurrentLayer(layerId)
     }, {
         DRAW_OPERATION_ID: 'ContentEditor',
@@ -108,10 +109,10 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
             this.trigger('loading', this.loading);
             Helper.describeLayer(layerId).then(metadata => {
                 this.loading = false;
-                this.trigger('layer.metadata', { id: layerId});
-                this.trigger('loading', this.loading);
                 this._currentLayer.geometryType = metadata.geometryType;
                 this._currentLayer.fieldTypes = metadata.types;
+                this.trigger('layer.metadata', { id: layerId });
+                this.trigger('loading', this.loading);
                 // these are deprecated:
                 this.layerGeometryType = metadata.geometryType;
                 // NOTE! types are a bit different now
@@ -127,6 +128,54 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
         getCurrentLayer: function () {
             return this._currentLayer;
         },
+        editFeature: function (geojson) {
+            // TODO: start editor
+        },
+
+        setElement: function (rootEl) {
+            this._el = rootEl;
+        },
+        getElement: function () {
+            return this._el;
+        },
+        /**
+         * Renders view to given DOM element
+         * @method @public render
+         * @param {jQuery} container reference to DOM element this component will be
+         * rendered to
+         */
+        render: function (container) {
+            this.setElement(container);
+            this.update();
+            // oldRender()
+        },
+        update: function () {
+            const el = this.getElement();
+            if (!el) {
+                return;
+            }
+            ReactDOM.render(
+                <LocaleProvider value={{ bundleKey: 'ContentEditor' }}>
+                    <SidePanel
+                        loading={this.loading}
+                        layer={this.getCurrentLayer()}
+                        onClose={() => this.instance.setEditorMode(false)}
+                        startNewFeature={() => this.startNewFeature()}
+                    />
+                </LocaleProvider>, el);
+        },
+        startNewFeature: function () {
+            if (this.featureDuringEdit) {
+                this.featureDuringEdit = false;
+                this._showAddUnsavedInfoModal();
+            } else {
+                this.allClickedFeatures = [];
+                this._addNewFeature();
+            }
+        },
+
+
+
 
         /**
          * Shows message
@@ -449,74 +498,12 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
             me.showMessage(me.loc.unsavedChanges.title, me.loc.unsavedChanges.text, [saveButton, cancelButton], true);
         },
         
-        update: function () {
-            const el = this.getElement();
-            if (!el) {
-                return;
-            }
-            ReactDOM.render(<LocaleProvider value={{ bundleKey: 'ContentEditor' }}>
-                <SidePanel onClose={() => this.instance.setEditorMode(false)} />
-            </LocaleProvider>, el);
-        },
-        setElement: function (rootEl) {
-            this._el = rootEl;
-        },
-        getElement: function () {
-            return this._el;
-        },
-        /**
-         * Renders view to given DOM element
-         * @method @public render
-         * @param {jQuery} container reference to DOM element this component will be
-         * rendered to
-         */
-        render: function (container) {
-            this.setElement(container);
-            this.update();
-            if (true) {
-                return;
-            }
-            
+        oldRender: function () {
             var me = this,
                 content = me.template.clone();
             
             me.mainPanel = content;
 
-            container.append(content);
-            container.find('.icon-close').on('click', function () {
-                me.sendStopDrawRequest(true);
-                me.instance.setEditorMode(false);
-            });
-
-            content.find('div.header h3').append(me.loc.title);
-
-            content.find('.content').append(jQuery('<div>' + me.loc.featureModifyInfo + '</div>'));
-            content.find('.content').append(jQuery('<div>' + me.loc.multipleFeatureModifyInfo + '</div>'));
-            content.find('.content').append(jQuery('<div>' + me.loc.toolInfo + '</div>'));
-            content.find('.content').append(jQuery('<div>' + me.loc.geometryModifyInfo + '</div>'));
-            content.find('.content').append(jQuery('<div>' + me.loc.geometryDeleteInfo + '</div>'));
-            var addFeatureButton = Oskari.clazz.create('Oskari.userinterface.component.Button');
-            addFeatureButton.setTitle(me.loc.buttons.addFeature);
-            addFeatureButton.setHandler(function () {
-                if (me.featureDuringEdit) {
-                    me.featureDuringEdit = false;
-                    me._showAddUnsavedInfoModal();
-                } else {
-                    me.allClickedFeatures = [];
-                    me._addNewFeature();
-                }
-            });
-            var addFeatureButtonContainer = jQuery('<div />');
-
-            // Modify multiple features.
-            me.editMultipleFeaturesButton = Oskari.clazz.create('Oskari.userinterface.component.Button');
-            me.editMultipleFeaturesButton.setTitle(me.loc.buttons.editMultipleFeatures);
-            me.editMultipleFeaturesButton.setEnabled(false);
-            me.editMultipleFeaturesButton.insertTo(addFeatureButtonContainer);
-
-
-            addFeatureButton.insertTo(addFeatureButtonContainer);
-            content.find('.content').append(addFeatureButtonContainer);
             me._addDrawTools(content);
 
             content.find('.content').append(jQuery('<div />').addClass('properties-container'));
@@ -846,7 +833,6 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                 me._changeLayerVisibility(me.layerId, false);
             }
             this.getElement().remove();
-            //this.mainPanel.remove();
         },
 
         /**

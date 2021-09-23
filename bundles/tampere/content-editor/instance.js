@@ -209,7 +209,8 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
                     var layer = this.sandbox.findMapLayerFromSelectedMapLayers(layerId);
                     this.sandbox.notifyAll(eventBuilder(featureIds, layer, true));
                 }
-                this.sideContentEditor.parseWFSFeatureGeometries(event);
+                this.sideContentEditor.editFeature(features[0].geojson.features[0]);
+                //this.sideContentEditor.parseWFSFeatureGeometries(event);
             },
             /*
             GetInfoResultEvent: function (evt) {
