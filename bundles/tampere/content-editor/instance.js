@@ -1,3 +1,5 @@
+import './view/SideContentEditorNew';
+
 /**
  * @class Oskari.tampere.bundle.content-editor.ContentEditorBundleInstance
  *
@@ -12,7 +14,6 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
      */
     function () {
         this.sandbox = null;
-        this.started = false;
         this.plugins = {};
         this.notifierService = null;
         this.sideContentEditor = null;
@@ -141,7 +142,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
                 layerModel = service.findMapLayer(layerModel);
             }
             if (!layerModel ||
-                !layerModel.getPermission('EDIT_LAYER_CONTENT') ||
+                !layerModel.hasPermission('EDIT_LAYER_CONTENT') ||
                 !layerModel.isLayerOfType('WFS')) {
                 return;
             }
@@ -327,22 +328,25 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
          * @param {string} layerId
          */
         setEditorMode: function (blnEnabled, layerId) {
-            const mapElement = jQuery('#contentMap');
+            const mapElement = document.getElementById('contentMap');
             const sandbox = this.getSandbox();
+            const additionalClass = 'mapContentEditorMode';
             if (blnEnabled) {
-                mapElement.addClass('mapContentEditorMode');
+                mapElement.classList.add(additionalClass); //addClass('mapContentEditorMode');
+                const myRoot = document.createElement('div');
+                mapElement.appendChild(myRoot);
                 this.sideContentEditor = Oskari.clazz.create(
                     'Oskari.tampere.bundle.content-editor.view.SideContentEditor',
                     this,
                     this.getLocalization('ContentEditorView'),
                     layerId
                 );
-                this.sideContentEditor.render(mapElement);
+                this.sideContentEditor.render(myRoot);
             } else {
                 if (this.sideContentEditor) {
                     this.sideContentEditor.destroy();
                 }
-                mapElement.removeClass('mapContentEditorMode');
+                mapElement.classList.remove(additionalClass); //removeClass('mapContentEditorMode');
 
                 const request = Oskari.requestBuilder('userinterface.UpdateExtensionRequest')(this, 'close', this.getName());
                 sandbox.request(this.getName(), request);
