@@ -201,16 +201,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
                     return;
                 }
                 const features = event.getFeatures();
-                const layerId = features[0].layerId;
-                const featureIds = features[0].geojson.features.map(feat => feat.id);
-
-                var eventBuilder = Oskari.eventBuilder('WFSFeaturesSelectedEvent');
-                if (eventBuilder) {
-                    var layer = this.sandbox.findMapLayerFromSelectedMapLayers(layerId);
-                    this.sandbox.notifyAll(eventBuilder(featureIds, layer, true));
-                }
                 this.sideContentEditor.editFeature(features[0].geojson.features[0]);
-                //this.sideContentEditor.parseWFSFeatureGeometries(event);
             },
             /*
             GetInfoResultEvent: function (evt) {

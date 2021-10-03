@@ -87,8 +87,11 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
         me.defaultClickDistanceThreshold = 0.05;
         me._geojson = null;
         me.templateFeatureMarkup = null;
+
+
         Oskari.makeObservable(this);
         this.on('loading', () => this.update());
+        this.on('update', () => this.update());
         this.setCurrentLayer(layerId)
     }, {
         DRAW_OPERATION_ID: 'ContentEditor',
@@ -106,6 +109,8 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
             };
             this.layerId = layerId;
             this.loading = true;
+            // Oskari.getSandbox().postRequestByName('ContentEditor.ShowContentEditorRequest', [2662])
+            Oskari.getSandbox().postRequestByName('AddMapLayerRequest', [layerId]);
             this.trigger('loading', this.loading);
             Helper.describeLayer(layerId).then(metadata => {
                 this.loading = false;
@@ -129,7 +134,14 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
             return this._currentLayer;
         },
         editFeature: function (geojson) {
-            // TODO: start editor
+            this.setCurrentFeature(geojson);
+            this.update();
+        },
+        setCurrentFeature: function (feature) {
+            this._feature = feature;
+        },
+        getCurrentFeature: function () {
+            return this._feature;
         },
 
         setElement: function (rootEl) {
@@ -159,12 +171,22 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                     <SidePanel
                         loading={this.loading}
                         layer={this.getCurrentLayer()}
+                        feature={this.getCurrentFeature()}
                         onClose={() => this.instance.setEditorMode(false)}
+                        onCancel={() => this.stopEditing()}
                         startNewFeature={() => this.startNewFeature()}
                     />
                 </LocaleProvider>, el);
         },
+        stopEditing: function () {
+            this.editFeature(undefined);
+        },
         startNewFeature: function () {
+            this.editFeature({
+                type: 'Feature',
+                properties: {}
+            });
+            /*
             if (this.featureDuringEdit) {
                 this.featureDuringEdit = false;
                 this._showAddUnsavedInfoModal();
@@ -172,6 +194,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                 this.allClickedFeatures = [];
                 this._addNewFeature();
             }
+            */
         },
 
 
