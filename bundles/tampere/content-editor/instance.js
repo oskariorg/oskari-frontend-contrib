@@ -334,6 +334,24 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
                     layerId
                 );
                 this.sideContentEditor.render(myRoot);
+
+                /*
+// Force map size to match rest of screen: 
+const content = jQuery('#contentMap');
+const container = content.find('.row-fluid');
+// Ugly hack, container has a nasty habit of overflowing the viewport...
+const totalWidth = jQuery(window).width() - container.offset().left;
+const mapContainer = container.find('.oskariui-center');
+const mapDiv = this.mapmodule.getMapEl();
+
+                
+mapContainer.css({
+    'width': mapWidth,
+    'height': mapHeight
+});
+
+mapDiv.width(mapWidth);
+                */
             } else {
                 if (this.sideContentEditor) {
                     this.sideContentEditor.destroy();

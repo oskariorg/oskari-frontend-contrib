@@ -1,20 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Message, Button, Tooltip, Spin } from 'oskari-ui';
+import styled from 'styled-components';
 
 // <Button disabled={true}><Message messageKey="ContentEditorView.buttons.editMultipleFeatures" /></Button>
 
+export const StyledMessage = styled('div')`
+    margin-bottom: 20px;
+`;
+
 export const InfoPanel = ({ layer = {}, startNewFeature}) => {
-    return (<div className="content">
-        <div><Message messageKey="ContentEditorView.featureModifyInfo" /></div>
-        <div><Message messageKey="ContentEditorView.multipleFeatureModifyInfo" /></div>
-        <div><Message messageKey="ContentEditorView.toolInfo" /></div>
-        <div><Message messageKey="ContentEditorView.geometryModifyInfo" /></div>
-        <div><Message messageKey="ContentEditorView.geometryDeleteInfo" /></div>
-        <div>
+    return (<React.Fragment>
+        <StyledMessage><Message messageKey="ContentEditorView.featureModifyInfo" /></StyledMessage>
+        <StyledMessage><Message messageKey="ContentEditorView.multipleFeatureModifyInfo" /></StyledMessage>
+        <StyledMessage><Message messageKey="ContentEditorView.toolInfo" /></StyledMessage>
+        <StyledMessage><Message messageKey="ContentEditorView.geometryModifyInfo" /></StyledMessage>
+        <StyledMessage><Message messageKey="ContentEditorView.geometryDeleteInfo" /></StyledMessage>
+        <StyledMessage>
             <Button onClick={startNewFeature}><Message messageKey="ContentEditorView.buttons.addFeature" /></Button>
-        </div>
-    </div>);
+        </StyledMessage>
+    </React.Fragment>);
 };
 
 InfoPanel.propTypes = {

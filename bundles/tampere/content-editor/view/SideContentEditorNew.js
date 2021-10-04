@@ -1,7 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import PropTypes from 'prop-types';
-import olFormatWKT from 'ol/format/WKT';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
 import { LocaleProvider } from 'oskari-ui/util';
 import * as olProj from 'ol/proj';
@@ -249,7 +247,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
         /**
          * Parse WFS feature geometries
          * @method @public parseWFSFeatureGeometries
-         * @param  {Oskari.mapframework.bundle.mapwfs2.event.WFSFeatureGeometriesEvent}                  evt event
+         * @param  {Oskari.mapframework.bundle.mapwfs2.event.WFSFeatureGeometriesEvent} evt event
          */
         parseWFSFeatureGeometries: function (evt) {
             const eventFeature = evt.getFeatures()[0];

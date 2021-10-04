@@ -1,50 +1,65 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { TextInput, NumberInput, Tooltip } from 'oskari-ui';
-import { Form, Row } from 'antd';
 import styled from 'styled-components';
 
-import 'antd/es/form/style/index.js';
+export const StyledFormField = styled('div')`
+    padding-top: 5px;
+    padding-bottom: 10px;
+    width: 100%;
+`;
+export const StyledLabel = styled('label')`
+    display:block;
+`;
 
-const getFieldForType = (name, type, value) => {
+const getFieldForType = (name, type, value, onUpdate) => {
     const attribs = {
         disabled: name === 'id',
         name,
         value
     };
     if (type === 'number') {
-        return (<NumberInput {...attribs} />);
+        return (<NumberInput {...attribs} onChange={(newValue) => onUpdate(name, newValue)}/>);
     }
-    return (<TextInput {...attribs} />);
+    return (<TextInput {...attribs} onChange={(evt) => onUpdate(name, evt.target.value)} />);
 }
 
-const getDecorated = (name, type, value) => {
-    const label = (<Tooltip title={name} >{name}</Tooltip>)
+const getDecorated = ({ name, type, value, onUpdate }) => {
+    const labelValue = (<Tooltip title={name} >{name}</Tooltip>)
     return (
-        <Form.Item label={label} name={name} key={name}>
-            { getFieldForType(name, type, value) }
-        </Form.Item>
+        <StyledFormField key={name}>
+            <StyledLabel>{labelValue}</StyledLabel>
+            { getFieldForType(name, type, value, onUpdate) }
+        </StyledFormField>
     );
     
 }
 
-export const FeatureForm = ({config = {}, feature = {}}) => {
+export const FeatureForm = ({config = {}, feature = {}, onChange}) => {
     const fieldsTypes = config.fieldTypes || {};
     const featureProperties = feature.properties || {};
-    const fields = Object.keys(fieldsTypes)
-        .map(field => getDecorated(field, fieldsTypes[field], featureProperties[field]));
 
+    const onUpdate = (name, value) => {
+        onChange({
+            ...feature,
+            properties: {
+                ...feature.properties,
+                [name]: value
+            }
+        });
+    };
+    const fields = Object.keys(fieldsTypes)
+        .map(field => getDecorated({
+            name: field, 
+            type: fieldsTypes[field], 
+            value: featureProperties[field],
+            onUpdate}));
     return (
         <React.Fragment>
-    <Form
-        labelCol={{ span: 6 }}
-        wrapperCol={{ span: 18 }}
-        autoComplete="off">
-                {fields}
-            </Form>
-        <pre>{JSON.stringify(config, null, 2)}</pre>
-        <pre>{JSON.stringify(feature, null, 2)}</pre>
-            </React.Fragment>)
+            {fields}
+            <pre>{JSON.stringify(config, null, 2)}</pre>
+            <pre>{JSON.stringify(feature, null, 2)}</pre>
+        </React.Fragment>);
 };
 
 FeatureForm.propTypes = {

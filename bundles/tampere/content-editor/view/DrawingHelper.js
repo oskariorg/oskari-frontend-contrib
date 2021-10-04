@@ -23,16 +23,12 @@ const startDrawing = (type, isMulti = false, currentGeometry, listener) => {
     const drawParams = {
         allowMultipleDrawing: true,
         showMeasureOnMap: true,
-        geojson: currentGeometry
+        geojson: currentGeometry,
+        allowMultipleDrawing: isMulti ? 'multiGeom' : 'single'
     };
-    if (isMulti) {
-        drawParams.allowMultipleDrawing = 'multiGeom';
-    } else {
-        drawParams.allowMultipleDrawing = 'single';
-    }
     const sandbox = Oskari.getSandbox();
     sandbox.postRequestByName('DrawTools.StartDrawingRequest',
-        [DRAW_OPERATION_ID, type, drawParams]);
+        [DRAW_OPERATION_ID, type.replace('Multi', ''), drawParams]);
 
     drawListener = listener;
     sandbox.registerForEventByName(fakeModule, EVENT_NAME);
