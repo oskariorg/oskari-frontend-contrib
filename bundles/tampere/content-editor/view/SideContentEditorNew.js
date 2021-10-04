@@ -7,6 +7,7 @@ import { LocaleProvider } from 'oskari-ui/util';
 import * as olProj from 'ol/proj';
 import { Helper } from './Helper';
 import { SidePanel } from './SidePanel';
+import { DrawingHelper } from './DrawingHelper';
 
 /**
  * @class Oskari.tampere.bundle.content-editor.view.SideContentEditor
@@ -186,47 +187,10 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                 type: 'Feature',
                 properties: {}
             });
-            /*
-            if (this.featureDuringEdit) {
-                this.featureDuringEdit = false;
-                this._showAddUnsavedInfoModal();
-            } else {
-                this.allClickedFeatures = [];
-                this._addNewFeature();
-            }
-            */
         },
 
 
 
-
-        /**
-         * Shows message
-         * @method @public showMessage
-         * @param  {String}    title   title string
-         * @param  {Object}    content content
-         * @param  {Array}    buttons buttons
-         * @param  {Boolean}   isModal show message as model
-         */
-        showMessage: function (title, content, buttons, isModal) {
-            this.closeDialog();
-            this._dialog = Oskari.clazz.create('Oskari.userinterface.component.Popup');
-            this._dialog.show(title, content, buttons);
-            if (isModal) {
-                this._dialog.makeModal();
-            }
-        },
-
-        /**
-         * Closes the message dialog if opened
-         * @method @public closeDialog
-         */
-        closeDialog: function () {
-            if (this._dialog) {
-                this._dialog.close(true);
-                this._dialog = null;
-            }
-        },
 
         /**
          * Starts drawing, sends a StartDrawingRequest with given params. Changes the panel controls to match the application state (new/edit)
@@ -270,7 +234,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
          * @method @public sendStopDrawRequest
          */
         sendStopDrawRequest: function () {
-            this.sandbox.postRequestByName('DrawTools.StopDrawingRequest', [this.DRAW_OPERATION_ID, true, true]);
+            DrawingHelper.stopDrawing();
         },
 
         /**
