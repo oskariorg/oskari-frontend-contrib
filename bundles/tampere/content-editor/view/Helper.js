@@ -15,6 +15,7 @@ const GEOM_TYPE_MAPPING = {
 
     'Polygon': 'Polygon',
     'gml:PolygonPropertyType': 'Polygon',
+    'gml:SurfacePropertyType': 'Polygon',
 
     'gml:GeometryPropertyType': 'GeometryPropertyType'
 };
