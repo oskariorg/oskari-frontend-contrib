@@ -32,14 +32,10 @@ export const StyledPanel = styled('div')`
     }
 `;
 
-export const SidePanel = ({ layer = {}, feature = {}, editing = false, loading = false, onClose, onCancel, startNewFeature}) => {
+export const SidePanel = ({ layer = {}, feature = {}, loading = false, onSave, onClose, onCancel, startNewFeature}) => {
     const hasLayer = !!layer.geometryType;
     const hasFeature = hasLayer && feature.type === 'Feature';
     const showHelpText = hasLayer && !hasFeature;
-    const onSave = (updatedFeature) => {
-        console.log('TODO: save:', updatedFeature);
-        onCancel();
-    };
     return (
         <StyledPanel className="content-editor">
             <div className="header">
@@ -64,8 +60,8 @@ export const SidePanel = ({ layer = {}, feature = {}, editing = false, loading =
 SidePanel.propTypes = {
     layer: PropTypes.object,
     feature: PropTypes.object,
-    editing: PropTypes.bool,
     loading: PropTypes.bool,
+    onSave: PropTypes.func,
     onClose: PropTypes.func,
     onCancel: PropTypes.func,
     startNewFeature: PropTypes.func
