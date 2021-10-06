@@ -1,3 +1,6 @@
+
+import './request/ShowContentEditorRequest';
+import './request/ShowContentEditorRequestHandler';
 import './view/SideContentEditor';
 
 /**

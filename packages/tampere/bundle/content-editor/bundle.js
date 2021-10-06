@@ -7,41 +7,15 @@ Oskari.clazz.define("Oskari.tampere.bundle.content-editor.ContentEditorBundle", 
 
 }, {
     "create": function () {
-        var me = this;
-        var inst = Oskari.clazz.create("Oskari.tampere.bundle.content-editor.ContentEditorBundleInstance");
-
-        return inst;
-
+        return Oskari.clazz.create("Oskari.tampere.bundle.content-editor.ContentEditorBundleInstance");
     },
-    "update": function (manager, bundle, bi, info) {
-
-    }
+    "update": function () {}
 }, {
 
     "source": {
-
         "scripts": [{
             "type": "text/javascript",
             "src": "../../../../bundles/tampere/content-editor/instance.js"
-        }, {
-            "type": "text/javascript",
-            "expose": "turf",
-            "src": "../../../../libraries/turf/turf.min.js"
-        }, {
-            "type": "text/javascript",
-            "src": "../../../../bundles/tampere/content-editor/request/ShowContentEditorRequest.js"
-        }, {
-            "type": "text/javascript",
-            "src": "../../../../bundles/tampere/content-editor/request/ShowContentEditorRequestHandler.js"
-        }, {
-            "type": "text/javascript",
-            "src": "../../../../bundles/tampere/content-editor/service/OskariEventNotifierService.js"
-        }, {
-            "type": "text/javascript",
-            "src": "../../../../libraries/datepicker/resources/locale/datepicker-fi.js"
-        }, {
-            "type": "text/javascript",
-            "src": "../../../../libraries/datepicker/resources/locale/datepicker-en-GB.js"
         }, {
             "type": "text/css",
             "src": "../../../../bundles/tampere/content-editor/resources/scss/style.scss"
@@ -57,42 +31,9 @@ Oskari.clazz.define("Oskari.tampere.bundle.content-editor.ContentEditorBundle", 
         }]
     },
     "bundle": {
-        "manifest": {
-            "Bundle-Identifier": "content-editor",
-            "Bundle-Name": "content-editor",
-            "Bundle-Author": [{
-                "Name": "jjk",
-                "Organisation": "sito.fi",
-                "Temporal": {
-                    "Start": "2009",
-                    "End": "2011"
-                },
-                "Copyleft": {
-                    "License": {
-                        "License-Name": "EUPL",
-                        "License-Online-Resource": "http://www.paikkatietoikkuna.fi/license"
-                    }
-                }
-            }],
-            "Bundle-Name-Locale": {
-                "fi": {
-                    "Name": " style-1",
-                    "Title": " style-1"
-                },
-                "en": {}
-            },
-            "Bundle-Version": "1.0.0",
-            "Import-Namespace": ["Oskari", "jquery"],
-            "Import-Bundle": {}
-        }
+        "manifest": {}
     },
-
-    /**
-     * @static
-     * @property dependencies
-     */
-    "dependencies": ["jquery"]
-
+    "dependencies": []
 });
 
 Oskari.bundle_manager.installBundleClass("content-editor", "Oskari.tampere.bundle.content-editor.ContentEditorBundle");
