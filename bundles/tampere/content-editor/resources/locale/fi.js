@@ -20,6 +20,7 @@ Oskari.registerLocalization(
                 "LineString": "Viiva",
                 "Polygon": "Alue",
             },
+            "exitConfirm": "Tallentamattomat muutokset menetetään. Haluatko varmasti poistua?",
             "multipleFeatureModifyInfo": "Voit myös valita useita kohteita kartalta ctrl-nappi pohjassa ja muokata niitä.",
             "geometryModifyInfo": "Geometrian muokkautyökalulla voit muokata kohteen geometriaa.",
             "geometryDeleteInfo": "Geometrian poistotyökalulla voit poistaa yhden geometrian monipalstaisesta kohteesta.",
