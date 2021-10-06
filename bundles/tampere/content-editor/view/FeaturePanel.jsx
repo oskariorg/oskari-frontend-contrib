@@ -20,6 +20,7 @@ export const FeaturePanel = ({ layer = {}, feature = {}, onCancel, onSave}) => {
     const isNew = !featureProperties._oid;
     const [isDrawing, setDrawingMode] = useState(false);
     const [currentFeature, setCurrentFeature] = useState(feature);
+    // TODO: if feature === currentFeature differs -> there have been edits made
     const stopDrawing = () => {
         setDrawingMode(false);
         DrawingHelper.stopDrawing();
@@ -58,7 +59,7 @@ export const FeaturePanel = ({ layer = {}, feature = {}, onCancel, onSave}) => {
     if (!isNew) {
         title = `${currentFeature.id}`;
     }
-    const canSave = !isDrawing && !!feature.geometry;
+    const canSave = !isDrawing && !!currentFeature.geometry;
     return (<React.Fragment>
         <StyledSpace direction="vertical">
             <Card title={title}>
