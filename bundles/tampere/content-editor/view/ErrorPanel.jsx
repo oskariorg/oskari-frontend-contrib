@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Spin } from 'oskari-ui';
+import { Message, Spin } from 'oskari-ui';
 
 export const ErrorPanel = ({ loading = false }) => {
     if (loading) {
-        return (<Spin>Ladataan tason tietoja...</Spin>);
+        return (<Spin><Message messageKey="ContentEditorView.info.loading"/></Spin>);
     }
-    return (<div>Tason tiedot puuttuvat!!</div>);
+    return (<Message messageKey="ContentEditorView.info.problem"/>);
 };
 
 

@@ -9,7 +9,9 @@ Oskari.registerLocalization(
             "title": "Sisältöeditori",
             "info": {
                 "layerLabel": "Muokataan tasoa",
-                "featureModifyInfo": "Valitse muokattava kohde kartalta klikkaamalla."
+                "featureModifyInfo": "Valitse muokattava kohde kartalta klikkaamalla.",
+                "loading": "Ladataan tason tietoja...",
+                "problem": "Tason tiedot puuttuvat!"
             },
             "newTitle": "Uusi kohde",
             "geometrylist": {
