@@ -7,9 +7,20 @@ Oskari.registerLocalization(
         "desc": "",
         "ContentEditorView": {
             "title": "Sisältöeditori",
-            "featureModifyInfo": "Valitse kohde kartalta muokataksesi kohteen ominaisuuksia.",
+            "info": {
+                "layerLabel": "Muokataan tasoa",
+                "featureModifyInfo": "Valitse muokattava kohde kartalta klikkaamalla."
+            },
+            "newTitle": "Uusi kohde",
+            "geometrylist": {
+                "title": "Geometria",
+                "empty": "Merkitse geometria kartalle",
+                "editing": "Tee merkintä kartalle",
+                "Point": "Piste",
+                "LineString": "Viiva",
+                "Polygon": "Alue",
+            },
             "multipleFeatureModifyInfo": "Voit myös valita useita kohteita kartalta ctrl-nappi pohjassa ja muokata niitä.",
-            "toolInfo": "Valitse piste-, viiva- tai aluepiirtotyökalu piirtääksesi uutta geometriaa.",
             "geometryModifyInfo": "Geometrian muokkautyökalulla voit muokata kohteen geometriaa.",
             "geometryDeleteInfo": "Geometrian poistotyökalulla voit poistaa yhden geometrian monipalstaisesta kohteesta.",
             "buttons": {
@@ -28,7 +39,8 @@ Oskari.registerLocalization(
                 "point": "Lisää piste",
                 "line": "Lisää viiva",
                 "area": "Lisää alue",
-                "geometryEdit": "Muokkaa geometriaa",
+                "geometryEdit": "Muokkaa kartalla",
+                "finishSketch": "Lukitse karttamerkintä",
                 "remove": "Poista yksittäinen geometria"
             },
             "featureUpdate": {

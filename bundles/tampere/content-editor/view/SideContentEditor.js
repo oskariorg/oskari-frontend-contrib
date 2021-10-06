@@ -36,6 +36,17 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
         },
         editFeature: function (geojson) {
             this._feature = geojson;
+            if (typeof geojson !== 'undefined') {
+                // remove _oid (internal normalized id by Oskari) from properties
+                const {_oid, ...rest} = geojson.properties
+                const feature = {
+                    ...geojson,
+                    properties: {
+                        ...rest
+                    }
+                };
+                this._feature = feature;
+            }
             this._update();
         },
         getCurrentFeature: function () {
@@ -74,8 +85,10 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                 </LocaleProvider>, el);
         },
         _setCurrentLayer: function (layerId) {
+            const mapLayer = this.mapLayerService.findMapLayer(layerId);
             this._currentLayer = {
-                id: layerId
+                id: layerId,
+                name: mapLayer.getName(Oskari.getDefaultLanguage())
             };
             // Oskari.getSandbox().postRequestByName('ContentEditor.ShowContentEditorRequest', [2662])
             this.sandbox.postRequestByName('AddMapLayerRequest', [layerId]);
@@ -107,20 +120,12 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                 layerId: this.getCurrentLayer().id,
                 crs: this.sandbox.getMap().getSrsName()
             });
-            // remove _oid (internal normalized id by Oskari) from properties
-            const {_oid, ...rest} = feature.properties
-            const payload = {
-                ...feature,
-                properties: {
-                    ...rest
-                }
-            };
             fetch(url, {
                 method: isNew ? 'POST': 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(payload)
+                body: JSON.stringify(feature)
             }).then(response => {
                 if (!response.ok) {
                     return Promise.reject(Error('Save failed'));
@@ -189,10 +194,4 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
         _changeLayerVisibility: function (layerId, isVisible) {
             this.sandbox.postRequestByName('MapModulePlugin.MapLayerVisibilityRequest', [layerId, isVisible]);
         }
-    }, {
-        /**
-         * @property {String[]} protocol
-         * @static
-         */
-        protocol: ['Oskari.mapframework.module.Module']
     });

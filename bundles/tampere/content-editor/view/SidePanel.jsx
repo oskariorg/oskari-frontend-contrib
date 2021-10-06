@@ -1,12 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Message } from 'oskari-ui';
+import { Message, Confirm } from 'oskari-ui';
+import { LocaleConsumer } from 'oskari-ui/util';
 import { FeaturePanel } from './FeaturePanel';
 import { ErrorPanel } from './ErrorPanel';
 import { InfoPanel } from './InfoPanel';
+import { CloseCircleFilled } from '@ant-design/icons';
+
 import styled from 'styled-components';
 
-export const StyledPanel = styled('div')`
+const StyledPanel = styled('div')`
     background: #FFF;
     position: absolute;
     height: 100%;
@@ -27,9 +30,37 @@ export const StyledPanel = styled('div')`
     div.content {
         padding: 10px;
         overflow: auto;
-        height: 89%;
+        height: calc(100% - 46px);
     }
 `;
+const FloatingIcon = styled('div')`
+    float: right;
+`;
+/*
+<div className="icon-close"></div>
+*/
+const Header = LocaleConsumer(({ getMessage, onClose, confirmExit }) => {
+    const iconProps = {};
+    if (!confirmExit) {
+        iconProps.onClick = onClose;
+    }
+    return (
+        <div className="header">
+            <FloatingIcon>
+                <Confirm 
+                    disabled={!confirmExit}
+                    title={getMessage('ContentEditorView.exitConfirm')}
+                    onConfirm={onClose}
+                    okText={getMessage('ContentEditorView.buttons.yes')}
+                    cancelText={getMessage('ContentEditorView.buttons.no')}>
+                    <CloseCircleFilled {...iconProps}/>
+                </Confirm>
+            </FloatingIcon>
+            <h3><Message messageKey="ContentEditorView.title" /></h3>
+        </div>);
+});
+
+
 
 export const SidePanel = ({ layer = {}, feature = {}, loading = false, onSave, onClose, onCancel, startNewFeature}) => {
     const hasLayer = !!layer.geometryType;
@@ -37,13 +68,17 @@ export const SidePanel = ({ layer = {}, feature = {}, loading = false, onSave, o
     const showHelpText = hasLayer && !hasFeature;
     return (
         <StyledPanel className="content-editor">
-            <div className="header">
-                <div className="icon-close" onClick={onClose}></div>
-                <h3><Message messageKey="ContentEditorView.title" /></h3>
-            </div>
+            <Header onClose={ onClose } confirmExit={hasFeature} />
             <div className="content">
-                { !hasLayer && <ErrorPanel loading={loading} />}
-                { showHelpText && <InfoPanel layer={layer} startNewFeature={startNewFeature} />}
+                { !hasLayer &&
+                    <ErrorPanel loading={loading} />
+                }
+                { showHelpText &&
+                    <InfoPanel
+                        layer={layer}
+                        onClose={onClose}
+                        startNewFeature={startNewFeature} />
+                }
                 { hasFeature &&
                     <FeaturePanel 
                         layer={layer}

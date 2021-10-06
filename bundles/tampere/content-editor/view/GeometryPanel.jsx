@@ -1,6 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Message, Button, Tooltip } from 'oskari-ui';
+import { Message, Button, Space } from 'oskari-ui';
+import styled from 'styled-components';
+
+export const StyledList = styled('ul')`
+    padding-left: 30px;
+`;
 
 
 export const GeometryPanel = ({ type = '', feature = {}, startDrawing, updateGeometry}) => {
@@ -19,54 +24,73 @@ export const GeometryPanel = ({ type = '', feature = {}, startDrawing, updateGeo
         updateGeometry(newFeature);
     };
     if (!feature.geometry) {
-        // TODO: Maybe the draw tools?
-        return (<React.Fragment>
+        return (<Space>
+            <Message messageKey="ContentEditorView.geometrylist.empty" />
+            
             { isGeomBtnShown('Point') &&
-                <Tooltip title={<Message messageKey="ContentEditorView.tools.point" />}>
-                    <div className="add-point tool" onClick={() => startDrawing('Point')}></div>
-                </Tooltip>
+                <Button onClick={() => startDrawing('Point')}>
+                    <Message messageKey="ContentEditorView.tools.point" />
+                </Button>
             }
             { isGeomBtnShown('LineString') &&
-                <Tooltip title={<Message messageKey="ContentEditorView.tools.line" />}>
-                    <div className="add-line tool" onClick={() => startDrawing('LineString')}></div>
-                </Tooltip>
+                <Button onClick={() => startDrawing('LineString')}>
+                    <Message messageKey="ContentEditorView.tools.line" />
+                </Button>
             }
             { isGeomBtnShown('Polygon') &&
-                <Tooltip title={<Message messageKey="ContentEditorView.tools.area" />}>
-                    <div className="add-area tool" onClick={() => startDrawing('Polygon')}></div>
-                </Tooltip>
+                <Button onClick={() => startDrawing('Polygon')}>
+                    <Message messageKey="ContentEditorView.tools.area" />
+                </Button>
             }
-        </React.Fragment>);
+        </Space>);
     }
     if (!isMulti) {
         // TODO: muokkausnappi?
-        return;
+        return (
+            <Space>
+                <Message messageKey="ContentEditorView.geometrylist.title" />
+                <Button onClick={() => startDrawing(type)}>
+                    <Message messageKey="ContentEditorView.tools.geometryEdit" />
+                </Button>
+            </Space>);
     }
     return (<React.Fragment>
         <div>
-            Geometriat:
-            <Tooltip title={<Message messageKey="ContentEditorView.tools.geometryEdit" />}>
-                <Button onClick={() => startDrawing(type)}><Message messageKey="ContentEditorView.tools.geometryEdit" /></Button>
-            </Tooltip>
-            <ol>
-            {feature.geometry.coordinates.map((feat, index) => {
-                return (<GeometryRow 
-                    feature={feature}
-                    index={index}
-                    onRemove={onRemove}
-                    key={JSON.stringify(feat)} />);
-            })}
-            </ol>
+            <Space direction="vertical">
+                <Space>
+                    <Message messageKey="ContentEditorView.geometrylist.title" />
+                    <Button onClick={() => startDrawing(type)}>
+                        <Message messageKey="ContentEditorView.tools.geometryEdit" />
+                    </Button>
+                </Space>
+                { isMulti && <StyledList>
+                    {feature.geometry.coordinates.map((feat, index) => {
+                        return (<GeometryRow 
+                            feature={feature}
+                            index={index}
+                            type={type}
+                            onRemove={onRemove}
+                            key={JSON.stringify(feat)} />);
+                    })}
+                </StyledList> }
+            </Space>
         </div>
     </React.Fragment>);
 };
 
-const GeometryRow = ({feature, index, onRemove}) => {
-    const onlyGeometry = feature.geometry.coordinates.length === 1;
+const GeometryRow = ({feature, type, index, onRemove}) => {
+    let onlyGeometry = feature.geometry.coordinates.length === 1;
+    let simpleType = type.replace('Multi', '');
     return (
         <li>
-            {index}
-            <Button disabled={onlyGeometry} onClick={() => onRemove(feature, index)}><Message messageKey="ContentEditorView.buttons.delete" /></Button>
+            <Space>
+                <Message messageKey={ "ContentEditorView.geometrylist." + simpleType }> {index + 1}</Message>
+                <Button disabled={onlyGeometry}
+                    type="dashed" danger
+                    onClick={() => onRemove(feature, index)}>
+                        <Message messageKey="ContentEditorView.buttons.delete" />
+                </Button>
+            </Space>
         </li>);
 };
 

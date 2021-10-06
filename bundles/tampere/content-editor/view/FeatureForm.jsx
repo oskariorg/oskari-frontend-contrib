@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TextInput, NumberInput, Tooltip } from 'oskari-ui';
+import { TextInput, NumberInput } from 'oskari-ui';
 import styled from 'styled-components';
 
 export const StyledFormField = styled('div')`
@@ -8,9 +8,8 @@ export const StyledFormField = styled('div')`
     padding-bottom: 10px;
     width: 100%;
 `;
-export const StyledLabel = styled('label')`
-    display:block;
-`;
+
+const Label = ({name, children}) => (<label>{name} {children}</label>);
 
 const getFieldForType = (name, type, value, onUpdate) => {
     const attribs = {
@@ -19,16 +18,19 @@ const getFieldForType = (name, type, value, onUpdate) => {
         value
     };
     if (type === 'number') {
-        return (<NumberInput {...attribs} onChange={(newValue) => onUpdate(name, newValue)}/>);
+        return (<Label name={name}>
+                    <NumberInput {...attribs}
+                        onChange={(newValue) => onUpdate(name, newValue)}/>
+                </Label>);
     }
-    return (<TextInput {...attribs} onChange={(evt) => onUpdate(name, evt.target.value)} />);
+    return (<TextInput {...attribs} 
+                addonBefore={<Label name={name} />}
+                onChange={(evt) => onUpdate(name, evt.target.value)} />);
 }
 
 const getDecorated = ({ name, type, value, onUpdate }) => {
-    const labelValue = (<Tooltip title={name} >{name}</Tooltip>)
     return (
         <StyledFormField key={name}>
-            <StyledLabel>{labelValue}</StyledLabel>
             { getFieldForType(name, type, value, onUpdate) }
         </StyledFormField>
     );
@@ -57,8 +59,6 @@ export const FeatureForm = ({config = {}, feature = {}, onChange}) => {
     return (
         <React.Fragment>
             {fields}
-            <pre>{JSON.stringify(config, null, 2)}</pre>
-            <pre>{JSON.stringify(feature, null, 2)}</pre>
         </React.Fragment>);
 };
 

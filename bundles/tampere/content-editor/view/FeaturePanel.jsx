@@ -1,12 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
-import { Message, Button } from 'oskari-ui';
+import { Message, Button, Space } from 'oskari-ui';
+import { Card } from 'oskari-ui/components/Card';
 import { FeatureForm } from './FeatureForm';
 import { GeometryPanel } from './GeometryPanel';
-
+import { GeoJSONPanel } from './GeoJSONPanel';
 import { Helper } from './Helper';
 import { DrawingHelper } from './DrawingHelper';
+import styled from 'styled-components';
 
+const StyledSpace = styled(Space)`
+    width: 100%;
+`;
 
 export const FeaturePanel = ({ layer = {}, feature = {}, onCancel, onSave}) => {
     const type = Helper.detectGeometryType(layer.geometryType);
@@ -49,29 +54,47 @@ export const FeaturePanel = ({ layer = {}, feature = {}, onCancel, onSave}) => {
         DrawingHelper.startDrawing(type, isMulti, currentFeature.geometry, updateGeometry);
         setDrawingMode(true);
     };
+    let title = <Message messageKey="ContentEditorView.newTitle" />;
+    if (!isNew) {
+        title = `${currentFeature.id}`;
+    }
+    const canSave = !isDrawing && !!feature.geometry;
     return (<React.Fragment>
-        <div>
-            Kohteen tiedot:
-            { isNew && <span>Uusi kohde</span>}
-            { !isNew && <span>FID: {currentFeature.id}</span>}
-        </div>
-        <div className="properties-container">
-            <FeatureForm config={layer} feature={currentFeature} onChange={onPropsChange} />
-            
-            { isDrawing && 
-                <Button onClick={() => stopDrawing()}><Message messageKey="ContentEditorView.tools.finishSketch" /></Button>
-            }
-            { !isDrawing &&
-                <GeometryPanel
-                    type={layer.geometryType}
-                    feature={currentFeature}
-                    startDrawing={startDrawing}
-                    updateGeometry={updateGeometry} />
-            }
-            <hr />
-            <Button onClick={cancelCb}><Message messageKey="ContentEditorView.buttons.cancel" /></Button>
-            <Button onClick={saveCb}><Message messageKey="ContentEditorView.buttons.save" /></Button>
-        </div>
+        <StyledSpace direction="vertical">
+            <Card title={title}>
+                <StyledSpace direction="vertical">
+                    <FeatureForm config={layer}
+                        feature={currentFeature} onChange={onPropsChange} />
+                    
+                    { isDrawing && 
+                        <React.Fragment>
+                            <Message messageKey="ContentEditorView.geometrylist.editing" />
+                            <Button type="primary" onClick={() => stopDrawing()}>
+                                <Message messageKey="ContentEditorView.tools.finishSketch" />
+                            </Button>
+                        </React.Fragment>
+                    }
+                    { !isDrawing &&
+                        <GeometryPanel
+                            type={layer.geometryType}
+                            feature={currentFeature}
+                            startDrawing={startDrawing}
+                            updateGeometry={updateGeometry} />
+                    }
+                    { !isDrawing &&
+                        <GeoJSONPanel feature={currentFeature} />
+                    }
+                </StyledSpace>
+            </Card>
+            <Space>
+                <Button onClick={cancelCb}>
+                    <Message messageKey="ContentEditorView.buttons.cancel" />
+                </Button>
+                <Button disabled={!canSave} type="primary" onClick={saveCb}>
+                    <Message messageKey="ContentEditorView.buttons.save" />
+                </Button>
+            </Space>
+        </StyledSpace>
     </React.Fragment>);
 };
 
