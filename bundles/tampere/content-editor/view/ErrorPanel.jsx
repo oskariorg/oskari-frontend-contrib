@@ -9,7 +9,6 @@ export const ErrorPanel = ({ loading = false }) => {
     return (<Message messageKey="ContentEditorView.info.problem"/>);
 };
 
-
 ErrorPanel.propTypes = {
     loading: PropTypes.bool
 };
