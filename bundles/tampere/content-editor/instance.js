@@ -1,4 +1,4 @@
-import './view/SideContentEditorNew';
+import './view/SideContentEditor';
 
 /**
  * @class Oskari.tampere.bundle.content-editor.ContentEditorBundleInstance
@@ -15,7 +15,6 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
     function () {
         this.sandbox = null;
         this.plugins = {};
-        this.notifierService = null;
         this.sideContentEditor = null;
     }, {
         /**
@@ -63,24 +62,11 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
         start: function () {
             const sandbox = Oskari.getSandbox();
             this.sandbox = sandbox;
-
-            // create the OskariEventNotifierService for handling Oskari events.
-            const notifierService = Oskari.clazz.create('Oskari.tampere.bundle.content-editor.OskariEventNotifierService');
-            this.notifierService = notifierService;
-            sandbox.registerService(notifierService);
-            notifierService.eventHandlers
-                .forEach((eventName) => sandbox.registerForEventByName(notifierService, eventName));
-
-            this._bindOskariEvents();
-
             sandbox.register(this);
             Object.keys(this.eventHandlers).forEach(eventName => sandbox.registerForEventByName(this, eventName));
 
             // Let's extend UI
             sandbox.request(this, Oskari.requestBuilder('userinterface.AddExtensionRequest')(this));
-
-            // draw ui
-            this._createUi();
 
             // create request handlers
             this.showContentEditorRequestHandler = Oskari.clazz.create(
@@ -176,22 +162,6 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
         },
 
         /**
-         * [_bindOskariEvents description]
-         * @return {[type]} [description]
-         */
-        _bindOskariEvents: function () {
-            this.notifierService.on('DrawingEvent', (evt) => {
-                if (!this.sideContentEditor || !evt.getIsFinished()) {
-                    return;
-                }
-                if (this.sideContentEditor.DRAW_OPERATION_ID !== evt.getId()) {
-                    return;
-                }
-                this.sideContentEditor.setCurrentGeoJson(evt.getGeoJson());
-            });
-        },
-
-        /**
          * @property {Object} eventHandlers
          * @static
          */
@@ -200,38 +170,17 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
                 if (this.sideContentEditor == null || event.getOperation() !== 'click') {
                     return;
                 }
-                const features = event.getFeatures();
-                this.sideContentEditor.editFeature(features[0].geojson.features[0]);
-            },
-            /*
-            GetInfoResultEvent: function (evt) {
-                if (this.sideContentEditor != null) {
-                    var data = evt.getData();
-                    var featuresIds = [];
-                    if(data.features) {
-                        data.features.forEach(function(feature){
-                            featuresIds.push(feature[0]);
-                        });
-                    }
-
-                    var eventBuilder = Oskari.eventBuilder('WFSFeaturesSelectedEvent');
-                    if (eventBuilder) {
-                        var layer = this.sandbox.findMapLayerFromSelectedMapLayers(data.layerId);
-                        var event = eventBuilder(featuresIds, layer, true);
-                        this.sandbox.notifyAll(event);
-                    }
+                const currentLayer = this.sideContentEditor.getCurrentLayer().id;
+                const editLayerFeatures = event.getFeatures().filter(f => f.layerId === currentLayer);
+                if (!editLayerFeatures.length) {
+                    // no features hit on layer that we are currently editing
+                    return;
                 }
-            },
-            */
-            MapClickedEvent: function (event) {
-                if (this.sideContentEditor != null) {
-                    this.sideContentEditor.setClickCoords({
-                        x: event.getLonLat().lon,
-                        y: event.getLonLat().lat
-                    });
-                }
+                // found one -> edit it
+                this.sideContentEditor.editFeature(editLayerFeatures[0].geojson.features[0]);
             },
             MapLayerEvent: function (event) {
+                // adds edit tool for new layers
                 if (event.getOperation() !== 'add') {
                     // only handle add layer
                     return;
@@ -242,24 +191,6 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
                     // ajax call for all layers
                     this.__setupLayerTools();
                 }
-            },
-            WFSFeaturesSelectedEvent: function (evt) {
-                if (this.sideContentEditor == null) {
-                    return;
-                }
-                const maplayer = evt.getMapLayer();
-                const featureIds = evt.getWfsFeatureIds();
-
-                const wfsPlugin = this.getSandbox()
-                    .findRegisteredModuleInstance('MainMapModule')
-                    .getPluginInstances()
-                    .MainMapModuleWfsVectorLayerPlugin;
-
-                const viewPortFeatures = wfsPlugin.getLayerFeaturePropertiesInViewport(maplayer.getId());
-                const features = featureIds
-                    .map((fid) => viewPortFeatures.find(feat => feat.__fid === fid))
-                    .filter(feat => typeof feat !== 'undefined');
-                this.sideContentEditor._handleInfoResult({layerId: maplayer.getId(), features: features});
             }
         },
         /**
@@ -306,12 +237,6 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
         getDescription: function () {
             return this.getLocalization('desc');
         },
-        /**
-         * @method _createUi
-         * @private
-         * (re)creates the UI
-         */
-        _createUi: function () {},
 
         /**
          * @method setEditorMode
@@ -329,9 +254,9 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
                 mapElement.appendChild(myRoot);
                 this.sideContentEditor = Oskari.clazz.create(
                     'Oskari.tampere.bundle.content-editor.view.SideContentEditor',
-                    this,
-                    this.getLocalization('ContentEditorView'),
-                    layerId
+                    sandbox,
+                    layerId,
+                    () => this.setEditorMode(false)
                 );
                 this.sideContentEditor.render(myRoot);
 

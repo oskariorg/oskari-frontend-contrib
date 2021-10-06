@@ -6,7 +6,6 @@ import { ErrorPanel } from './ErrorPanel';
 import { InfoPanel } from './InfoPanel';
 import styled from 'styled-components';
 
-
 export const StyledPanel = styled('div')`
     background: #FFF;
     position: absolute;
