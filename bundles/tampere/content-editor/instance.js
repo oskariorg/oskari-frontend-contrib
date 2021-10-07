@@ -7,7 +7,6 @@ import './view/SideContentEditor';
  * @class Oskari.tampere.bundle.content-editor.ContentEditorBundleInstance
  *
  * See Oskari.tampere.bundle.content-editor.ContentEditorBundle for bundle definition.
- *
  */
 Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleInstance',
 

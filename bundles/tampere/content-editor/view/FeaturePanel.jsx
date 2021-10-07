@@ -16,11 +16,10 @@ const StyledSpace = styled(Space)`
 export const FeaturePanel = ({ layer = {}, feature = {}, onCancel, onSave}) => {
     const type = Helper.detectGeometryType(layer.geometryType);
     const isMulti = type.includes('Multi');
-    const featureProperties = feature.properties || {};
-    const isNew = !featureProperties._oid;
     const [isDrawing, setDrawingMode] = useState(false);
     const [currentFeature, setCurrentFeature] = useState(feature);
     // TODO: if feature === currentFeature differs -> there have been edits made
+    const isNew = !currentFeature.id;
     const stopDrawing = () => {
         setDrawingMode(false);
         DrawingHelper.stopDrawing();
@@ -65,7 +64,9 @@ export const FeaturePanel = ({ layer = {}, feature = {}, onCancel, onSave}) => {
             <Card title={title}>
                 <StyledSpace direction="vertical">
                     <FeatureForm config={layer}
-                        feature={currentFeature} onChange={onPropsChange} />
+                        feature={currentFeature}
+                        original={feature}
+                        onChange={onPropsChange} />
                     
                     { isDrawing && 
                         <React.Fragment>
@@ -79,6 +80,7 @@ export const FeaturePanel = ({ layer = {}, feature = {}, onCancel, onSave}) => {
                         <GeometryPanel
                             type={layer.geometryType}
                             feature={currentFeature}
+                            original={feature}
                             startDrawing={startDrawing}
                             updateGeometry={updateGeometry} />
                     }
