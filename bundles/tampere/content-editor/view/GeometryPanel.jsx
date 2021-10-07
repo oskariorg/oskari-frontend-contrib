@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Message, Button, Space } from 'oskari-ui';
 import styled from 'styled-components';
@@ -6,11 +6,36 @@ import styled from 'styled-components';
 export const StyledList = styled('ul')`
     padding-left: 30px;
 `;
+export const StyledListItem = styled('li')`
+    :hover {
+        background-color: yellow;
+    }
+`;
 
+const flatten = (list = []) => {
+    let value = list.flat();
+    while(value.some(item => Array.isArray(item))) {
+        value = value.flat();
+    }
+    return value;
+}
 
-export const GeometryPanel = ({ type = '', feature = {}, startDrawing, updateGeometry}) => {
+const geometryMatch = (current = {}, original = {}) => {
+    const currentList = flatten(current.coordinates);
+    const originalList = flatten(original.coordinates);
+    if (currentList.length !== originalList.length) {
+        return false;
+    }
+    return currentList.every(item => originalList.includes(item));
+}
+
+export const GeometryPanel = ({ type = '', feature = {}, original = {}, startDrawing, updateGeometry}) => {
     const isMulti = type.includes('Multi');
     const isGeomBtnShown = (btnType) => type.includes(btnType);
+    useEffect(() => {
+        initLayerOnMap();
+        return cleanup;
+    });
     if (!feature.geometry) {
         return (<Space>
             <Message messageKey="ContentEditorView.geometrylist.empty" />
@@ -32,26 +57,43 @@ export const GeometryPanel = ({ type = '', feature = {}, startDrawing, updateGeo
             }
         </Space>);
     }
+    // has geometry
+    const geometryChanged = !geometryMatch(feature.geometry, original.geometry);
+    const updateFeatureGeometry = (feature, geometry) => {
+        const newFeature = {
+            ...feature,
+            geometry: {
+                ...geometry
+            }
+        };
+        updateGeometry(newFeature);
+    };
     if (!isMulti) {
+        // simple geometry (just one)
         return (
             <Space>
                 <Message messageKey="ContentEditorView.geometrylist.title" />
                 <Button onClick={() => startDrawing(type)}>
                     <Message messageKey="ContentEditorView.tools.geometryEdit" />
                 </Button>
+                <br />
+                {geometryChanged && <React.Fragment>
+                    <Message messageKey="ContentEditorView.modified" />
+                    <Button type="link" onClick={() => updateFeatureGeometry(feature, original.geometry)}>
+                        <Message messageKey="ContentEditorView.restoreOriginal" />
+                    </Button>
+                </React.Fragment>}
             </Space>);
     }
+
+    // multi geometry (can remove all but one)
     const onRemove = (feature, indexToRemove) => {
         const newCoords = feature.geometry.coordinates
             .filter((item, index) => index !== indexToRemove);
-        const newFeature = {
-            ...feature,
-            geometry: {
-                ...feature.geometry,
-                coordinates : newCoords
-            }
-        };
-        updateGeometry(newFeature);
+        updateFeatureGeometry(feature, {
+            ...feature.geometry,
+            coordinates : newCoords
+        });
     };
     return (<React.Fragment>
         <div>
@@ -72,16 +114,92 @@ export const GeometryPanel = ({ type = '', feature = {}, startDrawing, updateGeo
                             key={JSON.stringify(feat)} />);
                     })}
                 </StyledList> }
+                {geometryChanged && <React.Fragment>
+                    <Message messageKey="ContentEditorView.modified" />
+                    <Button type="link" onClick={() => updateFeatureGeometry(feature, original.geometry)}>
+                        <Message messageKey="ContentEditorView.restoreOriginal" />
+                    </Button>
+                </React.Fragment>}
             </Space>
         </div>
     </React.Fragment>);
 };
 
+const LAYER_NAME = 'ContentEditorPreview';
+const initLayerOnMap = () => {
+    Oskari.getSandbox().postRequestByName('VectorLayerRequest', [{
+        "layerId": LAYER_NAME,
+        "opacity": 75,
+        "hover": {
+          "featureStyle": {
+            "fill": {
+              "color": "#ff00ff"
+            },
+            "stroke": {
+              "color": "#000000"
+            }
+          }
+        }
+      }]);
+}
+const cleanup = () => {
+    Oskari.getSandbox().postRequestByName('VectorLayerRequest', [{
+        layerId: LAYER_NAME,
+        remove: true
+      }]);
+}
+
+const wrapToCollection = (feature) => {
+    return {
+        "type": "FeatureCollection",
+        "features": [
+          {
+              ...feature
+          }
+        ]
+      };
+}
+
+const addToMap = (geojson) => {
+    Oskari.getSandbox().postRequestByName('MapModulePlugin.AddFeaturesToMapRequest', 
+    [geojson, {
+        layerId: LAYER_NAME,
+        'clearPrevious': true
+    }]);
+}
+const removeFromMap = () => {
+    Oskari.getSandbox().postRequestByName('MapModulePlugin.RemoveFeaturesFromMapRequest', 
+    [null, null, LAYER_NAME]);
+    //['test_property', 1, LAYER_NAME]);
+}
+const onMouseEnter = (feature, index) => {
+    const partialFeature = {
+        ...feature,
+        geometry: {
+            ...feature.geometry,
+            coordinates: [
+                feature.geometry.coordinates[index]
+            ]
+        },
+        properties: {
+            ...feature.properties,
+            isNew: true
+        }
+    }
+    addToMap(wrapToCollection(partialFeature));
+}
+
+const onMouseOut = (feature, index) => {
+    removeFromMap();
+}
+
 const GeometryRow = ({feature, type, index, onRemove}) => {
     let onlyGeometry = feature.geometry.coordinates.length === 1;
     let simpleType = type.replace('Multi', '');
     return (
-        <li>
+        <StyledListItem
+            onMouseEnter={() => onMouseEnter(feature, index)}
+            onMouseLeave={() => onMouseOut(feature, index)}>
             <Space>
                 <Message messageKey={ "ContentEditorView.geometrylist." + simpleType }> {index + 1}</Message>
                 <Button disabled={onlyGeometry}
@@ -90,13 +208,14 @@ const GeometryRow = ({feature, type, index, onRemove}) => {
                         <Message messageKey="ContentEditorView.buttons.delete" />
                 </Button>
             </Space>
-        </li>);
+        </StyledListItem>);
 };
 
 
 GeometryPanel.propTypes = {
     type: PropTypes.string,
     feature: PropTypes.object,
+    original: PropTypes.object,
     startDrawing: PropTypes.func,
     updateGeometry: PropTypes.func
 };
