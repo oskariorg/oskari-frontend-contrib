@@ -36,9 +36,7 @@ const StyledPanel = styled('div')`
 const FloatingIcon = styled('div')`
     float: right;
 `;
-/*
-<div className="icon-close"></div>
-*/
+
 const Header = LocaleConsumer(({ getMessage, onClose, confirmExit }) => {
     const iconProps = {};
     if (!confirmExit) {
