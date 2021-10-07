@@ -11,18 +11,6 @@ export const StyledList = styled('ul')`
 export const GeometryPanel = ({ type = '', feature = {}, startDrawing, updateGeometry}) => {
     const isMulti = type.includes('Multi');
     const isGeomBtnShown = (btnType) => type.includes(btnType);
-    const onRemove = (feature, indexToRemove) => {
-        const newCoords = feature.geometry.coordinates
-            .filter((item, index) => index !== indexToRemove);
-        const newFeature = {
-            ...feature,
-            geometry: {
-                ...feature.geometry,
-                coordinates : newCoords
-            }
-        };
-        updateGeometry(newFeature);
-    };
     if (!feature.geometry) {
         return (<Space>
             <Message messageKey="ContentEditorView.geometrylist.empty" />
@@ -45,7 +33,6 @@ export const GeometryPanel = ({ type = '', feature = {}, startDrawing, updateGeo
         </Space>);
     }
     if (!isMulti) {
-        // TODO: muokkausnappi?
         return (
             <Space>
                 <Message messageKey="ContentEditorView.geometrylist.title" />
@@ -54,6 +41,18 @@ export const GeometryPanel = ({ type = '', feature = {}, startDrawing, updateGeo
                 </Button>
             </Space>);
     }
+    const onRemove = (feature, indexToRemove) => {
+        const newCoords = feature.geometry.coordinates
+            .filter((item, index) => index !== indexToRemove);
+        const newFeature = {
+            ...feature,
+            geometry: {
+                ...feature.geometry,
+                coordinates : newCoords
+            }
+        };
+        updateGeometry(newFeature);
+    };
     return (<React.Fragment>
         <div>
             <Space direction="vertical">

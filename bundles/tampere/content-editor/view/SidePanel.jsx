@@ -47,7 +47,7 @@ const Header = LocaleConsumer(({ getMessage, onClose, confirmExit }) => {
     return (
         <div className="header">
             <FloatingIcon>
-                <Confirm 
+                <Confirm
                     disabled={!confirmExit}
                     title={getMessage('ContentEditorView.exitConfirm')}
                     onConfirm={onClose}
@@ -62,7 +62,7 @@ const Header = LocaleConsumer(({ getMessage, onClose, confirmExit }) => {
 
 
 
-export const SidePanel = ({ layer = {}, feature = {}, loading = false, onSave, onClose, onCancel, startNewFeature}) => {
+export const SidePanel = ({ layer = {}, feature = {}, loading = false, onSave, onDelete, onClose, onCancel, startNewFeature}) => {
     const hasLayer = !!layer.geometryType;
     const hasFeature = hasLayer && feature.type === 'Feature';
     const showHelpText = hasLayer && !hasFeature;
@@ -84,6 +84,7 @@ export const SidePanel = ({ layer = {}, feature = {}, loading = false, onSave, o
                         layer={layer}
                         onCancel={onCancel}
                         onSave={onSave}
+                        onDelete={onDelete}
                         feature={feature} />
                 }
             </div>
@@ -96,6 +97,7 @@ SidePanel.propTypes = {
     feature: PropTypes.object,
     loading: PropTypes.bool,
     onSave: PropTypes.func,
+    onDelete: PropTypes.func,
     onClose: PropTypes.func,
     onCancel: PropTypes.func,
     startNewFeature: PropTypes.func

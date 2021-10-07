@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
-import { Message, Button, Space } from 'oskari-ui';
+import { Confirm, Message, Button, Space } from 'oskari-ui';
+import { LocaleConsumer } from 'oskari-ui/util';
 import { Card } from 'oskari-ui/components/Card';
 import { FeatureForm } from './FeatureForm';
 import { GeometryPanel } from './GeometryPanel';
@@ -13,7 +14,7 @@ const StyledSpace = styled(Space)`
     width: 100%;
 `;
 
-export const FeaturePanel = ({ layer = {}, feature = {}, onCancel, onSave}) => {
+export const FeaturePanel = ({ layer = {}, feature = {}, onCancel, onSave, onDelete}) => {
     const type = Helper.detectGeometryType(layer.geometryType);
     const isMulti = type.includes('Multi');
     const [isDrawing, setDrawingMode] = useState(false);
@@ -93,6 +94,7 @@ export const FeaturePanel = ({ layer = {}, feature = {}, onCancel, onSave}) => {
                 <Button onClick={cancelCb}>
                     <Message messageKey="ContentEditorView.buttons.cancel" />
                 </Button>
+                {!isNew && <DeleteButton onDelete={() => onDelete(currentFeature.id)} />}
                 <Button disabled={!canSave} type="primary" onClick={saveCb}>
                     <Message messageKey="ContentEditorView.buttons.save" />
                 </Button>
@@ -101,10 +103,24 @@ export const FeaturePanel = ({ layer = {}, feature = {}, onCancel, onSave}) => {
     </React.Fragment>);
 };
 
+const DeleteButton = LocaleConsumer(({ getMessage, onDelete }) => {
+    return (
+        <Confirm
+            title={getMessage('ContentEditorView.deleteFeature.text')}
+            onConfirm={onDelete}
+            okText={getMessage('ContentEditorView.buttons.yes')}
+            cancelText={getMessage('ContentEditorView.buttons.no')}>
+            <Button type="danger">
+                    <Message messageKey="ContentEditorView.buttons.deleteFeature" />
+                </Button>
+        </Confirm>);
+});
+
 FeaturePanel.propTypes = {
     layer: PropTypes.object,
     feature: PropTypes.object,
     editing: PropTypes.bool,
     onCancel: PropTypes.func,
-    onSave: PropTypes.func
+    onSave: PropTypes.func,
+    onDelete: PropTypes.func
 };

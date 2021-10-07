@@ -77,7 +77,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                         layer={this.getCurrentLayer()}
                         feature={this.getCurrentFeature()}
                         onSave={(feature) => this._saveFeature(feature)}
-                        deleteFeature={(featureId) => this._deleteFeature(featureId)}
+                        onDelete={(featureId) => this._deleteFeature(featureId)}
                         onClose={this.onExit}
                         onCancel={() => this._stopEditing()}
                         startNewFeature={() => this._startNewFeature()}
