@@ -16,7 +16,7 @@ export const InfoPanel = ({ layer = {}, startNewFeature, onClose}) => {
                 
                 <Space>
                     <Button onClick={onClose}>
-                        <Message messageKey="ContentEditorView.buttons.cancel" />
+                        <Message messageKey="ContentEditorView.buttons.close" />
                     </Button>
                     <Button onClick={startNewFeature}  type="primary">
                         <Message messageKey="ContentEditorView.buttons.addFeature" />

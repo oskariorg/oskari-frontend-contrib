@@ -35,6 +35,7 @@ Oskari.registerLocalization(
             "buttons": {
                 "save": "Save",
                 "cancel": "Cancel",
+                "close": "Close",
                 "ok": "Ok",
                 "delete": "Delete",
                 "addFeature": "Add feature",
