@@ -7,7 +7,27 @@ Oskari.registerLocalization(
         "desc": "",
         "ContentEditorView": {
             "title": "Content editor",
-            "featureModifyInfo": "Choose feature from map to modify it.",
+            "info": {
+                "layerLabel": "Modifying layer",
+                "featureModifyInfo": "Choose a feature to modify by clicking it on the map.",
+                "loading": "Loading layer metadata...",
+                "problem": "Insufficient metadata for layer!"
+            },
+            "newTitle": "New features",
+            "geometrylist": {
+                "title": "Geomerty",
+                "empty": "Draw a geometry on the map",
+                "editing": "Draw on the map",
+                "Point": "Point",
+                "LineString": "Line",
+                "Polygon": "Area",
+            },
+            "exitConfirm": "Unsaved changes will be lost. Do you want to exit?",
+            "originalValue": "Original value",
+            "missingValue": "Value missing",
+            "modified": "Modified",
+            "restoreOriginal": "Restore original value",
+            
             "multipleFeatureModifyInfo": "You can also choose multiple features from the map by pressing the ctrl-button on your keyboard.",
             "toolInfo": "Choose point, line or polygon tool to draw new geometries.",
             "geometryModifyInfo": "With geometry editing tool you can edit feature geometry.",
@@ -28,7 +48,8 @@ Oskari.registerLocalization(
                 "point": "Add point geometry",
                 "line": "Add line geometry",
                 "area": "Add area geometry",
-                "geometryEdit": "Edit selected geometry",
+                "geometryEdit": "Edit geometry on the map",
+                "finishSketch": "Finish drawing on map",
                 "remove": "Remove one geometry"
             },
             "featureUpdate": {
