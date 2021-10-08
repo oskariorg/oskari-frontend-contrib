@@ -2982,7 +2982,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             var analyseService = me.instance.analyseService;
 
             layers.forEach(function (layer) {
-                if (layer.hasFeatureData()) {
+                if (layer.getLayerType() === 'wfs') {
                     if (Object.keys(layer.getPropertyTypes()).length === 0) {
                         analyseService.loadWFSLayerPropertiesAndTypes(
                             layer.getId()
