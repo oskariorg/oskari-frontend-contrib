@@ -627,6 +627,9 @@ Oskari.clazz.define(
                 hasFeatureData: function () {
                     return false;
                 },
+                getAttributes: function () {
+                    return {};
+                },
                 getPropertyTypes: function () {
                     return {};
                 },
