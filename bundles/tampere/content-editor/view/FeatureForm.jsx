@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, TextInput, NumberInput, Message, Tooltip } from 'oskari-ui';
+import { StyledContainer, StyledModIndicator } from './styled';
 import styled from 'styled-components';
 
 export const StyledFormField = styled('div')`
@@ -40,14 +41,14 @@ const getDecorated = ({ name, type, value, originalValue, isNew, onUpdate }) => 
     return (
         <StyledFormField key={name}>
             { getFieldForType(name, type, value, onUpdate) }
-            { hasChanged && <React.Fragment>
-                <Message messageKey="ContentEditorView.modified" />
+            { hasChanged && <StyledContainer>
+                <Message messageKey="ContentEditorView.modified" LabelComponent={StyledModIndicator} />
                 <Tooltip title={noteForOriginal}>
                     <Button type="link" onClick={() => onUpdate(name, originalValue)}>
                         <Message messageKey="ContentEditorView.restoreOriginal" />
                     </Button>
                 </Tooltip>
-            </React.Fragment> }
+            </StyledContainer> }
         </StyledFormField>
     );
 };

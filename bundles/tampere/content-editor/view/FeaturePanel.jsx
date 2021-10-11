@@ -8,11 +8,7 @@ import { GeometryPanel } from './GeometryPanel';
 import { GeoJSONPanel } from './GeoJSONPanel';
 import { Helper } from './Helper';
 import { DrawingHelper } from './DrawingHelper';
-import styled from 'styled-components';
-
-const StyledSpace = styled(Space)`
-    width: 100%;
-`;
+import { StyledSpace } from './styled';
 
 export const FeaturePanel = ({ layer = {}, feature = {}, onCancel, onSave, onDelete}) => {
     const type = Helper.detectGeometryType(layer.geometryType);

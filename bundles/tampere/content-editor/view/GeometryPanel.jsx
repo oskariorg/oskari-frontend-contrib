@@ -1,20 +1,12 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Message, Button, Space } from 'oskari-ui';
+import { StyledSpace, StyledContainer, StyledModIndicator } from './styled';
 import styled from 'styled-components';
 
 export const StyledList = styled('ul')`
     width: 100%:
     list-style-type: none;
-`;
-export const StyledContainer = styled('div')`
-    display: inline-flex;
-    justify-content: space-between;
-    width: 100%;
-    align-items: center;
-`;
-export const StyledSpace = styled(Space)`
-    width: 100%;
 `;
 
 export const StyledListItem = styled('li')`
@@ -78,7 +70,8 @@ export const GeometryPanel = ({ type = '', feature = {}, original = {}, startDra
         </Space>);
     }
     // has geometry
-    const geometryChanged = !geometryMatch(feature.geometry, original.geometry);
+    const isNew = !feature.id;
+    const geometryChanged = !isNew && !geometryMatch(feature.geometry, original.geometry);
     const updateFeatureGeometry = (feature, geometry) => {
         const newFeature = {
             ...feature,
@@ -100,7 +93,7 @@ export const GeometryPanel = ({ type = '', feature = {}, original = {}, startDra
                 </StyledContainer>
                 <br />
                 {geometryChanged && <StyledContainer>
-                    <Message messageKey="ContentEditorView.modified" />
+                    <Message messageKey="ContentEditorView.modified" LabelComponent={StyledModIndicator}  />
                     <Button type="link" onClick={() => updateFeatureGeometry(feature, original.geometry)}>
                         <Message messageKey="ContentEditorView.restoreOriginal" />
                     </Button>
@@ -137,7 +130,7 @@ export const GeometryPanel = ({ type = '', feature = {}, original = {}, startDra
                     })}
                 </StyledList> }
                 {geometryChanged && <StyledContainer>
-                    <Message messageKey="ContentEditorView.modified" />
+                    <Message messageKey="ContentEditorView.modified" LabelComponent={StyledModIndicator} />
                     <Button type="link" onClick={() => updateFeatureGeometry(feature, original.geometry)}>
                         <Message messageKey="ContentEditorView.restoreOriginal" />
                     </Button>
