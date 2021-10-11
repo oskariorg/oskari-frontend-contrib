@@ -33,6 +33,7 @@ Oskari.registerLocalization(
             "buttons": {
                 "save": "Tallenna",
                 "cancel": "Peruuta",
+                "close": "Sulje",
                 "ok": "Ok",
                 "delete": "Poista",
                 "addFeature": "Lisää kohde",
