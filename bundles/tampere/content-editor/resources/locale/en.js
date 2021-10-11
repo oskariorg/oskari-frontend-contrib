@@ -22,12 +22,15 @@ Oskari.registerLocalization(
                 "LineString": "Line",
                 "Polygon": "Area",
             },
+            "editConfirm": {
+                "title": "The feature to edit is being switched",
+                "msg": "Unsaved changes will be lost. Do you want to switch?"
+            },
             "exitConfirm": "Unsaved changes will be lost. Do you want to exit?",
             "originalValue": "Original value",
             "missingValue": "Value missing",
             "modified": "Modified",
             "restoreOriginal": "Restore original value",
-            
             "multipleFeatureModifyInfo": "You can also choose multiple features from the map by pressing the ctrl-button on your keyboard.",
             "toolInfo": "Choose point, line or polygon tool to draw new geometries.",
             "geometryModifyInfo": "With geometry editing tool you can edit feature geometry.",
