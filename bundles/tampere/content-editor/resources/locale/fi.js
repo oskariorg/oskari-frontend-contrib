@@ -22,6 +22,10 @@ Oskari.registerLocalization(
                 "LineString": "Viiva",
                 "Polygon": "Alue",
             },
+            "editConfirm": {
+                "title": "Muokattavaa kohdetta ollaan vaihtamassa",
+                "msg": "Tallentamattomat muutokset menetetään. Haluatko varmasti vaihtaa?"
+            },
             "exitConfirm": "Tallentamattomat muutokset menetetään. Haluatko varmasti poistua?",
             "originalValue": "Alkuperäinen arvo",
             "missingValue": "Arvo puuttuu",

@@ -106,10 +106,9 @@ const DeleteButton = LocaleConsumer(({ getMessage, onDelete, disabled }) => {
             onConfirm={onDelete}
             okText={getMessage('ContentEditorView.buttons.yes')}
             cancelText={getMessage('ContentEditorView.buttons.no')}>
-            <Button type="danger"
-                disabled={disabled}>
-                    <Message messageKey="ContentEditorView.buttons.deleteFeature" />
-                </Button>
+            <Button type="danger" disabled={disabled}>
+                <Message messageKey="ContentEditorView.buttons.deleteFeature" />
+            </Button>
         </Confirm>);
 });
 

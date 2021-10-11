@@ -4,6 +4,8 @@ import { LocaleProvider } from 'oskari-ui/util';
 import { Helper } from './Helper';
 import { SidePanel } from './SidePanel';
 import { DrawingHelper } from './DrawingHelper';
+import { Messaging } from 'oskari-ui/util';
+import { confirmEdit } from './EditConfirmation';
 
 /**
  * @class Oskari.tampere.bundle.content-editor.view.SideContentEditor
@@ -14,6 +16,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
         this.onExit = onExit;
         this.mapLayerService = this.sandbox.getService('Oskari.mapframework.service.MapLayerService');
 
+        this.loc = Oskari.getMsg.bind(null, 'ContentEditor');
         Oskari.makeObservable(this);
         this.loading = false;
         this.on('loading', (newValue) => {
@@ -34,9 +37,19 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
         getCurrentLayer: function () {
             return this._currentLayer;
         },
-        editFeature: function (geojson) {
-            this._feature = geojson;
-            if (typeof geojson !== 'undefined') {
+        editFeature: function (geojson, confirmed) {
+            //if (this._feature.)
+            //confirmEdit(() => this._update());
+            if (typeof geojson === 'undefined') {
+                // reset feature we were editing
+                this._feature = undefined;
+                this._update();
+                return;
+            }
+
+            if (!confirmed && this._feature && this._feature.id !== geojson.id) {
+                confirmEdit(this.loc, () => this.editFeature(geojson, true));
+            } else {
                 // remove _oid (internal normalized id by Oskari) from properties
                 const {_oid, ...rest} = geojson.properties
                 const feature = {
@@ -46,8 +59,8 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                     }
                 };
                 this._feature = feature;
+                this._update();
             }
-            this._update();
         },
         getCurrentFeature: function () {
             return this._feature;
@@ -114,6 +127,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                 properties: {}
             });
         },
+
         _saveFeature: function (feature) {
             const isNew = typeof feature.id === 'undefined';
             const url = Oskari.urls.getRoute('VectorFeatureWriter', {
@@ -135,9 +149,11 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                 this._stopEditing();
                 setTimeout(() => {
                     this.sandbox.postRequestByName('MapModulePlugin.MapLayerUpdateRequest', [this.getCurrentLayer().id, true]);
+                    Messaging.success(this.loc('ContentEditorView.featureUpdate.success'));
                 }, 500);
-            }).catch(error => console.log(error));
+            }).catch(() => Messaging.error(this.loc('ContentEditorView.featureUpdate.error')));
         },
+
         _deleteFeature: function (featureId) {
             const url = Oskari.urls.getRoute('VectorFeatureWriter', {
                 layerId: this.getCurrentLayer().id,
@@ -158,8 +174,9 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                 this._stopEditing();
                 setTimeout(() => {
                     this.sandbox.postRequestByName('MapModulePlugin.MapLayerUpdateRequest', [this.getCurrentLayer().id, true]);
+                    Messaging.success(this.loc('ContentEditorView.featureDelete.success'));
                 }, 500);
-            }).catch(error => console.log(error));
+            }).catch(() => Messaging.error(this.loc('ContentEditorView.featureDelete.error')));
         },
 
         /**
