@@ -90,7 +90,7 @@ export const FeaturePanel = ({ layer = {}, feature = {}, onCancel, onSave, onDel
                 <Button onClick={cancelCb}>
                     <Message messageKey="ContentEditorView.buttons.cancel" />
                 </Button>
-                {!isNew && <DeleteButton onDelete={() => onDelete(currentFeature.id)} />}
+                {!isNew && <DeleteButton disabled={!canSave} onDelete={() => onDelete(currentFeature.id)} />}
                 <Button disabled={!canSave} type="primary" onClick={saveCb}>
                     <Message messageKey="ContentEditorView.buttons.save" />
                 </Button>
@@ -99,14 +99,15 @@ export const FeaturePanel = ({ layer = {}, feature = {}, onCancel, onSave, onDel
     </React.Fragment>);
 };
 
-const DeleteButton = LocaleConsumer(({ getMessage, onDelete }) => {
+const DeleteButton = LocaleConsumer(({ getMessage, onDelete, disabled }) => {
     return (
         <Confirm
             title={getMessage('ContentEditorView.deleteFeature.text')}
             onConfirm={onDelete}
             okText={getMessage('ContentEditorView.buttons.yes')}
             cancelText={getMessage('ContentEditorView.buttons.no')}>
-            <Button type="danger">
+            <Button type="danger"
+                disabled={disabled}>
                     <Message messageKey="ContentEditorView.buttons.deleteFeature" />
                 </Button>
         </Confirm>);
