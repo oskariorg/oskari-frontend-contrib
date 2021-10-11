@@ -4,11 +4,31 @@ import { Message, Button, Space } from 'oskari-ui';
 import styled from 'styled-components';
 
 export const StyledList = styled('ul')`
-    padding-left: 30px;
+    width: 100%:
+    list-style-type: none;
 `;
+export const StyledContainer = styled('div')`
+    display: inline-flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+`;
+export const StyledSpace = styled(Space)`
+    width: 100%;
+`;
+
 export const StyledListItem = styled('li')`
+    padding: 5px;
+    border: 1px solid gray;
+    border-radius: 3px;
+    margin-bottom: 2px;
+    display: inline-flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+
     :hover {
-        background-color: yellow;
+        background-color: #FDF8D9;
     }
 `;
 
@@ -71,19 +91,21 @@ export const GeometryPanel = ({ type = '', feature = {}, original = {}, startDra
     if (!isMulti) {
         // simple geometry (just one)
         return (
-            <Space>
-                <Message messageKey="ContentEditorView.geometrylist.title" />
-                <Button onClick={() => startDrawing(type)}>
-                    <Message messageKey="ContentEditorView.tools.geometryEdit" />
-                </Button>
+            <StyledSpace>
+                <StyledContainer>
+                    <Message messageKey="ContentEditorView.geometrylist.title" />
+                    <Button onClick={() => startDrawing(type)}>
+                        <Message messageKey="ContentEditorView.tools.geometryEdit" />
+                    </Button>
+                </StyledContainer>
                 <br />
-                {geometryChanged && <React.Fragment>
+                {geometryChanged && <StyledContainer>
                     <Message messageKey="ContentEditorView.modified" />
                     <Button type="link" onClick={() => updateFeatureGeometry(feature, original.geometry)}>
                         <Message messageKey="ContentEditorView.restoreOriginal" />
                     </Button>
-                </React.Fragment>}
-            </Space>);
+                </StyledContainer>}
+            </StyledSpace>);
     }
 
     // multi geometry (can remove all but one)
@@ -97,13 +119,13 @@ export const GeometryPanel = ({ type = '', feature = {}, original = {}, startDra
     };
     return (<React.Fragment>
         <div>
-            <Space direction="vertical">
-                <Space>
+            <StyledSpace direction="vertical">
+                <StyledContainer>
                     <Message messageKey="ContentEditorView.geometrylist.title" />
                     <Button onClick={() => startDrawing(type)}>
                         <Message messageKey="ContentEditorView.tools.geometryEdit" />
                     </Button>
-                </Space>
+                </StyledContainer>
                 { isMulti && <StyledList>
                     {feature.geometry.coordinates.map((feat, index) => {
                         return (<GeometryRow 
@@ -114,13 +136,13 @@ export const GeometryPanel = ({ type = '', feature = {}, original = {}, startDra
                             key={JSON.stringify(feat)} />);
                     })}
                 </StyledList> }
-                {geometryChanged && <React.Fragment>
+                {geometryChanged && <StyledContainer>
                     <Message messageKey="ContentEditorView.modified" />
                     <Button type="link" onClick={() => updateFeatureGeometry(feature, original.geometry)}>
                         <Message messageKey="ContentEditorView.restoreOriginal" />
                     </Button>
-                </React.Fragment>}
-            </Space>
+                </StyledContainer>}
+            </StyledSpace>
         </div>
     </React.Fragment>);
 };
@@ -200,14 +222,12 @@ const GeometryRow = ({feature, type, index, onRemove}) => {
         <StyledListItem
             onMouseEnter={() => onMouseEnter(feature, index)}
             onMouseLeave={() => onMouseOut(feature, index)}>
-            <Space>
-                <Message messageKey={ "ContentEditorView.geometrylist." + simpleType }> {index + 1}</Message>
-                <Button disabled={onlyGeometry}
-                    type="dashed" danger
-                    onClick={() => onRemove(feature, index)}>
-                        <Message messageKey="ContentEditorView.buttons.delete" />
-                </Button>
-            </Space>
+            <Message messageKey={ "ContentEditorView.geometrylist." + simpleType }> {index + 1}</Message>
+            <Button disabled={onlyGeometry}
+                type="dashed" danger
+                onClick={() => onRemove(feature, index)}>
+                    <Message messageKey="ContentEditorView.buttons.delete" />
+            </Button>
         </StyledListItem>);
 };
 
