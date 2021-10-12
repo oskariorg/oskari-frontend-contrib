@@ -2283,6 +2283,13 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                     return val.value;
                 });
             }
+            // HACK!!
+            // There should be one propertety in filter - in other case all properties are retreaved by WPS
+            // Userlayer has forced selection for no properties => fields is empty array
+            // Add feature_id field (can't use normal fields because them values are inside property_json)
+            if (layer.getLayerType() === 'userlayer') {
+                fields = ['feature_id'];
+            }
 
             var name = container.find('.settings_name_field').val() ? container.find('.settings_name_field').val() : '_';
             const defaults = {
@@ -2982,7 +2989,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             var analyseService = me.instance.analyseService;
 
             layers.forEach(function (layer) {
-                if (layer.hasFeatureData()) {
+                if (layer.getLayerType() === 'wfs') {
                     if (Object.keys(layer.getPropertyTypes()).length === 0) {
                         analyseService.loadWFSLayerPropertiesAndTypes(
                             layer.getId()
