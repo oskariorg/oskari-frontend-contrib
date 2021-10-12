@@ -1,8 +1,12 @@
+
+import './request/ShowContentEditorRequest';
+import './request/ShowContentEditorRequestHandler';
+import './view/SideContentEditor';
+
 /**
  * @class Oskari.tampere.bundle.content-editor.ContentEditorBundleInstance
  *
  * See Oskari.tampere.bundle.content-editor.ContentEditorBundle for bundle definition.
- *
  */
 Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleInstance',
 
@@ -12,13 +16,8 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
      */
     function () {
         this.sandbox = null;
-        this.started = false;
         this.plugins = {};
-        this.notifierService = null;
-        this.localization = null;
         this.sideContentEditor = null;
-        this.disabledLayers = null;
-        this.finishedDrawing = false;
     }, {
         /**
          * @static
@@ -63,58 +62,22 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
          * Implements BundleInstance protocol start method
          */
         start: function () {
-            var me = this,
-                conf = me.conf,
-                sandboxName = (conf ? conf.sandbox : null) || 'sandbox',
-                sandbox = Oskari.getSandbox(sandboxName),
-                request,
-                p;
-
-            if (me.started) {
-                return;
-            }
-
-            me.started = true;
-
-            me.sandbox = sandbox;
-
-            this.localization = Oskari.getLocalization(this.getName());
-
-            // create the OskariEventNotifierService for handling Oskari events.
-            var notifierService = Oskari.clazz.create('Oskari.tampere.bundle.content-editor.OskariEventNotifierService');
-            me.sandbox.registerService(notifierService);
-            me.notifierService = notifierService;
-            me.notifierService.eventHandlers.forEach(function (eventName) {
-                sandbox.registerForEventByName(me.notifierService, eventName);
-            });
-
-            me._bindOskariEvents();
-
-            sandbox.register(me);
-            for (p in me.eventHandlers) {
-                if (me.eventHandlers.hasOwnProperty(p)) {
-                    sandbox.registerForEventByName(me, p);
-                }
-            }
+            const sandbox = Oskari.getSandbox();
+            this.sandbox = sandbox;
+            sandbox.register(this);
+            Object.keys(this.eventHandlers).forEach(eventName => sandbox.registerForEventByName(this, eventName));
 
             // Let's extend UI
-            request = Oskari.requestBuilder('userinterface.AddExtensionRequest')(this);
-            sandbox.request(this, request);
-
-            // draw ui
-            me._createUi();
+            sandbox.request(this, Oskari.requestBuilder('userinterface.AddExtensionRequest')(this));
 
             // create request handlers
-            me.showContentEditorRequestHandler = Oskari.clazz.create(
+            this.showContentEditorRequestHandler = Oskari.clazz.create(
                 'Oskari.tampere.bundle.content-editor.request.ShowContentEditorRequestHandler',
-                me
+                this
             );
 
             // register request handlers
-            sandbox.requestHandler(
-                'ContentEditor.ShowContentEditorRequest',
-                me.showContentEditorRequestHandler
-            );
+            sandbox.requestHandler('ContentEditor.ShowContentEditorRequest', this.showContentEditorRequestHandler);
             this.__setupLayerTools();
         },
 
@@ -152,7 +115,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
          * @return {Oskari.mapframework.service.MapLayerService}
          */
         getLayerService: function () {
-            return this.sandbox.getService('Oskari.mapframework.service.MapLayerService');
+            return this.getSandbox().getService('Oskari.mapframework.service.MapLayerService');
         },
 
         /**
@@ -161,25 +124,28 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
          * @param  {Boolean} suppressEvent true to not send event about updated layer (optional)
          */
         __addTool: function (layerModel, suppressEvent) {
-            var me = this;
-            var service = this.getLayerService();
+            const service = this.getLayerService();
             if (typeof layerModel !== 'object') {
                 // detect layerId and replace with the corresponding layerModel
                 layerModel = service.findMapLayer(layerModel);
             }
-            if (!layerModel || !layerModel.getPermission('EDIT_LAYER_CONTENT') || !layerModel.isLayerOfType('WFS')) {
+            if (!layerModel ||
+                !layerModel.hasPermission('EDIT_LAYER_CONTENT') ||
+                !layerModel.isLayerOfType('WFS')) {
                 return;
             }
 
             // add feature data tool for layer
-            var label = this.getLocalization('title') || {},
-                tool = Oskari.clazz.create('Oskari.mapframework.domain.Tool');
+            const label = this.getLocalization('title') || {};
+            const tool = Oskari.clazz.create('Oskari.mapframework.domain.Tool');
             tool.setName('content-editor');
             tool.setTitle(label);
             tool.setIconCls('show-content-editor-tool');
             tool.setTooltip(label);
+
+            const sb = this.getSandbox();
             tool.setCallback(function () {
-                me.sandbox.postRequestByName('ContentEditor.ShowContentEditorRequest', [layerModel.getId()]);
+                sb.postRequestByName('ContentEditor.ShowContentEditorRequest', [layerModel.getId()]);
             });
 
             service.addToolForLayer(layerModel, tool, suppressEvent);
@@ -188,33 +154,13 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
          * Adds tools for all layers
          */
         __setupLayerTools: function () {
-            var me = this;
             // add tools for feature data layers
-            var service = this.getLayerService();
-            var layers = service.getAllLayers();
-            _.each(layers, function (layer) {
-                me.__addTool(layer, true);
-            });
+            const service = this.getLayerService();
+            const layers = service.getAllLayers();
+            layers.forEach((layer) => this.__addTool(layer, true));
             // update all layers at once since we suppressed individual events
             var event = Oskari.eventBuilder('MapLayerEvent')(null, 'tool');
-            me.sandbox.notifyAll(event);
-        },
-
-        /**
-         * [_bindOskariEvents description]
-         * @return {[type]} [description]
-         */
-        _bindOskariEvents: function () {
-            var me = this;
-            me.notifierService.on('DrawingEvent', function (evt) {
-                if (me.getName() !== evt.getId()) {
-                    return;
-                }
-                if (!evt.getIsFinished()) {
-                    return;
-                }
-                me.sideContentEditor.setCurrentGeoJson(evt.getGeoJson());
-            });
+            this.getSandbox().notifyAll(event);
         },
 
         /**
@@ -223,37 +169,20 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
          */
         eventHandlers: {
             FeatureEvent: function (event) {
-                if (this.sideContentEditor != null && event.getOperation() == 'click') {
-                    this.sideContentEditor.parseWFSFeatureGeometries(event);
+                if (this.sideContentEditor == null || event.getOperation() !== 'click') {
+                    return;
                 }
-            },
-            GetInfoResultEvent: function (evt) {
-                if (this.sideContentEditor != null) {
-                    var data = evt.getData();
-                    var featuresIds = [];
-                    if(data.features) {
-                        data.features.forEach(function(feature){
-                            featuresIds.push(feature[0]);
-                        });
-                    }
-
-                    var eventBuilder = Oskari.eventBuilder('WFSFeaturesSelectedEvent');
-                    if (eventBuilder) {
-                        var layer = this.sandbox.findMapLayerFromSelectedMapLayers(data.layerId);
-                        var event = eventBuilder(featuresIds, layer, true);
-                        this.sandbox.notifyAll(event);
-                    }
+                const currentLayer = this.sideContentEditor.getCurrentLayer().id;
+                const editLayerFeatures = event.getFeatures().filter(f => f.layerId === currentLayer);
+                if (!editLayerFeatures.length) {
+                    // no features hit on layer that we are currently editing
+                    return;
                 }
-            },
-            MapClickedEvent: function (event) {
-                if (this.sideContentEditor != null) {
-                    this.sideContentEditor.setClickCoords({
-                        x: event.getLonLat().lon,
-                        y: event.getLonLat().lat
-                    });
-                }
+                // found one -> edit it
+                this.sideContentEditor.editFeature(editLayerFeatures[0].geojson.features[0]);
             },
             MapLayerEvent: function (event) {
+                // adds edit tool for new layers
                 if (event.getOperation() !== 'add') {
                     // only handle add layer
                     return;
@@ -264,24 +193,6 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
                     // ajax call for all layers
                     this.__setupLayerTools();
                 }
-            },
-            WFSFeaturesSelectedEvent: function (evt) {
-                if (this.sideContentEditor != null) {
-                    var maplayer = evt.getMapLayer();
-                    var featureIds = evt.getWfsFeatureIds();
-                    var features = [];
-
-                    featureIds.forEach(function(fid) {
-                        var filtered = maplayer.getActiveFeatures().filter(function(feature){
-                            return feature[0] === fid;
-                        });
-                        filtered.forEach(function(feature){
-                            features.push(feature);
-                        });
-                    });
-                    this.sideContentEditor._handleInfoResult({layerId: maplayer.getId(), features: features});
-                    
-                }
             }
         },
         /**
@@ -289,20 +200,11 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
          * Implements BundleInstance protocol stop method
          */
         stop: function () {
-            var sandbox = this.sandbox(),
-                request,
-                p;
-            for (p in this.eventHandlers) {
-                if (this.eventHandlers.hasOwnProperty(p)) {
-                    sandbox.unregisterFromEventByName(this, p);
-                }
-            }
-
-            request = Oskari.requestBuilder('userinterface.RemoveExtensionRequest')(this);
-            sandbox.request(this, request);
-
-            this.sandbox.unregister(this);
-            this.started = false;
+            const sandbox = this.getSandbox();
+            Object.keys(this.eventHandlers)
+                .forEach(eventName => sandbox.unregisterFromEventByName(this, eventName));
+            sandbox.request(this, Oskari.requestBuilder('userinterface.RemoveExtensionRequest')(this));
+            sandbox.unregister(this);
         },
         /**
          * @method startExtension
@@ -337,12 +239,6 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
         getDescription: function () {
             return this.getLocalization('desc');
         },
-        /**
-         * @method _createUi
-         * @private
-         * (re)creates the UI
-         */
-        _createUi: function () {},
 
         /**
          * @method setEditorMode
@@ -351,66 +247,54 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
          * @param {string} layerId
          */
         setEditorMode: function (blnEnabled, layerId) {
-            var me = this,
-                map = jQuery('#contentMap'),
-                request;
+            const mapElement = document.getElementById('contentMap');
+            const sandbox = this.getSandbox();
+            const additionalClass = 'mapContentEditorMode';
             if (blnEnabled) {
-                me.oskariLang = Oskari.getLang();
-
-                map.addClass('mapContentEditorMode');
-                me.sandbox.mapMode = 'mapContentEditorMode';
-
-                me.sideContentEditor = Oskari.clazz.create(
+                mapElement.classList.add(additionalClass); //addClass('mapContentEditorMode');
+                const myRoot = document.createElement('div');
+                mapElement.appendChild(myRoot);
+                this.sideContentEditor = Oskari.clazz.create(
                     'Oskari.tampere.bundle.content-editor.view.SideContentEditor',
-                    me,
-                    me.getLocalization('ContentEditorView'),
-                    layerId
+                    sandbox,
+                    layerId,
+                    () => this.setEditorMode(false)
                 );
-                me.sideContentEditor.render(map);
+                this.sideContentEditor.render(myRoot);
+
+                /*
+// Force map size to match rest of screen: 
+const content = jQuery('#contentMap');
+const container = content.find('.row-fluid');
+// Ugly hack, container has a nasty habit of overflowing the viewport...
+const totalWidth = jQuery(window).width() - container.offset().left;
+const mapContainer = container.find('.oskariui-center');
+const mapDiv = this.mapmodule.getMapEl();
+
+                
+mapContainer.css({
+    'width': mapWidth,
+    'height': mapHeight
+});
+
+mapDiv.width(mapWidth);
+                */
             } else {
-                jQuery('#contentMap').width('');
-                jQuery('.oskariui-left')
-                    .css({
-                        'width': '',
-                        'height': '',
-                        'float': ''
-                    })
-                    .empty();
-                jQuery('.oskariui-center').css({
-                    'width': '100%',
-                    'float': ''
-                });
-
-                Oskari.setLang(me.oskariLang);
-                if (me.sideContentEditor) {
-                    me.sideContentEditor.destroy();
+                if (this.sideContentEditor) {
+                    this.sideContentEditor.destroy();
                 }
-                // first return all needed plugins before adding the layers back
-                map.removeClass('mapContentEditorMode');
-                if (me.sandbox._mapMode === 'mapContentEditorMode') {
-                    delete me.sandbox._mapMode;
-                }
+                mapElement.classList.remove(additionalClass); //removeClass('mapContentEditorMode');
 
-                request = Oskari.requestBuilder('userinterface.UpdateExtensionRequest')(me, 'close', me.getName());
-                me.sandbox.request(me.getName(), request);
+                const request = Oskari.requestBuilder('userinterface.UpdateExtensionRequest')(this, 'close', this.getName());
+                sandbox.request(this.getName(), request);
             }
 
-            me.sandbox.postRequestByName('MapFull.MapSizeUpdateRequest', []);
-        },
-        _getFakeExtension: function (name) {
-            return {
-                getName: function () {
-                    return name;
-                }
-            };
-        },
-        _closeExtension: function (name) {
-            var extension = this._getFakeExtension(name);
-            var rn = 'userinterface.UpdateExtensionRequest';
-            this.sandbox.postRequestByName(rn, [extension, 'close']);
+            sandbox.postRequestByName('MapFull.MapSizeUpdateRequest', []);
         },
         showContentEditor: function (layerId) {
-            this._closeExtension('LayerSelection');
+            // trigger an event letting other bundles know we require the whole UI
+            var eventBuilder = Oskari.eventBuilder('UIChangeEvent');
+            this.sandbox.notifyAll(eventBuilder(this.mediator.bundleId));
             this.setEditorMode(true, layerId);
         }
     }, {

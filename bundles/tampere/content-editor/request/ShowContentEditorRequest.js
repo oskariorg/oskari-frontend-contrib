@@ -24,7 +24,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.request.ShowContentEdi
          * @method getEditMap
          */
         getLayerId: function () {
-            return this.layerId;
+            return this._layerId;
         }
     }, {
         /**

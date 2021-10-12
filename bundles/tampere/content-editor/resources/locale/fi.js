@@ -7,14 +7,37 @@ Oskari.registerLocalization(
         "desc": "",
         "ContentEditorView": {
             "title": "Sisältöeditori",
-            "featureModifyInfo": "Valitse kohde kartalta muokataksesi kohteen ominaisuuksia.",
+            "info": {
+                "layerLabel": "Muokataan tasoa",
+                "featureModifyInfo": "Valitse muokattava kohde kartalta klikkaamalla.",
+                "loading": "Ladataan tason tietoja...",
+                "problem": "Tason tiedot puuttuvat!"
+            },
+            "newTitle": "Uusi kohde",
+            "geometrylist": {
+                "title": "Geometria",
+                "empty": "Merkitse geometria kartalle",
+                "editing": "Tee merkintä kartalle",
+                "Point": "Piste",
+                "LineString": "Viiva",
+                "Polygon": "Alue",
+            },
+            "editConfirm": {
+                "title": "Muokattavaa kohdetta ollaan vaihtamassa",
+                "msg": "Tallentamattomat muutokset menetetään. Haluatko varmasti vaihtaa?"
+            },
+            "exitConfirm": "Tallentamattomat muutokset menetetään. Haluatko varmasti poistua?",
+            "originalValue": "Alkuperäinen arvo",
+            "missingValue": "Arvo puuttuu",
+            "modified": "Muokattu",
+            "restoreOriginal": "Palauta alkuperäinen arvo",
             "multipleFeatureModifyInfo": "Voit myös valita useita kohteita kartalta ctrl-nappi pohjassa ja muokata niitä.",
-            "toolInfo": "Valitse piste-, viiva- tai aluepiirtotyökalu piirtääksesi uutta geometriaa.",
             "geometryModifyInfo": "Geometrian muokkautyökalulla voit muokata kohteen geometriaa.",
             "geometryDeleteInfo": "Geometrian poistotyökalulla voit poistaa yhden geometrian monipalstaisesta kohteesta.",
             "buttons": {
                 "save": "Tallenna",
                 "cancel": "Peruuta",
+                "close": "Sulje",
                 "ok": "Ok",
                 "delete": "Poista",
                 "addFeature": "Lisää kohde",
@@ -28,7 +51,8 @@ Oskari.registerLocalization(
                 "point": "Lisää piste",
                 "line": "Lisää viiva",
                 "area": "Lisää alue",
-                "geometryEdit": "Muokkaa geometriaa",
+                "geometryEdit": "Muokkaa kartalla",
+                "finishSketch": "Lukitse karttamerkintä",
                 "remove": "Poista yksittäinen geometria"
             },
             "featureUpdate": {
