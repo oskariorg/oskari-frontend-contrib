@@ -61,7 +61,7 @@ Oskari.clazz.define(
         },
         getWFSLayerService: function () {
             if (!this._WFSLayerService) {
-                this._WFSLayerService = this.sandbox.getService('Oskari.mapframework.bundle.mapwfs2.service.WFSLayerService');;
+                this._WFSLayerService = this.sandbox.getService('Oskari.mapframework.bundle.mapwfs2.service.WFSLayerService');
             }
             return this._WFSLayerService;
         },
