@@ -1139,7 +1139,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 feature = null;
 
             if (analysisWFSLayerId) {
-                analysisWFSLayer = me.instance.getSandbox().findMapLayerFromSelectedMapLayers(me.WFSLayerService.getAnalysisWFSLayerId());
+                analysisWFSLayer = me.instance.getSandbox().findMapLayerFromSelectedMapLayers(analysisWFSLayerId);
                 if (analysisWFSLayer && analysisWFSLayer.getClickedGeometries && analysisWFSLayer.getClickedGeometries().length > 0) {
                     // set filter geometry for filter json
                     var geometries = [];
