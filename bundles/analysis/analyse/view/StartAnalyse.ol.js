@@ -956,34 +956,30 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             layers = layers.concat(this.features);
             // Add property types for WFS layer, if not there
             me._addPropertyTypes(layers);
-
             contentOptions = _.chain(layers)
                 .filter(function (layer) {
                     return me._eligibleForAnalyse(layer);
                 })
                 .map(function (layer) {
-                    var isTemp = layer.isLayerOfType(me.contentPanel.getLayerType()),
-                        allSelectedFeatures = me.WFSLayerService.getWFSSelections(),
-                        selectedFeaturesOnCurrentLayer = me.WFSLayerService.getSelectedFeatureIds(layer.getId()),
-                        option = {
-                            id: layer.getId(),
+                    const layerId = layer.getId();
+                    const isTemp = layer.isLayerOfType(me.contentPanel.getLayerType());
+                    const hasSelections = me.instance.getSelectionsForLayer(layerId).length > 0;
+                    const option = {
+                            id: isTemp ? layerId : me.id_prefix + 'layer_' + layerId,
+                            layerId,
                             label: layer.getName(),
                             temp: isTemp,
                             icon: layer.getLayerType()
                         };
-
-                    if (!isTemp) {
-                        option.layerId = option.id;
-                        option.id = (me.id_prefix + 'layer_' + option.id);
+                    if (isTemp) {
+                        delete option.layerId;
                     }
 
                     // selections exist on some maplayer -> check that one. Otherwise use either the one that was selected before or the one that was added last
-                    if (allSelectedFeatures && allSelectedFeatures.length > 0) {
-                        if (selectedFeaturesOnCurrentLayer && selectedFeaturesOnCurrentLayer.length > 0) {
-                            option.checked = 'checked';
-                        }
+                    if (hasSelections) {
+                        option.checked = 'checked';
                     } else {
-                        if (inserted_layer_id && inserted_layer_id === layer.getId()) {
+                        if (inserted_layer_id && inserted_layer_id === layerId) {
                             option.checked = 'checked';
                         } else if (!inserted_layer_id && selectedLayer && selectedLayer.getName() === layer.getName()) {
                             option.checked = 'checked';
@@ -2850,10 +2846,10 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             var me = this,
                 filterIcon = tools.find('div.filter'),
                 prevJson,
-                selectedLayer,
-                // From 'oskari_analyse_layer_{id}' to '{id}'
-                layerId = analyse_layer_id.replace((this.id_prefix + 'layer_'), ''),
-                layer = this.instance.mapLayerService.findMapLayer(layerId);
+                selectedLayer;
+            // From 'oskari_analyse_layer_{id}' to '{id}'
+            const parsedLayerId = analyse_layer_id.replace((this.id_prefix + 'layer_'), '');
+            const layer = this.instance.mapLayerService.findMapLayer(parsedLayerId);
 
             var fixedOptions = {
                 addLinkToAggregateValues: true,
@@ -2870,15 +2866,15 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
 
             filterIcon.off('click');
             filterIcon.on('click', function () {
-                var selectedFeatures = me.WFSLayerService.getSelectedFeatureIds(layer.getId()),
-                    boolSelectedFeatures = (selectedFeatures !== undefined && selectedFeatures.length > 0),
-                    boolSelectedGeometry = (me.contentPanel.selectedGeometry !== null);
+                const layerId = layer.getId();
+                const hasSelectedFeatures = me.instance.getSelectionsForLayer(layerId).length > 0;
+                const hasSelectedGeometry = me.contentPanel.selectedGeometry !== null;
 
-                if (!me._filterPopups[layer.getId()]) {
-                    prevJson = me.getFilterJson(layer.getId());
+                if (!me._filterPopups[layerId]) {
+                    prevJson = me.getFilterJson(layerId);
                     selectedLayer = me._getSelectedMapLayer();
                     // Check weather the layer is selected of not
-                    if (parseInt(layerId) === selectedLayer._id) {
+                    if (layerId === selectedLayer._id) {
                         layer._isLayerSelected = true;
                     } else {
                         layer._isLayerSelected = false;
@@ -2886,10 +2882,10 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
 
                     me.filterDialog.createFilterDialog(layer, prevJson, function () {
                         me.instance.analyseService._returnAnalysisOfTypeAggregate(_.bind(me.aggregateAnalyseFilter.addAggregateFilterFunctionality, me));
-                    }, boolSelectedFeatures, boolSelectedGeometry);
+                    }, hasSelectedFeatures, hasSelectedGeometry);
 
-                    me._filterPopups[layer.getId()] = true;
-                    me._userSetFilter[layer.getId()] = true;
+                    me._filterPopups[layerId] = true;
+                    me._userSetFilter[layerId] = true;
                     // If there's already filter values for current layer, populate the dialog with them.
                     if (prevJson && !jQuery.isEmptyObject(prevJson)) {
                         me.filterDialog.setCloseButtonHandler(function () {
@@ -2966,8 +2962,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             if (!layer || !filterJson) {
                 return;
             }
-            var featureIds = this.WFSLayerService.getSelectedFeatureIds(layer.getId());
-            filterJson.featureIds = featureIds || [];
+            filterJson.featureIds = this.instance.getSelectionsForLayer(layer.getId());
         },
 
         /**
