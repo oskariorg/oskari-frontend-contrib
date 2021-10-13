@@ -6,7 +6,6 @@ Oskari.clazz.define(
         this.loc = loc;
         this.drawStopper = stopDrawingFunction;
         this.drawStarter = startDrawingFunction;
-        this.WFSLayerService = this.sandbox.getService('Oskari.mapframework.bundle.mapwfs2.service.WFSLayerService');
         this.selectionPlugin = this.sandbox.findRegisteredModuleInstance('MainMapModuleMapSelectionPlugin');
         this.mapModule = this.sandbox.findRegisteredModuleInstance('MainMapModule');
 
@@ -254,9 +253,6 @@ Oskari.clazz.define(
                         return;
                     }
 
-                    // notify WFSLayerService that the selection tools ain't on any more.
-                    me.WFSLayerService.setSelectionToolsActive(false);
-
                     me._startNewDrawFiltering({
                         mode: drawFilter,
                         sourceGeometry: me.getSelectedGeometry()
@@ -276,28 +272,28 @@ Oskari.clazz.define(
          * @return {jQuery}
          */
         createSelectToolButtons: function (loc) {
-            var me = this,
-                selectionToolsContainer = jQuery(me._templates.selectionToolsContainer).clone(),
-                selectionToolDiv = jQuery(me._templates.tool).clone(),
-                selectionToolButtonsContainer = selectionToolsContainer.find('div.toolContainerButtons'),
-                WFSSelections = (me.WFSLayerService.getWFSSelections() && me.WFSLayerService.getWFSSelections().length > 0);
+            const selectionToolsContainer = jQuery(this._templates.selectionToolsContainer).clone();
+            const selectionToolDiv = jQuery(this._templates.tool).clone();
+            const selectionToolButtonsContainer = selectionToolsContainer.find('div.toolContainerButtons');
+            const hasSelections = this.instance.getLayerIdsWithSelections().length > 0;
 
             // use the existing component to render selection buttons
-            me.selectionButtonsRenderer = Oskari.clazz.create('Oskari.mapframework.bundle.featuredata2.PopupHandler', me.instance);
-            me.selectionButtonsRenderer.renderSelectionToolButtons(selectionToolDiv);
+            this.selectionButtonsRenderer = Oskari.clazz.create('Oskari.mapframework.bundle.featuredata2.PopupHandler', this.instance);
+            this.selectionButtonsRenderer.renderSelectionToolButtons(selectionToolDiv);
 
             var emptyBtn = Oskari.clazz.create('Oskari.userinterface.component.buttons.CancelButton');
-            emptyBtn.setHandler(function () {
-                if (me.WFSLayerService.getAnalysisWFSLayerId()) {
-                    me.WFSLayerService.emptyWFSFeatureSelections(me.sandbox.findMapLayerFromSelectedMapLayers(me.WFSLayerService.getAnalysisWFSLayerId()));
+            emptyBtn.setHandler(() => {
+                const analysisId = this.instance.getAnalysisLayerId();
+                if (analysisId) {
+                    this.instance.emptySelections(analysisId);
                 } else {
-                    me.selectControl.unselectAll();
+                    this.selectControl.unselectAll();
                 }
             });
             emptyBtn.setTitle(loc.content.selectionTools.button.empty);
             emptyBtn.insertTo(selectionToolButtonsContainer);
 
-            if (!WFSSelections) {
+            if (!hasSelections) {
                 emptyBtn.setEnabled(false);
             }
 

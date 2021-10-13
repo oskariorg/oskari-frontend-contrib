@@ -27,7 +27,6 @@ Oskari.clazz.define(
         me.selectedGeometry = undefined;
         me.drawFilterMode = undefined;
         me.helpDialog = undefined;
-        me.WFSLayerService = undefined;
         me.stopDrawing = false;
         me.selectActivated = false;
 
@@ -218,7 +217,7 @@ Oskari.clazz.define(
                 // if selection is made from different layer than previous selection, empty selections from previous layer
                 _.forEach(me.sandbox.findAllSelectedMapLayers(), function (layer) {
                     if (layer.hasFeatureData() && layerId !== layer.getId()) {
-                        me.WFSLayerService.emptyWFSFeatureSelections(layer);
+                        me.instance.emptySelections(layer.getId());
                     }
                 });
                 // if there are selected features, unselect them
@@ -248,7 +247,7 @@ Oskari.clazz.define(
                 if (me.drawFilterMode) {
                     return;
                 }
-                if (layerId === me.WFSLayerService.getAnalysisWFSLayerId()) {
+                if (layerId === me.instance.getAnalysisLayerId()) {
                     if (event.getWfsFeatureIds().length === 0) {
                         me.selectedGeometry = null;
                         // TODO: enable when geometryeditor is integrated
@@ -271,7 +270,8 @@ Oskari.clazz.define(
                     return;
                 }
                 this.toggleSelectionTools();
-                this.drawControls.toggleEmptySelectionBtn((this.WFSLayerService.getWFSSelections() && this.WFSLayerService.getWFSSelections().length > 0));
+                const hasSelections = this.instance.getLayerIdsWithSelections().length > 0;
+                this.drawControls.toggleEmptySelectionBtn(hasSelections);
                 this.mapModule.bringToTop(this.featureLayer);
             },
             'AfterMapLayerRemoveEvent': function (event) {
@@ -279,7 +279,8 @@ Oskari.clazz.define(
                     return;
                 }
                 this.toggleSelectionTools();
-                this.drawControls.toggleEmptySelectionBtn((this.WFSLayerService.getWFSSelections() && this.WFSLayerService.getWFSSelections().length > 0));
+                const hasSelections = this.instance.getLayerIdsWithSelections().length > 0;
+                this.drawControls.toggleEmptySelectionBtn(hasSelections);
             }
         },
 
@@ -298,7 +299,6 @@ Oskari.clazz.define(
             me.view = view;
             me.instance = me.view.instance;
             me.sandbox = me.instance.getSandbox();
-            me.WFSLayerService = me.sandbox.getService('Oskari.mapframework.bundle.mapwfs2.service.WFSLayerService');
             me.loc = me.view.loc;
             me.mapModule = me.sandbox.findRegisteredModuleInstance(
                 'MainMapModule'
@@ -689,7 +689,7 @@ Oskari.clazz.define(
                     var geometries = [];
                     geometries.push(featureWKT);
                     me.view.setFilterGeometry(geometries);
-                    me.WFSLayerService.emptyAllWFSFeatureSelections();
+                    me.instance.emptySelections();
                 } else if (evt.deselected.length) {
                     me.selectedGeometry = undefined;
                 }
@@ -744,21 +744,16 @@ Oskari.clazz.define(
          *
          */
         toggleSelectionTools: function () {
-            var me = this,
-                selectionToolsToolContainer = jQuery('div.toolContainerToolDiv'),
-                analysisWFSLayerSelected = (me.WFSLayerService.getAnalysisWFSLayerId() !== undefined && me.WFSLayerService.getAnalysisWFSLayerId() !== null);
-            if (analysisWFSLayerSelected) {
+            const selectionToolsToolContainer = jQuery('div.toolContainerToolDiv');
+            const analysisId = this.instance.getAnalysisLayerId();
+            if (analysisId) {
                 selectionToolsToolContainer.find('div[class*=selection-]').removeClass('disabled');
-                if (!_.isEmpty(me.WFSLayerService.getSelectedFeatureIds(me.WFSLayerService.getAnalysisWFSLayerId()))) {
-                    me.drawControls.toggleEmptySelectionBtn(true);
-                } else {
-                    me.drawControls.toggleEmptySelectionBtn(false);
-                }
+                const hasSelections = this.instance.getSelectionsForLayer(analysisId).length > 0;
+                this.drawControls.toggleEmptySelectionBtn(hasSelections);
             } else {
-                me.drawControls.deactivateSelectTools();
+                this.drawControls.deactivateSelectTools();
                 selectionToolsToolContainer.find('div[class*=selection-]').addClass('disabled');
             }
-            me.WFSLayerService.setSelectionToolsActive(analysisWFSLayerSelected);
         },
 
         /**
