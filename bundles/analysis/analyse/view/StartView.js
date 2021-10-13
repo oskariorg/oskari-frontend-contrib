@@ -55,7 +55,6 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartView',
         this.content = undefined;
         this.buttons = {};
         this.alert = Oskari.clazz.create('Oskari.userinterface.component.Alert');
-        this.WFSLayerService = this.instance.sandbox.getService('Oskari.mapframework.bundle.mapwfs2.service.WFSLayerService');
     }, {
         /**
          * @method render
@@ -79,7 +78,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartView',
 
             // in analyse mode features can be selected only from one layer at once
             // check if user have selections from many layers and notify about it
-            var selectionsInManyLayers = this.checkFeatureSelections();
+            this.renderRemoveFeatureSelections();
 
             var cancelButton = Oskari.clazz.create(
                 'Oskari.userinterface.component.buttons.CancelButton'
@@ -103,18 +102,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartView',
             continueButton.setId('oskari_analysis_analyse_view_start_view_buttons_continue');
             continueButton.setTitle(this.loc.buttons['continue']);
             continueButton.setHandler(function () {
-                if (selectionsInManyLayers) {
-                    var selectedLayers = me.instance.sandbox.findAllSelectedMapLayers(),
-                        removeSelectionsLayer;
-                    _.forEach(me.emptySelectionsFromLayers, function (layerId) {
-                        _.forEach(selectedLayers, function (layer) {
-                            if (layer._id === layerId) {
-                                removeSelectionsLayer = layer;
-                                me.WFSLayerService.emptyWFSFeatureSelections(removeSelectionsLayer);
-                            }
-                        });
-                    });
-                }
+                me.emptySelectionsFromLayers.forEach(layerId => me.instance.emptySelections(layerId));
                 me.instance.enableAnalyseMode();
             });
             this.buttons['continue'] = continueButton;
@@ -154,63 +142,44 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartView',
             }
         },
 
-        checkFeatureSelections: function (container) {
-            var me = this,
-                WFSSelections = me.WFSLayerService.getWFSSelections(),
-                layersWithFeatures = _.map(WFSSelections, 'layerId'),
-                layerList = me.layerList.clone(),
-                labelTemplate = me.layerLabelTemplate.clone(),
-                layerListRadioElement,
-                layerName;
-
-            if (layersWithFeatures.length <= 1) {
-                return false;
-            } else {
-                labelTemplate.find('label').append(me.loc.layersWithFeatures);
-                layersWithFeatures.forEach(
-                    function (layerId) {
-                        layerName = me.getLayerName(layerId);
-                        layerListRadioElement = me.layerListRadioElement.clone();
-                        layerListRadioElement
-                            .find('input')
-                            .val(layerId);
-
-                        layerListRadioElement
-                            .find('span')
-                            .html(layerName);
-
-                        layerList.find('ul').append(layerListRadioElement);
-
-                        if (layerList.find('input')[0].checked !== true) {
-                            layerList.find('input').prop('checked', true);
-                            layersWithFeatures = _.map(WFSSelections, 'layerId');
-                            me.emptySelectionsFromLayers = _.pull(layersWithFeatures, layerId);
-                        }
-                    }
-                );
-                jQuery(layerList).find('input').on('click', function (el) {
-                    var layerid = parseInt(el.currentTarget.value);
-                    layersWithFeatures = _.map(WFSSelections, 'layerId');
-                    me.emptySelectionsFromLayers = _.pull(layersWithFeatures, layerid);
-                });
-                me.content.find('div.content').append(labelTemplate);
-                me.content.find('div.content').append(layerList);
-                return true;
+        renderRemoveFeatureSelections: function () {
+            var me = this;
+            const layersWithSelections = this.instance.getLayerIdsWithSelections();
+            this.emptySelectionsFromLayers =  [];
+            if (layersWithSelections.length <= 1) {
+                return;
             }
+            const layerList = this.layerList.clone();
+            const labelTemplate = this.layerLabelTemplate.clone();
+            labelTemplate.find('label').append(this.loc.layersWithFeatures);
+            layersWithSelections.forEach(layerId => {
+                const layerListRadioElement = this.layerListRadioElement.clone();
+                layerListRadioElement
+                    .find('input')
+                    .val(layerId);
+
+                layerListRadioElement
+                    .find('span')
+                    .html(this.getLayerName(layerId));
+
+                layerList.find('ul').append(layerListRadioElement);
+                }
+            );
+            layerList.find('input').first().prop('checked', true);
+            this.emptySelectionsFromLayers = layersWithSelections.slice(1);
+
+            jQuery(layerList).find('input').on('click', function (el) {
+                const selectedStr = el.currentTarget.value;
+                const selectedId = isNaN(selectedStr) ? selectedStr : Number(selectedStr);
+                me.emptySelectionsFromLayers = layersWithSelections.filter(layerId => layerId !== selectedId);
+            });
+            this.content.find('div.content').append(labelTemplate);
+            this.content.find('div.content').append(layerList);
         },
 
         getLayerName: function (layerId) {
-            var layerName,
-                layers;
-
-            layers = this.instance.sandbox.findAllSelectedMapLayers();
-
-            _.forEach(layers, function (layer) {
-                if (layerId === layer._id) {
-                    layerName = layer.getName();
-                }
-            });
-
-            return layerName;
+            const layer = this.instance.sandbox.findMapLayerFromSelectedMapLayers(layerId);
+            return layer ? layer.getName() : '';
         }
+
     });
