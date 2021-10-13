@@ -32,6 +32,8 @@ Oskari.clazz.define(
         this.personalDataTab = undefined;
         this._log = Oskari.log(this.getName());
         this._unsupportedWfsLayerVersions = ['2.0.0', '3.0.0'];
+        this._featureSelectionService = null;
+        this._WFSLayerService = null;
     }, {
         /**
          * @static @property __name
@@ -56,6 +58,50 @@ Oskari.clazz.define(
          */
         getSandbox: function () {
             return this.sandbox;
+        },
+        getWFSLayerService: function () {
+            if (!this._WFSLayerService) {
+                this._WFSLayerService = this.sandbox.getService('Oskari.mapframework.bundle.mapwfs2.service.WFSLayerService');;
+            }
+            return this._WFSLayerService;
+        },
+        // FIXME:
+        // change to store this.analysisLayerId, remove analysisWFSLayerId from WFSLayerService and handle selection properly
+        // remove wfslayerservice.setAnalysisWFSLayerId() from every analysis component
+        // remove this._WFSLayerService
+        getAnalysisLayerId: function () {
+            const service = this.getWFSLayerService();
+            if (!service) {
+                return;
+            }
+            return service.getAnalysisWFSLayerId();
+        },
+        getSelectionService: function () {
+            if (!this._featureSelectionService) {
+                this._featureSelectionService = this.sandbox.getService('Oskari.mapframework.service.VectorFeatureSelectionService');
+            }
+            return this._featureSelectionService;
+        },
+        getLayerIdsWithSelections: function () {
+            const service = this.getSelectionService();
+            if (!service) {
+                return [];
+            }
+            return service.getLayerIdsWithSelections();
+        },
+        getSelectionsForLayer: function (layerId) {
+            const service = this.getSelectionService();
+            if (!service) {
+                return [];
+            }
+            return service.getSelectedFeatureIdsByLayer(layerId);
+        },
+        emptySelections: function (layerId) {
+            const service = this.getSelectionService();
+            if (!service) {
+                return;
+            }
+            return service.removeSelection(layerId);
         },
 
         /**
@@ -144,8 +190,6 @@ Oskari.clazz.define(
             if (conf && conf.stateful === true) {
                 sandbox.registerAsStateful(me.mediator.bundleId, me);
             }
-
-            me.WFSLayerService = me.sandbox.getService('Oskari.mapframework.bundle.mapwfs2.service.WFSLayerService');
 
             this.__addTab();
         },
@@ -430,7 +474,6 @@ Oskari.clazz.define(
             }
             this.analyse.show();
             this.analyse.setEnabled(true);
-            this.WFSLayerService.setSelectFromAllLayers(false);
             this._resizeMap();
         },
 
@@ -452,7 +495,7 @@ Oskari.clazz.define(
                 this.analyse.setEnabled(false);
                 this.analyse.hide();
             }
-            this.WFSLayerService.setAnalysisWFSLayerId(null);
+            this.getWFSLayerService().setAnalysisWFSLayerId(null);
             this._resizeMap();
         },
         /**

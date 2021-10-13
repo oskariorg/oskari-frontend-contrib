@@ -132,11 +132,8 @@ Oskari.clazz.define(
          *
          */
         refresh: function () {
-            var flyout = this.container,
-                sandbox = this.instance.getSandbox(),
-                WFSSelections = sandbox.getService('Oskari.mapframework.bundle.mapwfs2.service.WFSLayerService').getWFSSelections(),
-                layersWithFeaturesCount = _.map(WFSSelections, 'layerId').length;
-
+            const flyout = this.container;
+            const layersWithSelections = this.instance.getLayerIdsWithSelections();
             flyout.empty();
 
             if (!Oskari.user().isLoggedIn()) {
@@ -144,7 +141,7 @@ Oskari.clazz.define(
                     this.instance,
                     this.instance.getLocalization('NotLoggedView'));
                 this.view.render(flyout);
-            } else if (jQuery.cookie('analyse_info_seen') !== '1' || layersWithFeaturesCount > 1) {
+            } else if (jQuery.cookie('analyse_info_seen') !== '1' || layersWithSelections.length > 1) {
                 this.view.render(flyout);
                 flyout.parent().parent().css('display', '');
             } else {
