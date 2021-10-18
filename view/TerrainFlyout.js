@@ -258,6 +258,6 @@ Oskari.clazz.define('Oskari.mapframework.bundle.terrain-profile.TerrainFlyout',
         }
     },
     {
-        'extend': ['Oskari.userinterface.extension.ExtraFlyout']
+        extend: ['Oskari.userinterface.extension.ExtraFlyout']
     }
 );
