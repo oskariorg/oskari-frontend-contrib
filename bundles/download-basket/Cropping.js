@@ -24,6 +24,7 @@ Oskari.clazz.define(
         this.croppingLayerId = null;
         this._features = {};
         this._croppingFeatures = [];
+        this._croppingBtnEl = null;
         this._drawing = false;
         this.CROPPING_LAYER_ID = 'download-basket-cropping-layer';
         this.DOWNLOAD_BASKET_DRAW_ID = 'download-basket-drawing';
@@ -46,6 +47,12 @@ Oskari.clazz.define(
                 croppingBtn.setTitle(croppingLayer.getName());
 
                 var croppingBtnEl = jQuery(croppingBtn.getElement());
+                /**
+                 * Saved for when when clearing cropping
+                 * @type {*|jQuery|HTMLElement}
+                 * @see clearCrop()
+                 */
+                me._croppingBtnEl = croppingBtnEl
 
                 croppingBtnEl.data('layerId', croppingLayer.getId());
                 croppingBtnEl.data('layerName', croppingLayer.getLayerName());
@@ -76,13 +83,7 @@ Oskari.clazz.define(
                     }
                     // Cropping btn is allready selected
                     if (croppingBtnEl.hasClass('selected')) {
-                        me._toggleGFIAndWFSHighlight(true);
-                        me.container.find('.cropping-btn').removeClass('selected');
-                        me.removeSelectedCroppingLayer();
-                        me.removeFeatures();
-                        me._updateBasketText(0);
-                        croppingBtnEl.removeClass('primary');
-                        me._toggleDrawControl(false, false);
+                        me.clearCrop()
                     } else {
                         var toggleLayers = function () {
                             me.removeSelectedCroppingLayer();
@@ -154,6 +155,22 @@ Oskari.clazz.define(
         },
 
         /**
+         * Clears the current cropping
+         */
+        clearCrop: function () {
+          const me = this;
+          me._toggleGFIAndWFSHighlight(true);
+          me.container.find('.cropping-btn').removeClass('selected');
+          me.removeSelectedCroppingLayer();
+          me.removeFeatures();
+          me._updateBasketText(0);
+          if (me._croppingBtnEl) {
+              me._croppingBtnEl.removeClass('primary');
+          }
+          me._toggleDrawControl(false, false);
+        },
+
+      /**
          * Removes selected cropping layer
          * @method removeSelectedCroppingLayer
          * @public

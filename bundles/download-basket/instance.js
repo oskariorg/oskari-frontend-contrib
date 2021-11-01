@@ -175,6 +175,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.downloadBasket.BundleInstance',
                         }
                     }
                 } else {
+                    me.cropping.clearCrop()
                     me.basket.removePopup();
                 }
             },
