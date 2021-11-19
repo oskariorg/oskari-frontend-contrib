@@ -78,7 +78,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.mapanalysis.domain.AnalysisLayer
         }
         if (!this.groupId) {
             // negative value for group id means that admin isn't presented with tools for it
-            this.groupId = -1 * Oskari.seq.nextVal('usergeneratedGroup');
+            this.groupId = -1 * Oskari.getSeq('usergeneratedGroup').nextVal();
             // initialize the group these layers will be in:
             const mapLayerGroup = maplayerService.getAllLayerGroups(this.groupId);
             if (!mapLayerGroup) {
