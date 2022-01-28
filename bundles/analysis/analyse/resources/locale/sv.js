@@ -335,7 +335,8 @@ Oskari.registerLocalization(
                 "color_label": "Välj stil:",
                 "colorset_tooltip": "Välj stil för punkter, linjer och område.",
                 "tooltip": "Välj en passande stil för punkter, linjer och område.",
-                "random_color_label": "Slumpmässiga färg"
+                "random_color_label": "Slumpmässiga färg",
+                "defaultStyle": "Förvalt utseende"
             },
             "buttons": {
                 "save": "Lagra och sluta",

@@ -335,7 +335,8 @@ Oskari.registerLocalization(
                 "color_label": "Valitse tyyli",
                 "colorset_tooltip": "Valitse tyyli pisteille, viivoille ja alueille.",
                 "tooltip": "Määrittele esitystapa lopputuloksessa näytettäville pisteille, viivoille ja alueille.",
-                "random_color_label": "Satunnaiset värit"
+                "random_color_label": "Satunnaiset värit",
+                "defaultStyle": "Oletustyyli"
             },
             "buttons": {
                 "save": "Tallenna ja lopeta",
