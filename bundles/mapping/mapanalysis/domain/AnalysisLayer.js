@@ -10,9 +10,31 @@ export class AnalysisLayer extends WFSLayer {
         /* Layer Type */
         this._layerType = 'analysislayer'; // 'ANALYSIS';
         this._metaType = 'ANALYSIS';
+        this._locale = {};
         this._wpsUrl = null;
         this._wpsName = null;
         this._wpsLayerId = null;
+    }
+    // override to get name from locale
+    getName (lang = Oskari.getLang()) {
+        const locale = this.getLocale();
+        let { name } = locale[lang] || {};
+        if (!name) {
+            const defaultLocale = locale[Oskari.getDefaultLanguage()] || {};
+            name = defaultLocale.name;
+        }
+        if (name) {
+            return Oskari.util.sanitize(name);
+        }
+        return '';
+    }
+
+    getLocale () {
+        return this._locale;
+    }
+
+    setLocale (locale) {
+        this._locale = locale;
     }
     /**
      * Sets the WPS url where the layer images are fetched from
