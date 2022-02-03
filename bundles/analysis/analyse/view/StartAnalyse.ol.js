@@ -763,12 +763,11 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             panel.getHeader().append(tooltipCont);
 
             const button = Oskari.clazz.create('Oskari.userinterface.component.Button');
-            button.setTitle(this.loc.output.color_label);
+            button.setTitle(this.loc.output.editStyle);
             button.setPrimary(true);
             button.setHandler(() => {
                 this.openStyleEditor();
             });
-
             panel.setContent(button.getElement());
 
             return panel;
@@ -863,20 +862,28 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
          *
          * @return {Object}
          */
-        getStyleValues: function () {
-            return this._ownStyle || this.getRandomizedStyle();
+        getStyleValues: function (pick) {
+            if (!this._ownStyle) {
+                this._ownStyle = this.getRandomizedStyle();
+            }
+            const style = this._ownStyle;
+            if (pick) {
+                this._ownStyle = null;
+            }
+            return style;
         },
         openStyleEditor : function () {
             if (this._popupControls) {
                 return;
             }
-            const style = this.getRandomizedStyle();
+            const style = this.getStyleValues();
             const onSave = style => {
                 this._ownStyle = style;
                 this.closeStyleEditor();
             };
+            const getRandom = () => this.getRandomizedStyle();
             const onClose = () => this.closeStyleEditor();
-            this._popupControls = showStyleEditor(style, onSave, onClose)
+            this._popupControls = showStyleEditor(style, getRandom, onSave, onClose)
         },
         closeStyleEditor: function () {
             if (this._popupControls) {
@@ -2312,7 +2319,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             var selections = this._getMethodSelections(layer, defaults);
 
             // Styles
-            selections.style = this.getStyleValues();
+            selections.style = this.getStyleValues(true);
             // Bbox
             selections.bbox = this.instance.getSandbox().getMap().getBbox();
 

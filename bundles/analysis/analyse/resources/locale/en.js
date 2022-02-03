@@ -332,10 +332,9 @@ Oskari.registerLocalization(
             },
             "output": {
                 "label": "Feature style",
-                "color_label": "Select style",
-                "colorset_tooltip": "Select style for points, lines and regions.",
                 "tooltip": "Select a style for points, lines and areas in the result.",
-                "random_color_label": "Random colours",
+                "editStyle": "Edit",
+                "randomColor": "Random colours",
                 "defaultStyle": "Default style"
             },
             "buttons": {

@@ -14,7 +14,7 @@ const Content = styled.div`
 
 const getMessage = key => <Message messageKey={ `AnalyseView.output.${key}` } bundleKey={BUNDLE_KEY} />;
 
-const StyleForm = ({ style: initStyle, onSave, onCancel }) => {
+const StyleForm = ({ style: initStyle, onSave, onCancel, getRandom }) => {
     const [style, setStyle] = useState(initStyle);
     return (
         <Content>
@@ -23,6 +23,7 @@ const StyleForm = ({ style: initStyle, onSave, onCancel }) => {
                 onChange={ setStyle }
             />
             <ButtonContainer>
+                <Button onClick={() => setStyle(getRandom())}>{getMessage('randomColor')}</Button>
                 <Button onClick={() => setStyle(DEFAULT_STYLE)}>{getMessage('defaultStyle')}</Button>
                 <SecondaryButton type='cancel' onClick={onCancel}/>
                 <PrimaryButton type='save' onClick={() => onSave(style) }/>
@@ -34,13 +35,14 @@ const StyleForm = ({ style: initStyle, onSave, onCancel }) => {
 StyleForm.propTypes = {
     onSave: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
+    getRandom: PropTypes.func.isRequired,
     style: PropTypes.object.isRequired
 };
 
-export const showStyleEditor = (style, onSave, onClose) => {
+export const showStyleEditor = (style, getRandom, onSave, onClose) => {
     return showPopup(
         getMessage('label'),
-        (<StyleForm style={style} onSave={onSave} onCancel={onClose}/>),
+        (<StyleForm style={style} getRandom={getRandom} onSave={onSave} onCancel={onClose}/>),
         onClose,
         { id: BUNDLE_KEY }
     );
