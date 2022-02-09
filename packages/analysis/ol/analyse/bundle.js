@@ -71,19 +71,19 @@ Oskari.clazz.define("Oskari.analysis.bundle.analyse.AnalyseBundle", function() {
             "src" : "../../../../bundles/analysis/analyse/resources/scss/style.scss"
         }, {
             "type": "text/javascript",
-            "src": "Oskari-frontend/bundles/framework/divmanazer/component/VisualizationForm.js"
+            "src": "oskari-frontend/bundles/framework/divmanazer/component/VisualizationForm.js"
         }, {
             "type": "text/javascript",
-            "src": "Oskari-frontend/bundles/framework/divmanazer/component/visualization-form/AreaForm.js"
+            "src": "oskari-frontend/bundles/framework/divmanazer/component/visualization-form/AreaForm.js"
         }, {
             "type": "text/javascript",
-            "src": "Oskari-frontend/bundles/framework/divmanazer/component/visualization-form/LineForm.js"
+            "src": "oskari-frontend/bundles/framework/divmanazer/component/visualization-form/LineForm.js"
         }, {
             "type": "text/javascript",
-            "src": "Oskari-frontend/bundles/framework/divmanazer/component/visualization-form/DotForm.js"
+            "src": "oskari-frontend/bundles/framework/divmanazer/component/visualization-form/DotForm.js"
         }, {
             "type": "text/css",
-            "src": "Oskari-frontend/bundles/framework/divmanazer/resources/scss/visualizationform.scss"
+            "src": "oskari-frontend/bundles/framework/divmanazer/resources/scss/visualizationform.scss"
         }],
 
         "locales" : [{
