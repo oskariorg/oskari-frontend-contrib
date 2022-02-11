@@ -1,4 +1,6 @@
 import olFormatGeoJSON from 'ol/format/GeoJSON';
+import { COLORS, FILL_COLORS, DEFAULT_STYLE } from './constants';
+import { showStyleEditor } from './StyleForm';
 /**
  * @class Oskari.analysis.bundle.analyse.view.StartAnalyse
  * Request the analyse params and layers and triggers analyse actions
@@ -79,6 +81,9 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
         me.contentOptions = {};
         me.intersectOptions = {};
         me.unionOptions = {};
+
+        me._ownStyle = null;
+        me._popupControls = null;
 
         me.accordion = null;
         me.mainPanel = null;
@@ -179,10 +184,6 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             title_name:
                 '<div class="analyse_title_name analyse_settings_cont">' +
                 '  <input class="settings_name_field" type="text" />' +
-                '</div>',
-            title_color:
-                '<div class="analyse_title_colcont analyse_output_cont">' +
-                '  <div class="output_color_label"></div>' +
                 '</div>',
             title_columns:
                 '<div class="analyse_title_columns analyse_output_cont">' +
@@ -752,46 +753,22 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
          * @return {jQuery} Returns the created panel
          */
         _createOutputPanel: function () {
-            var me = this,
-                panel = Oskari.clazz.create(
-                    'Oskari.userinterface.component.AccordionPanel'
-                ),
-                headerPanel = panel.getHeader(),
-                colorRandomizer = me.template.checkboxToolOptíon.clone(),
-                colorTitle = me.template.title_color.clone(),
-                contentPanel = panel.getContainer(),
-                tooltipCont = me.template.help.clone(),
-                visualizationForm = Oskari.clazz.create(
-                    'Oskari.userinterface.component.VisualizationForm', {saveCallback: function () {
-                        me.ownStyleSaved();
-                    }}
-                );
-
-            colorRandomizer.find('input')
-                .addClass('analyse_randomize_colors')
-                .attr('name', 'randomize_colors')
-                .attr('id', 'analyse_randomize_colors_input');
-
-            panel.setTitle(me.loc.output.label);
+            const panel = Oskari.clazz.create('Oskari.userinterface.component.AccordionPanel');
+            panel.setTitle(this.loc.output.label);
 
             // tooltip
-            tooltipCont.attr('title', me.loc.output.tooltip);
+            const tooltipCont = this.template.help.clone();
+            tooltipCont.attr('title', this.loc.output.tooltip);
             tooltipCont.addClass('header-icon-info');
-            headerPanel.append(tooltipCont);
+            panel.getHeader().append(tooltipCont);
 
-            // title
-            colorTitle.find('.output_color_label').html(me.loc.output.color_label);
-            contentPanel.append(colorTitle);
-
-            // Create random color picker checkbox
-            colorRandomizer.find('input[name=randomize_colors]').prop('checked', true);
-            colorRandomizer.find('label').addClass('params_checklabel').find('span').html(
-                me.loc.output.random_color_label
-            );
-            contentPanel.append(colorRandomizer);
-
-            me.visualizationForm = visualizationForm;
-            contentPanel.append(me.visualizationForm.getForm());
+            const button = Oskari.clazz.create('Oskari.userinterface.component.Button');
+            button.setTitle(this.loc.output.editStyle);
+            button.setPrimary(true);
+            button.setHandler(() => {
+                this.openStyleEditor();
+            });
+            panel.setContent(button.getElement());
 
             return panel;
         },
@@ -885,11 +862,47 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
          *
          * @return {Object}
          */
-        getStyleValues: function () {
-            // Sets random color values for visualization form
-            // if the checkbox is checked.
-            this.randomizeColors();
-            return this.visualizationForm.getOskariStyle();
+        getStyleValues: function (pick) {
+            if (!this._ownStyle) {
+                this._ownStyle = this.getRandomizedStyle();
+            }
+            const style = this._ownStyle;
+            if (pick) {
+                this._ownStyle = null;
+            }
+            return style;
+        },
+        openStyleEditor : function () {
+            if (this._popupControls) {
+                return;
+            }
+            const style = this.getStyleValues();
+            const onSave = style => {
+                this._ownStyle = style;
+                this.closeStyleEditor();
+            };
+            const getRandom = () => this.getRandomizedStyle();
+            const onClose = () => this.closeStyleEditor();
+            this._popupControls = showStyleEditor(style, getRandom, onSave, onClose)
+        },
+        closeStyleEditor: function () {
+            if (this._popupControls) {
+                this._popupControls.close();
+            }
+            this._popupControls = null;
+        },
+        getRandomizedStyle: function () {
+            const index = Math.floor(Math.random() * (COLORS.length - 1))
+            const color = COLORS[index];
+            const style = {
+                fill: { color: FILL_COLORS[index] },
+                image : { fill: { color } },
+                stroke: {
+                    color,
+                    area : { color }
+                }
+            };
+            return jQuery.extend(true, {}, DEFAULT_STYLE, style)
         },
 
         /**
@@ -2306,7 +2319,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             var selections = this._getMethodSelections(layer, defaults);
 
             // Styles
-            selections.style = this.getStyleValues();
+            selections.style = this.getStyleValues(true);
             // Bbox
             selections.bbox = this.instance.getSandbox().getMap().getBbox();
 
@@ -3174,58 +3187,6 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 .find('#oskari_analyse_select')
                 .prop('checked', true)
                 .trigger('change');
-        },
-
-        /**
-         * @method randomColors
-         * Change default colors for analyse in random range order
-         *
-         *
-         */
-        randomizeColors: function () {
-            if (!this.mainPanel.find('input[name=randomize_colors]').is(':checked')) {
-                return;
-            }
-
-            if (this.colorCount === undefined || this.colorCount === 16) {
-                this.colorCount = 0;
-            } else {
-                this.colorCount += 1;
-            }
-
-            var line_point_border_colors = [
-                    '#e31a1c', '#2171b5', '#238b45', '#88419d',
-                    '#2b8cbe', '#238b45', '#d94801', '#d7301f',
-                    '#0570b0', '#02818a', '#ce1256', '#6a51a3',
-                    '#ae017e', '#cb181d', '#238443', '#225ea8',
-                    '#cc4c02'
-                ],
-                fill_colors = [
-                    '#fd8d3c', '#6baed6', '#66c2a4', '#8c96c6',
-                    '#7bccc4', '#74c476', '#fd8d3c', '#fc8d59',
-                    '#74a9cf', '#67a9cf', '#df65b0', '#9e9ac8',
-                    '#f768a1', '#fb6a4a', '#78c679', '#41b6c4',
-                    '#fe9929'
-                ],
-                values = {
-                    point: {
-                        color: line_point_border_colors[this.colorCount]
-                    },
-                    line: {
-                        color: line_point_border_colors[this.colorCount]
-                    },
-                    area: {
-                        lineColor: line_point_border_colors[this.colorCount],
-                        fillColor: fill_colors[this.colorCount]
-                    }
-                };
-
-            if (this.visualizationForm) {
-                this.visualizationForm.setValues(values);
-            }
-        },
-        ownStyleSaved: function () {
-            this.mainPanel.find('input[name=randomize_colors]').prop('checked', false);
         },
 
         /**
