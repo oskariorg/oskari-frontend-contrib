@@ -26,27 +26,27 @@ Oskari.clazz.define(
         {
           type: "text/javascript",
           src:
-            "../../../../bundles/paikkatietoikkuna/terrain-profile/view/TerrainFlyout.js"
+            "../../bundles/terrain-profile/view/TerrainFlyout.js"
         },
         {
           type: "text/javascript",
           src:
-            "../../../../bundles/paikkatietoikkuna/terrain-profile/view/TerrainPopup.js"
+            "../../bundles/terrain-profile/view/TerrainPopup.js"
         },
         {
           type: "text/javascript",
           src:
-            "../../../../bundles/paikkatietoikkuna/terrain-profile/MarkerHandler.js"
+            "../../bundles/terrain-profile/MarkerHandler.js"
         },
         {
           type: "text/javascript",
           src:
-            "../../../../bundles/paikkatietoikkuna/terrain-profile/instance.js"
+            "../../bundles/terrain-profile/instance.js"
         },
         {
           type: "text/css",
           src:
-            "../../../../bundles/paikkatietoikkuna/terrain-profile/resources/css/terrainprofile.css"
+            "../../bundles/terrain-profile/resources/css/terrainprofile.css"
         }
       ],
       locales: [
@@ -54,19 +54,19 @@ Oskari.clazz.define(
           lang: "en",
           type: "text/javascript",
           src:
-            "../../../../bundles/paikkatietoikkuna/terrain-profile/resources/locale/en.js"
+            "../../bundles/terrain-profile/resources/locale/en.js"
         },
         {
           lang: "fi",
           type: "text/javascript",
           src:
-            "../../../../bundles/paikkatietoikkuna/terrain-profile/resources/locale/fi.js"
+            "../../bundles/terrain-profile/resources/locale/fi.js"
         },
         {
           lang: "sv",
           type: "text/javascript",
           src:
-            "../../../../bundles/paikkatietoikkuna/terrain-profile/resources/locale/sv.js"
+            "../../bundles/terrain-profile/resources/locale/sv.js"
         }
       ]
     },
