@@ -435,7 +435,8 @@ Oskari.registerLocalization(
         "personalDataTab": {
             "grid": {
                 "name": "Name",
-                "delete": "Remove"
+                "delete": "Remove",
+                "actions": "Actions"
             },
             "title": "Analysis",
             "confirmDeleteMsg": "Do you want to remove the analysis layer \"{name}\"?",

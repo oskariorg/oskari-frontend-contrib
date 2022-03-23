@@ -1,4 +1,7 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
 import {getCenter as olExtentGetCenter, getArea as olExtentGetArea} from 'ol/extent';
+import { AnalysisList } from './AnalysisList';
 
 /**
  * @class Oskari.mapframework.bundle.analyse.view.PersonalDataTab
@@ -21,7 +24,6 @@ Oskari.clazz.define(
 
         me.instance = instance;
         me.loc = Oskari.getMsg.bind(null, 'Analyse');
-        me.grid = undefined;
         me.container = undefined;
 
         /* templates */
@@ -33,8 +35,7 @@ Oskari.clazz.define(
         }
     }, {
         __templates: {
-            main: '<div class="oskari-analysis-listing-tab"></div>',
-            link: '<a href="JavaScript:void(0);"></a>'
+            main: '<div class="oskari-analysis-listing-tab"></div>'
         },
         /**
          * Returns reference to a container that should be shown in personal data
@@ -47,49 +48,6 @@ Oskari.clazz.define(
             }
             // construct it
             var me = this;
-            var sandbox = me.instance.sandbox;
-            var addMLrequestBuilder = Oskari.requestBuilder('AddMapLayerRequest');
-            var grid = Oskari.clazz.create('Oskari.userinterface.component.Grid');
-            var visibleFields = ['name', 'delete'];
-
-            me.grid = grid;
-            grid.setVisibleFields(visibleFields);
-            // set up the link from name field
-            var nameRenderer = function (name, data) {
-                var link = me.template.link.clone();
-                var layer = data.layer;
-
-                link.append(name);
-                link.on('click', function () {
-                    // add analysis layer to map on name click
-                    if (!me.popupOpen) {
-                        sandbox.request(me.instance, addMLrequestBuilder(layer.getId()));
-                        me.handleBounds(layer);
-                        return false;
-                    }
-                });
-                return link;
-            };
-            grid.setColumnValueRenderer('name', nameRenderer);
-            // set up the link from edit field
-            var deleteRenderer = function (name, data) {
-                var link = me.template.link.clone();
-                link.append(name);
-                link.on('click', function () {
-                    if (!me.popupOpen) {
-                        // delete analysis layer
-                        me._confirmDeleteAnalysis(data);
-                        return false;
-                    }
-                });
-                return link;
-            };
-            grid.setColumnValueRenderer('delete', deleteRenderer);
-
-            // setup localization
-            visibleFields.forEach(function (key) {
-                grid.setColumnUIName(key, me.loc('personalDataTab.grid.' + key));
-            });
 
             me.container = me.template.main.clone();
             // populate initial grid content
@@ -110,7 +68,7 @@ Oskari.clazz.define(
          */
         handleBounds: function (layer) {
             var sandbox = this.instance.sandbox;
-            var geom = layer.getGeometry();
+            var geom = layer._geometry;
 
             if ((geom === null) || (typeof geom === 'undefined')) {
                 return;
@@ -146,77 +104,29 @@ Oskari.clazz.define(
                 service = me.instance.sandbox.getService(
                     'Oskari.mapframework.service.MapLayerService'
                 ),
-                layers = service.getAllLayersByMetaType('ANALYSIS'),
-                gridModel = Oskari.clazz.create(
-                    'Oskari.userinterface.component.GridModel'
-                );
+                layers = service.getAllLayersByMetaType('ANALYSIS');
 
-            gridModel.setIdField('id');
-
-            layers.forEach(function (layer) {
-                gridModel.addData({
-                    'id': layer.getId(),
-                    'name': layer.getName(),
-                    'layer': layer,
-                    'delete': me.loc('personalDataTab.buttons.delete')
-                });
-            });
-
-            me.grid.setDataModel(gridModel);
-            me.container.empty();
-            me.grid.renderTo(me.container);
+            ReactDOM.render(
+                <AnalysisList
+                    data={layers}
+                    handleDelete={(item) => me.deleteAnalysis(item)}
+                    openAnalysis={(item) => me.openAnalysis(item)}
+                />
+                ,
+                me.container[0]
+            )
         },
         /**
-         * Confirms delete for given place and deletes it if confirmed. Also shows
-         * notification about cancel, deleted or error on delete.
-         * @method _confirmDeleteAnalysis
-         * @param {Object} data grid data object for place
-         * @private
-         */
-        _confirmDeleteAnalysis: function (data) {
-            var me = this,
-                dialog = Oskari.clazz.create(
-                    'Oskari.userinterface.component.Popup'
-                ),
-                okBtn = Oskari.clazz.create(
-                    'Oskari.userinterface.component.buttons.DeleteButton'
-                );
-
-            okBtn.addClass('primary');
-
-            okBtn.setHandler(function () {
-                me._deleteAnalysis(data.layer);
-                dialog.close();
-            });
-            dialog.onClose(function () {
-                me.popupOpen = false;
-            });
-
-            dialog.show(
-                me.loc('personalDataTab.title'),
-                me.loc('personalDataTab.confirmDeleteMsg', {name: data.name}),
-                [
-                    dialog.createCloseButton(me.loc('personalDataTab.buttons.cancel')),
-                    okBtn
-                ]
-            );
-            me.popupOpen = true;
-
-            dialog.makeModal();
-        },
-
-        /**
-         * @method _deleteAnalysis
+         * @method deleteAnalysis
          * Request backend to delete analysis data for the layer. On success removes the layer
          * from map and layerservice. On failure displays a notification.
          * @param {Oskari.mapframework.bundle.mapanalysis.domain.AnalysisLayer} layer analysis data to be destroyed
          * @param {Boolean} should success dialog be shown or not. Optional, if not set, dialog is shown.
-         * @private
          */
-        _deleteAnalysis: function (layer, showDialog) {
+        deleteAnalysis: function (layer, showDialog) {
             var me = this,
-                tokenIndex = layer.getId().lastIndexOf('_') + 1, // parse actual id from layer id
-                idParam = layer.getId().substring(tokenIndex);
+                tokenIndex = layer._id.lastIndexOf('_') + 1, // parse actual id from layer id
+                idParam = layer._id.substring(tokenIndex);
 
             jQuery.ajax({
                 url: Oskari.urls.getRoute('DeleteAnalysisData'),
@@ -236,6 +146,13 @@ Oskari.clazz.define(
                 }
             });
         },
+        openAnalysis: function (layer) {
+            const me = this;
+            const addMLrequestBuilder = Oskari.requestBuilder('AddMapLayerRequest');
+            const sandbox = me.instance.sandbox;
+            sandbox.request(me.instance, addMLrequestBuilder(layer._id));
+            me.handleBounds(layer);
+        },
         /**
          * Success callback for backend operation.
          * @method _deleteSuccess
@@ -249,8 +166,8 @@ Oskari.clazz.define(
             // TODO: shouldn't maplayerservice send removelayer request by default on remove layer?
             // also we need to do it before service.remove() to avoid problems on other components
             var removeMLrequestBuilder = Oskari.requestBuilder('RemoveMapLayerRequest');
-            sandbox.request(this.instance, removeMLrequestBuilder(layer.getId()));
-            service.removeLayer(layer.getId());
+            sandbox.request(this.instance, removeMLrequestBuilder(layer._id));
+            service.removeLayer(layer._id);
             // show msg to user about successful removal
             if (showDialog) {
                 var dialog = Oskari.clazz.create(

@@ -435,7 +435,8 @@ Oskari.registerLocalization(
         "personalDataTab": {
             "grid": {
                 "name": "Namn",
-                "delete": "Ta bort"
+                "delete": "Ta bort",
+                "actions": "Handlingar"
             },
             "title": "Analyser",
             "confirmDeleteMsg": "Vill du ta bort analyslager \"{name}\"?",
