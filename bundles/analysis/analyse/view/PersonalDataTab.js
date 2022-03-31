@@ -25,6 +25,7 @@ Oskari.clazz.define(
         me.instance = instance;
         me.loc = Oskari.getMsg.bind(null, 'Analyse');
         me.container = undefined;
+        me.layers = [];
 
         /* templates */
         me.template = {};
@@ -68,7 +69,7 @@ Oskari.clazz.define(
          */
         handleBounds: function (layer) {
             var sandbox = this.instance.sandbox;
-            var geom = layer._geometry;
+            var geom = layer.getGeometry();
 
             if ((geom === null) || (typeof geom === 'undefined')) {
                 return;
@@ -105,12 +106,12 @@ Oskari.clazz.define(
                     'Oskari.mapframework.service.MapLayerService'
                 ),
                 layers = service.getAllLayersByMetaType('ANALYSIS');
-
+            me.layers = layers;
             ReactDOM.render(
                 <AnalysisList
                     data={layers}
-                    handleDelete={(item) => me.deleteAnalysis(item)}
-                    openAnalysis={(item) => me.openAnalysis(item)}
+                    handleDelete={(id) => me.deleteAnalysis(id)}
+                    openAnalysis={(id) => me.openAnalysis(id)}
                 />
                 ,
                 me.container[0]
@@ -123,10 +124,11 @@ Oskari.clazz.define(
          * @param {Oskari.mapframework.bundle.mapanalysis.domain.AnalysisLayer} layer analysis data to be destroyed
          * @param {Boolean} should success dialog be shown or not. Optional, if not set, dialog is shown.
          */
-        deleteAnalysis: function (layer, showDialog) {
+        deleteAnalysis: function (id, showDialog) {
+            const layer = this.layers.find(l => l.getId() === id);
             var me = this,
-                tokenIndex = layer._id.lastIndexOf('_') + 1, // parse actual id from layer id
-                idParam = layer._id.substring(tokenIndex);
+                tokenIndex = layer.getId().lastIndexOf('_') + 1, // parse actual id from layer id
+                idParam = layer.getId().substring(tokenIndex);
 
             jQuery.ajax({
                 url: Oskari.urls.getRoute('DeleteAnalysisData'),
@@ -146,11 +148,12 @@ Oskari.clazz.define(
                 }
             });
         },
-        openAnalysis: function (layer) {
+        openAnalysis: function (id) {
             const me = this;
+            const layer = me.layers.find(l => l.getId() === id);
             const addMLrequestBuilder = Oskari.requestBuilder('AddMapLayerRequest');
             const sandbox = me.instance.sandbox;
-            sandbox.request(me.instance, addMLrequestBuilder(layer._id));
+            sandbox.request(me.instance, addMLrequestBuilder(layer.getId()));
             me.handleBounds(layer);
         },
         /**
@@ -166,8 +169,8 @@ Oskari.clazz.define(
             // TODO: shouldn't maplayerservice send removelayer request by default on remove layer?
             // also we need to do it before service.remove() to avoid problems on other components
             var removeMLrequestBuilder = Oskari.requestBuilder('RemoveMapLayerRequest');
-            sandbox.request(this.instance, removeMLrequestBuilder(layer._id));
-            service.removeLayer(layer._id);
+            sandbox.request(this.instance, removeMLrequestBuilder(layer.getId()));
+            service.removeLayer(layer.getId());
             // show msg to user about successful removal
             if (showDialog) {
                 var dialog = Oskari.clazz.create(

@@ -27,14 +27,14 @@ export const AnalysisList = ({ data = [], handleDelete, openAnalysis }) => {
 
     const columnSettings = [
         {
-            dataIndex: ['_name', 'fi'],
+            dataIndex: 'name',
             align: 'left',
             title: <Message messageKey='personalDataTab.grid.name' bundleKey={BUNDLE_KEY} />,
-            sorter: (a, b) => a._name.fi.localeCompare(b._name.fi),
+            sorter: getSorterFor('name'),
             defaultSortOrder: 'ascend',
             render: (title, item) => {
                 return (
-                    <a onClick={() => openAnalysis(item)}>{title}</a>
+                    <a onClick={() => openAnalysis(item.key)}>{title}</a>
                 );
             }
         },
@@ -46,8 +46,8 @@ export const AnalysisList = ({ data = [], handleDelete, openAnalysis }) => {
                 return (
                     <ToolsContainer>
                         <Confirm
-                            title={<Message messageKey='personalDataTab.confirmDeleteMsg' messageArgs={{ name: item._name.fi }} bundleKey={BUNDLE_KEY} />}
-                            onConfirm={() => handleDelete(item)}
+                            title={<Message messageKey='personalDataTab.confirmDeleteMsg' messageArgs={{ name: item.name }} bundleKey={BUNDLE_KEY} />}
+                            onConfirm={() => handleDelete(item.key)}
                             okText={<Message messageKey='personalDataTab.buttons.ok' bundleKey={BUNDLE_KEY} />}
                             cancelText={<Message messageKey='personalDataTab.buttons.cancel' bundleKey={BUNDLE_KEY} />}
                             placement='bottomLeft'
@@ -65,7 +65,8 @@ export const AnalysisList = ({ data = [], handleDelete, openAnalysis }) => {
             columns={columnSettings}
             dataSource={data.map(item => ({
                 key: item._id,
-                ...item
+                ...item,
+                name: Oskari.getLocalized(item._name)
             }))}
             pagination={false}
         />
