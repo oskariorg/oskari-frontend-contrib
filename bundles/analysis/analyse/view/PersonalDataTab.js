@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {getCenter as olExtentGetCenter, getArea as olExtentGetArea} from 'ol/extent';
+import { LocaleProvider } from 'oskari-ui/util';
 import { AnalysisList } from './AnalysisList';
+import { BUNDLE_KEY } from './constants';
 
 /**
  * @class Oskari.mapframework.bundle.analyse.view.PersonalDataTab
@@ -108,11 +110,15 @@ Oskari.clazz.define(
                 layers = service.getAllLayersByMetaType('ANALYSIS');
             me.layers = layers;
             ReactDOM.render(
-                <AnalysisList
-                    data={layers}
-                    handleDelete={(id) => me.deleteAnalysis(id)}
-                    openAnalysis={(id) => me.openAnalysis(id)}
-                />
+                <LocaleProvider value={{ bundleKey: BUNDLE_KEY }}>
+                    <AnalysisList
+                        data={layers}
+                        controller={{
+                            deleteAnalysis: (id) => me.deleteAnalysis(id),
+                            openAnalysis: (id) => me.openAnalysis(id)
+                        }}
+                    />
+                </LocaleProvider>
                 ,
                 me.container[0]
             )

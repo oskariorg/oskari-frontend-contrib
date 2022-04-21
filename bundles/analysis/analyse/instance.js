@@ -1,3 +1,5 @@
+import { AnalysisHandler } from './handler/AnalysisHandler';
+import { AnalysisTab } from './view/AnalysisTab';
 /**
  * @class Oskari.analysis.bundle.analyse.AnalyseBundleInstance
  *
@@ -31,6 +33,7 @@ Oskari.clazz.define(
         this.conf = {};
         this.personalDataTab = undefined;
         this._log = Oskari.log(this.getName());
+        this.loc = Oskari.getMsg.bind(null, 'Analyse');
         this._unsupportedWfsLayerVersions = ['2.0.0', '3.0.0'];
         this._featureSelectionService = null;
         this._WFSLayerService = null;
@@ -191,7 +194,7 @@ Oskari.clazz.define(
                 sandbox.registerAsStateful(me.mediator.bundleId, me);
             }
 
-            this.__addTab();
+            this._addTab();
         },
 
         /**
@@ -228,44 +231,36 @@ Oskari.clazz.define(
             }
             return handler.apply(this, [event]);
         },
-
-        /**
-         * Adds a tab for analysis layers in PersonalData
-         */
-        __addTab: function () {
-            if (this.personalDataTab) {
-                // already added
-                return;
+        _addTab: function (appStarted) {
+            const sandbox = Oskari.getSandbox();
+            let myDataService = sandbox.getService('Oskari.mapframework.bundle.mydata.service.MyDataService');
+    
+            const reqName = 'PersonalData.AddTabRequest';
+            if (myDataService) {
+                myDataService.addTab('analysis', this.loc('personalDataTab.title'), AnalysisTab, new AnalysisHandler(this));
+            } else if (sandbox.hasHandler(reqName)) {
+                // fallback to old personaldata tabs
+                this.addTabToPersonalData();
+            } else if (!appStarted) {
+                // Wait for the application to load all bundles and try again
+                Oskari.on('app.start', () => {
+                    this._addTab(true);
+                });
             }
-
-            if (!this.sandbox.hasHandler('PersonalData.AddTabRequest')) {
-                // request not ready
-                return;
+        },
+        addTabToPersonalData: function () {
+            const analysisTab = Oskari.clazz.create('Oskari.mapframework.bundle.analyse.view.PersonalDataTab', this);
+            const addTabReqBuilder = Oskari.requestBuilder('PersonalData.AddTabRequest');
+    
+            if (addTabReqBuilder) {
+                this.getSandbox().request(this, addTabReqBuilder(this.localization.personalDataTab.title, analysisTab.getContent(), false, 'analyse'));
             }
-            var reqBuilder = Oskari.requestBuilder('PersonalData.AddTabRequest');
-            // Request tab to be added to personal data
-            var tab = Oskari.clazz.create(
-                'Oskari.mapframework.bundle.analyse.view.PersonalDataTab',
-                this
-            );
-            this.personalDataTab = tab;
-            this.sandbox.request(
-                this,
-                reqBuilder(
-                    this.localization.personalDataTab.title,
-                    tab.getContent(),
-                    false,
-                    'analyse'
-                )
-            );
+            this.personalDataTab = analysisTab;
         },
         /**
          * @static @property {Object} eventHandlers
          */
         eventHandlers: {
-            'Personaldata.PersonaldataLoadedEvent': function (event) {
-                this.__addTab();
-            },
             MapLayerVisibilityChangedEvent: function (event) {
                 if (this.analyse && this.analyse.isEnabled && this.isMapStateChanged) {
                     this.isMapStateChanged = false;
