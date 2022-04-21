@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Message, Confirm } from 'oskari-ui';
+import { Message, Confirm, Tooltip } from 'oskari-ui';
 import { Table, getSorterFor, ToolsContainer } from 'oskari-ui/components/Table';
 import styled from 'styled-components';
 import { BUNDLE_KEY } from './constants';
@@ -23,7 +23,7 @@ const deleteIconStyle = {
     color: red.primary
 };
 
-export const AnalysisList = ({ data = [], handleDelete, openAnalysis }) => {
+export const AnalysisList = ({ data = [], controller }) => {
 
     const columnSettings = [
         {
@@ -34,7 +34,7 @@ export const AnalysisList = ({ data = [], handleDelete, openAnalysis }) => {
             defaultSortOrder: 'ascend',
             render: (title, item) => {
                 return (
-                    <a onClick={() => openAnalysis(item.key)}>{title}</a>
+                    <a onClick={() => controller.openAnalysis(item.key)}>{title}</a>
                 );
             }
         },
@@ -47,12 +47,14 @@ export const AnalysisList = ({ data = [], handleDelete, openAnalysis }) => {
                     <ToolsContainer>
                         <Confirm
                             title={<Message messageKey='personalDataTab.confirmDeleteMsg' messageArgs={{ name: item.name }} bundleKey={BUNDLE_KEY} />}
-                            onConfirm={() => handleDelete(item.key)}
+                            onConfirm={() => controller.deleteAnalysis(item.key)}
                             okText={<Message messageKey='personalDataTab.buttons.ok' bundleKey={BUNDLE_KEY} />}
                             cancelText={<Message messageKey='personalDataTab.buttons.cancel' bundleKey={BUNDLE_KEY} />}
                             placement='bottomLeft'
                         >
-                            <div className='icon t_delete'><DeleteOutlined style={deleteIconStyle} /></div>
+                            <Tooltip title={<Message messageKey='personalDataTab.grid.delete' />}>
+                                <div className='icon t_delete'><DeleteOutlined style={deleteIconStyle} /></div>
+                            </Tooltip>
                         </Confirm>
                     </ToolsContainer>
                 );
@@ -75,5 +77,5 @@ export const AnalysisList = ({ data = [], handleDelete, openAnalysis }) => {
 
 AnalysisList.propTypes = {
     data: PropTypes.arrayOf(PropTypes.object),
-    handleDelete: PropTypes.func.isRequired
+    controller: PropTypes.object.isRequired
 }
