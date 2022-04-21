@@ -240,7 +240,7 @@ Oskari.clazz.define(
                 myDataService.addTab('analysis', this.loc('personalDataTab.title'), AnalysisTab, new AnalysisHandler(this));
             } else if (sandbox.hasHandler(reqName)) {
                 // fallback to old personaldata tabs
-                this.addTabToPersonalData();
+                this._addTabToPersonalData();
             } else if (!appStarted) {
                 // Wait for the application to load all bundles and try again
                 Oskari.on('app.start', () => {
@@ -248,7 +248,7 @@ Oskari.clazz.define(
                 });
             }
         },
-        addTabToPersonalData: function () {
+        _addTabToPersonalData: function () {
             const analysisTab = Oskari.clazz.create('Oskari.mapframework.bundle.analyse.view.PersonalDataTab', this);
             const addTabReqBuilder = Oskari.requestBuilder('PersonalData.AddTabRequest');
     
