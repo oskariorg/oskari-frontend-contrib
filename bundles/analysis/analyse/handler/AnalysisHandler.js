@@ -7,7 +7,8 @@ class AnalyseHandler extends StateHandler {
         this.instance = instance;
         this.sandbox = Oskari.getSandbox();
         this.setState({
-            data: []
+            data: [],
+            loading: false
         });
         this.loc = Oskari.getMsg.bind(null, 'Analyse');
         this.service = this.instance.sandbox.getService('Oskari.mapframework.service.MapLayerService');
@@ -20,9 +21,13 @@ class AnalyseHandler extends StateHandler {
     }
 
     refreshLayerList () {
+        this.updateState({
+            loading: true
+        });
         const layers = this.service.getAllLayersByMetaType('ANALYSIS');
         this.updateState({
-            data: layers
+            data: layers,
+            loading: false
         });
     }
 
@@ -34,6 +39,9 @@ class AnalyseHandler extends StateHandler {
     }
 
     deleteAnalysis (id, showDialog) {
+        this.updateState({
+            loading: true
+        });
         const me = this;
         const layer = me.state.data.find(l => l.getId() === id);
         const tokenIndex = layer.getId().lastIndexOf('_') + 1; // parse actual id from layer id

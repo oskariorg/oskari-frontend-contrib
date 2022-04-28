@@ -19,11 +19,11 @@ const StyledTable = styled(Table)`
 `;
 
 const deleteIconStyle = {
-    fontSize: '14px',
+    fontSize: '16px',
     color: red.primary
 };
 
-export const AnalysisList = ({ data = [], controller }) => {
+export const AnalysisList = ({ data = [], controller, loading }) => {
 
     const columnSettings = [
         {
@@ -42,6 +42,7 @@ export const AnalysisList = ({ data = [], controller }) => {
             dataIndex: 'id',
             align: 'left',
             title: <Message messageKey='personalDataTab.grid.actions' bundleKey={BUNDLE_KEY} />,
+            width: 100,
             render: (title, item) => {
                 return (
                     <ToolsContainer>
@@ -71,11 +72,13 @@ export const AnalysisList = ({ data = [], controller }) => {
                 name: Oskari.getLocalized(item._name)
             }))}
             pagination={false}
+            loading={loading}
         />
     );
 };
 
 AnalysisList.propTypes = {
     data: PropTypes.arrayOf(PropTypes.object),
-    controller: PropTypes.object.isRequired
+    controller: PropTypes.object.isRequired,
+    loading: PropTypes.bool
 }
