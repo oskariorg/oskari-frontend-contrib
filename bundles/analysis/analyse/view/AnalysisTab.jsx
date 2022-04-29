@@ -10,6 +10,7 @@ export const AnalysisTab = ({ state, controller }) => {
             <AnalysisList
                 controller={controller}
                 data={state.data}
+                loading={state.loading}
             />
         </LocaleProvider>
     );
