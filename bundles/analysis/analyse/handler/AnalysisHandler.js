@@ -1,4 +1,4 @@
-import { StateHandler, controllerMixin } from 'oskari-ui/util';
+import { StateHandler, controllerMixin, Messaging } from 'oskari-ui/util';
 import {getCenter as olExtentGetCenter, getArea as olExtentGetArea} from 'ol/extent';
 
 class AnalyseHandler extends StateHandler {
@@ -81,14 +81,7 @@ class AnalyseHandler extends StateHandler {
         this.service.removeLayer(layer.getId());
         // show msg to user about successful removal
         if (showDialog) {
-            const dialog = Oskari.clazz.create(
-                'Oskari.userinterface.component.Popup'
-            );
-            dialog.show(
-                this.loc('personalDataTab.notification.deletedTitle'),
-                this.loc('personalDataTab.notification.deletedMsg')
-            );
-            dialog.fadeout(3000);
+            Messaging.success(this.loc('personalDataTab.notification.deletedMsg'));
         }
     }
 
@@ -98,9 +91,7 @@ class AnalyseHandler extends StateHandler {
      * @private
      */
     deleteFailure () {
-        const dialog = Oskari.clazz.create('Oskari.userinterface.component.Popup');
-        const okBtn = dialog.createCloseButton(this.loc('personalDataTab.buttons.ok'));
-        dialog.show(this.loc('personalDataTab.error.title'), this.loc('personalDataTab.error.generic'), [okBtn]);
+        Messaging.error(this.loc('personalDataTab.error.generic'));
     }
 
     /**
