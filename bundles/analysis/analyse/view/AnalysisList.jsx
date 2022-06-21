@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Message, Confirm, Tooltip } from 'oskari-ui';
+import { Message, Confirm } from 'oskari-ui';
 import { Table, getSorterFor, ToolsContainer } from 'oskari-ui/components/Table';
 import styled from 'styled-components';
 import { BUNDLE_KEY } from './constants';
 import { DeleteOutlined } from '@ant-design/icons';
 import { red } from '@ant-design/colors';
+import { IconButton } from 'oskari-ui/components/buttons';
 
 const StyledTable = styled(Table)`
     tr {
@@ -53,9 +54,11 @@ export const AnalysisList = ({ data = [], controller, loading }) => {
                             cancelText={<Message messageKey='personalDataTab.buttons.cancel' bundleKey={BUNDLE_KEY} />}
                             placement='bottomLeft'
                         >
-                            <Tooltip title={<Message messageKey='personalDataTab.grid.delete' />}>
-                                <div className='icon t_delete'><DeleteOutlined style={deleteIconStyle} /></div>
-                            </Tooltip>
+                            <IconButton
+                                className='t_icon t_delete'
+                                title={<Message messageKey='personalDataTab.grid.delete' />}
+                                icon={<DeleteOutlined style={deleteIconStyle} />}
+                            />
                         </Confirm>
                     </ToolsContainer>
                 );
