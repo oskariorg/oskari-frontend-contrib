@@ -8,6 +8,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.mapanalysis.domain.AnalysisLayer
     this.wfsBuilder = Oskari.clazz.create('Oskari.mapframework.bundle.mapwfs2.domain.WfsLayerModelBuilder', sandbox);
     // created in parseLayer so it can be used to detect if we have already done it
     this.groupId = null;
+    this.dataProviderId = null;
 }, {
     _getAnalyseService: function () {
         return this.sandbox.getService('Oskari.analysis.bundle.analyse.service.AnalyseService');
@@ -91,6 +92,20 @@ Oskari.clazz.define('Oskari.mapframework.bundle.mapanalysis.domain.AnalysisLayer
                 };
                 maplayerService.addLayerGroup(Oskari.clazz.create('Oskari.mapframework.domain.MaplayerGroup', group));
             }
+        }
+        if (!this.dataProviderId) {
+            this.dataProviderId = -10 * Oskari.getSeq('usergeneratedDataProvider').nextVal();
+            const dataProvider = maplayerService.getDataProviderById(this.dataProviderId);
+            if (!dataProvider) {
+                const provider = {
+                    id: this.dataProviderId,
+                    name: loclayer.inspire
+                };
+                maplayerService.addDataProvider(provider);
+            }
+        }
+        if (this.dataProviderId) {
+            layer.setDataProviderId(this.dataProviderId);
         }
         if (loclayer.inspire) {
             layer.setGroups([{
