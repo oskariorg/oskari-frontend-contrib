@@ -34,7 +34,7 @@ Oskari.registerLocalization(
         "back-to-search": "Back to search",
         "grid": {
             "name": "Place name",
-            "village": "Municipality",
+            "region": "Municipality",
             "type": "Search channel"
         },
         "resultBox": {

@@ -38,8 +38,8 @@ Oskari.clazz.define(
                 title: this.getLocalization('grid').name,
                 prop: 'name'
             }, {
-                title: this.getLocalization('grid').village,
-                prop: 'village'
+                title: this.getLocalization('grid').region,
+                prop: 'region'
             }, {
                 title: this.getLocalization('grid').type,
                 prop: 'type'
@@ -924,7 +924,7 @@ Oskari.clazz.define(
                 title = titleCell.find('a');
                 title.append(row.name);
                 title.on('click', closureMagic(row));
-                jQuery(cells[2]).append(row.village);
+                jQuery(cells[2]).append(row.region);
                 jQuery(cells[3]).append(row.type);
                 resultsTableBody.append(resultContainer);
             }
@@ -960,7 +960,7 @@ Oskari.clazz.define(
 
             var content = [
                 {
-                    html: '<h3>' + result.name + '</h3>' + '<p>' + result.village + '<br/>' + result.type + '</p>',
+                    html: '<h3>' + result.name + '</h3>' + '<p>' + result.region + '<br/>' + result.type + '</p>',
                     actions: [{
                         name: loc.close,
                         type: 'link',

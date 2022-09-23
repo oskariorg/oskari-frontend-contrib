@@ -34,7 +34,7 @@ Oskari.registerLocalization(
         "back-to-search": "Tillbaka till sökningen",
         "grid": {
             "name": "Platsnamn",
-            "village": "Kommun",
+            "region": "Kommun",
             "type": "Sökkanaler"
         },
         "resultBox": {

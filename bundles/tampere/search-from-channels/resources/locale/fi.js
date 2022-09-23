@@ -34,7 +34,7 @@ Oskari.registerLocalization(
         "back-to-search": "Takaisin hakuun",
         "grid": {
             "name": "Nimi",
-            "village": "Kunta",
+            "region": "Kunta",
             "type": "Hakukanava"
         },
         "resultBox": {
