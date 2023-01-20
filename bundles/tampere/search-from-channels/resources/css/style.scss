@@ -31,26 +31,34 @@ div.searchFromChannels_window_search_results div.returnTosearch,div.info,div.sho
 div.searchFromChannels_window_search_results .resultList{
   overflow-y: scroll;
   position: absolute;
-  width: 95%;
+  width: 100%;
   bottom: 10px;
   top: 260px;
 }
-div.searchFromChannels_window_search_results>div.header {
-  background-color: #fdf8d9;
-  padding: 5px 10px;
-  height: 37px;
-}
-div.searchFromChannels_window_search_results>div.header div.icon-close {
-  float: right;
-}
-div.searchFromChannels_window_search_results{
+div.searchFromChannels_window_search_results {
   background: #FFF;
-  position: absolute;
-  bottom: 0;
-  top: 0;
-  left: 0;
-  z-index: 2;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   width: 447px;
+
+  > div.header {
+    background-color: #fdf8d9;
+    padding: 5px 10px;
+    
+    div.icon-close {
+        float: right;
+    }
+  }
+  > div.content {
+      overflow: auto;
+      position: absolute;
+      top: 50px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+  }
 }
 
 div.searchFromChannels_window_search_results .accordion_panel{

@@ -537,9 +537,9 @@ Oskari.clazz.define(
             var me = this,
                 searchResultWindow = me.templates.templateSearchResultsWindow.clone(),
                 resultList = null,
-                mapDiv = jQuery('#contentMap'),
                 types = [];
 
+            const rootContainer = jQuery(Oskari.dom.getRootEl());
             jQuery.each(result.locations, function (index, val) {
                 if (jQuery.inArray(val.type, types) === -1) {
                     types.push(val.type);
@@ -558,7 +558,10 @@ Oskari.clazz.define(
                 'click',
                 function () {
                     searchResultWindow.remove();
-                    me._updateMapModuleSize(mapDiv, searchResultWindow);
+                    // make navigation block visible on exit
+                    const rootContainer = jQuery(Oskari.dom.getRootEl());
+                    const navigation = rootContainer.find('nav');
+                    navigation.css('display', 'block');
                     me._clearMapFromResults();
                     me._closeMapPopup();
 
@@ -584,7 +587,7 @@ Oskari.clazz.define(
                 resultList.append(nf);
                 return;
             } else {
-                me.toggleParentFlyout(me.optionPanel, searchResultWindow, mapDiv);
+                me.toggleParentFlyout(me.optionPanel, searchResultWindow);
 
                 info.append(me.getLocalization('searchResultCount') + ' ' +
                     result.totalCount + ' ' + me.getLocalization('searchResultCount2'));
@@ -601,8 +604,13 @@ Oskari.clazz.define(
                     me.getLocalization('searchResultDescriptionOrdering')
                 );
 
-                mapDiv.append(searchResultWindow);
-                me._updateMapModuleSize(mapDiv, searchResultWindow);
+                // prepend makes the sidebar go on the left side of the map
+                // we could use getNavigationDimensions() and check placement from it to append OR prepend,
+                // but it does work with the navigation even on the right hand side being hidden,
+                //  a new panel appearing on the left hand side and the map moves accordingly
+                rootContainer.prepend(searchResultWindow);
+                const navigation = rootContainer.find('nav');
+                navigation.css('display', 'none');
 
                 resultList = searchResultWindow.find('div.resultList');
                 resultList.empty();
@@ -723,7 +731,7 @@ Oskari.clazz.define(
             btn.setTitle(me.getLocalization('back-to-search'));
             jQuery(btn.getElement()).on('click',
                 function (event) {
-                    me.toggleParentFlyout(me.optionPanel, searchResultWindow, mapDiv);
+                    me.toggleParentFlyout(me.optionPanel, searchResultWindow);
                 }
             );
             var returnTosearch = searchResultWindow.find('div.returnTosearch');
@@ -735,7 +743,7 @@ Oskari.clazz.define(
          * @param  {[type]} optionPanel [description]
          * @return {[type]}             [description]
          */
-        toggleParentFlyout: function (optionPanel, searchResultWindow, mapDiv) {
+        toggleParentFlyout: function (optionPanel, searchResultWindow) {
             var me = this;
             var menuBtn = jQuery('.oskari-tile.search');
             if (optionPanel.parents('.oskari-flyout').is(':visible')) {
@@ -746,37 +754,13 @@ Oskari.clazz.define(
                 menuBtn.removeClass('oskari-tile-closed').addClass('oskari-tile-attached');
 
                 searchResultWindow.remove();
-                me._updateMapModuleSize(mapDiv, searchResultWindow);
+                // make navigation block visible on exit
+                const rootContainer = jQuery(Oskari.dom.getRootEl());
+                const navigation = rootContainer.find('nav');
+                navigation.css('display', 'block');
+
                 me._clearMapFromResults();
                 me._closeMapPopup();
-            }
-        },
-
-        /**
-         * [_updateMapModuleSize description] Updates size left UI component and map
-         * @param  {[type]} mapDiv             [description]
-         * @param  {[type]} searchResultWindow [description]
-         * @return {[type]}                    [description]
-         */
-        _updateMapModuleSize: function (mapDiv, searchResultWindow) {
-            var me = this;
-
-            if (searchResultWindow.find('div.resultList').is(':visible')) {
-                mapDiv.css('margin-left', searchResultWindow.width());
-                jQuery('.oskariui-center').width(jQuery('.oskariui-center').width() - searchResultWindow.width());
-                jQuery('.fullscreenDiv').hide();
-            } else {
-                mapDiv.css('margin-left', jQuery('#maptools').width());
-                jQuery('.oskariui-center').width(jQuery('.oskariui-center').width() + searchResultWindow.width());
-                jQuery('.fullscreenDiv').show();
-            }
-
-            var reqBuilder = Oskari.requestBuilder(
-                'MapFull.MapSizeUpdateRequest'
-            );
-
-            if (reqBuilder) {
-                me.sandbox.request(me, reqBuilder(true));
             }
         },
 
