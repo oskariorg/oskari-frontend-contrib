@@ -22,28 +22,6 @@ div.notLoggedIn {
     padding: 10px;
 }
 
-#contentMap {
-
-    &.mapAnalyseMode {
-        margin-left: 384px;
-    }
-
-    div.basic_analyse {
-        background: white;
-        position: absolute;
-        height: 100%;
-        top: 0;
-        left: 0;
-        z-index: 1500;
-        width: 384px;
-    }
-
-    div.basic_publisher div.content {
-        padding: 10px;
-    }
-
-}
-
 div.analyse {
 
     div.startview {
@@ -77,16 +55,26 @@ div.analyse-startview-label {
 
 div.basic_analyse {
 
+    position: relative;
+    background: #FFF;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 384px;
+
     > div.content {
+        position: absolute;
+        top: 50px;
+        bottom: 0;
+        left: 0;
+        right: 0;
         overflow: auto;
-        height: 89%;
-        @include calcProperty(height, unquote("100% - 88px"));
     }
 
     > div.header {
         background-color: #FDF8D9;
         padding: 5px 10px;
-        height: 37px;
+        /* height: 37px; */
 
         div.icon-close {
             float: right;
@@ -181,7 +169,6 @@ div.basic_analyse {
 
         div.buttons {
             display: inline-block;
-            float: right;
         }
 
     }
@@ -213,7 +200,6 @@ div.basic_analyse {
 
         div.buttons {
             display: inline-block;
-            float: right;
         }
 
     }

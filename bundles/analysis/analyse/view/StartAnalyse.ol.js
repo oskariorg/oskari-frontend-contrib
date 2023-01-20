@@ -253,7 +253,11 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             me.mainPanel = content;
             content.find('div.header h3').append(me.loc.title);
 
-            container.append(content);
+            // prepend makes the sidebar go on the left side of the map
+            // we could use getNavigationDimensions() and check placement from it to append OR prepend,
+            // but it does work with the navigation even on the right hand side being hidden,
+            //  a new panel appearing on the left hand side and the map moves accordingly
+            container.prepend(content);
             var contentDiv = content.find('div.content');
 
             me.alert.insertTo(contentDiv);

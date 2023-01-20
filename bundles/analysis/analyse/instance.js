@@ -445,31 +445,47 @@ Oskari.clazz.define(
          *
          */
         enableAnalyseMode: function() {
-            const map = jQuery('#contentMap');
-            map.addClass('mapAnalyseMode');
-            this.sandbox.mapMode = 'mapAnalyseMode';
-            // Hide flyout, it's not needed...
-            jQuery(this.plugins['Oskari.userinterface.Flyout'].container).parent().parent().hide();
+            const root = this.setEnabled(true);
 
             // proceed with analyse view
-            if (!this.analyse) {
-                this.analyse = Oskari.clazz.create(
-                    'Oskari.analysis.bundle.analyse.view.StartAnalyse',
-                    this,
-                    this.getLocalization('AnalyseView')
-                );
-                this.analyse.render(map);
-            } else {
-                // Update data UI
-                this.analyse.refreshAnalyseData();
-                this.analyse.refreshExtraParameters();
-            }
+            this.analyse = Oskari.clazz.create(
+                'Oskari.analysis.bundle.analyse.view.StartAnalyse',
+                this,
+                this.getLocalization('AnalyseView')
+            );
+            this.analyse.render(root);
+            // TODO: check if these can be removed from code:
+            // previously the analyse instance was just hidden and
+            //  these were called when returning to analysing functionality:
+            // this.analyse.refreshAnalyseData();
+            // this.analyse.refreshExtraParameters();
             if (this.state) {
                 this.analyse.setState(this.state);
             }
             this.analyse.show();
             this.analyse.setEnabled(true);
-            this._resizeMap();
+        },
+
+        setEnabled: function (blnEnabled) {
+            const root = jQuery(Oskari.dom.getRootEl());
+            const navigation = root.find('nav');
+            navigation.css('display', blnEnabled ? 'none' : 'block');
+            const MODE_TOGGLE = 'mapAnalyseMode';
+            const mapContainer = Oskari.dom.getMapContainerEl();
+            if (blnEnabled) {
+                // trigger an event letting other bundles know we require the whole UI
+                var eventBuilder = Oskari.eventBuilder('UIChangeEvent');
+                this.sandbox.notifyAll(eventBuilder(this.mediator.bundleId));
+                mapContainer.classList.add(MODE_TOGGLE);
+                this.sandbox.mapMode = MODE_TOGGLE;
+
+                // hide flyout
+                this.sandbox.postRequestByName('userinterface.UpdateExtensionRequest', [this, 'close']);
+            } else {
+                mapContainer.classList.remove(MODE_TOGGLE);
+                delete this.sandbox._mapMode;
+            }
+            return root;
         },
 
         /**
@@ -477,31 +493,12 @@ Oskari.clazz.define(
          *
          */
         disableAnalyseMode: function() {
-            const map = jQuery('#contentMap');
-            map.removeClass('mapAnalyseMode');
-
-            if (this.sandbox._mapMode === 'mapAnalyseMode') {
-                delete this.sandbox._mapMode;
-            }
+            this.setEnabled(false);
             if (this.analyse) {
-                // Reset tile state
-                const request = Oskari.requestBuilder('userinterface.UpdateExtensionRequest')(this, 'close', this.getName());
-                this.sandbox.request(this.getName(), request);
                 this.analyse.setEnabled(false);
-                this.analyse.hide();
+                this.analyse.destroy();
             }
             this.getWFSLayerService().setAnalysisWFSLayerId(null);
-            this._resizeMap();
-        },
-        /**
-         * @private @method _resizeMap
-         * Resize map to fit screen with expanded/normal sidebar
-         */
-        _resizeMap() {
-            const reqBuilder = Oskari.requestBuilder('MapFull.MapSizeUpdateRequest');
-            if (reqBuilder) {
-                this.sandbox.request(this, reqBuilder(true));
-            }
         },
         /**
          * @public @method displayContent

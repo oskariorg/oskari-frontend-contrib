@@ -40,7 +40,7 @@ Oskari.clazz.define("Oskari.tampere.bundle.searchfromchannels.SearchFromChannels
 	        /* css */
 			{
 				"type" : "text/css",
-				"src" : "../../../../bundles/tampere/search-from-channels/resources/css/style.css"
+				"src" : "../../../../bundles/tampere/search-from-channels/resources/css/style.scss"
 			}
 		], 
 		"locales" : [  
