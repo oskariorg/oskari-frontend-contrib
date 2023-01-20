@@ -137,13 +137,13 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             buttons: '<div class="buttons"></div>',
             help: '<div class="help icon-info"></div>',
             main:
-                '<div><div class="basic_analyse">' +
+                '<div class="basic_analyse">' +
                 '  <div class="header">' +
                 '    <div class="icon-close"></div>' +
                 '    <h3></h3>' +
                 '  </div>' +
                 '  <div class="content"></div>' +
-                '</div></div>',
+                '</div>',
             columnsContainer: '<div class="analyse-columns-container"></div>',
             columnsDropdown:
                 '<select class="analyse-columns-dropdown"></select>',
