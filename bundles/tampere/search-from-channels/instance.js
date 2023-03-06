@@ -467,20 +467,21 @@ Oskari.clazz.define(
             me._progressSpinner = Oskari.clazz.create('Oskari.userinterface.component.ProgressSpinner');
             me._progressSpinner.insertTo(jQuery('.searchFromChannelsOptions'));
             me._progressSpinner.start();
+            const reqBuilder = Oskari.requestBuilder('Search.AddTabRequest');
+            if (!reqBuilder) {
+                Oskari.log('search-from-channels').error('Search.AddTabRequest not available. Unable to start.');
+                return;
+            }
 
             me.optionService.getOptions(function (data) {
                 if (data.channels.length > 0) {
                     if (createTab) {
                     // Wfs search from channels tab OBS. this will be in UI if user has rights into channels
-                        var title = me.getLocalization('tabTitle'),
-                            content = searchFromChannelsContainer,
-                            priority = me.tabPriority,
-                            id = 'oskari_searchfromchannels_tabpanel_header',
-                            reqName = 'Search.AddTabRequest',
-                            reqBuilder = Oskari.requestBuilder(reqName),
-                            req = reqBuilder(title, content, priority, id);
-
-                        me.sandbox.request(me, req);
+                        var title = me.getLocalization('tabTitle');
+                        const content = searchFromChannelsContainer;
+                        const priority = me.tabPriority;
+                        const id = 'oskari_searchfromchannels_tabpanel_header';
+                        me.sandbox.request(me, reqBuilder(title, content, priority, id));
                     }
 
                     me._createAdvancedPanel(data, advancedContainer, moreLessLink);
