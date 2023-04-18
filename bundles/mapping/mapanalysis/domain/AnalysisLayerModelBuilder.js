@@ -64,6 +64,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.mapanalysis.domain.AnalysisLayer
 
         // call parent parseLayerData
         this.wfsBuilder.parseLayerData(layer, mapLayerJson, maplayerService);
+        layer.setStylesFromOptions(mapLayerJson.options);
 
         if (mapLayerJson.wpsName) {
             layer.setWpsName(mapLayerJson.wpsName);
