@@ -1,8 +1,10 @@
+import { showTerrainPopup } from './view/TerrainPopup';
+
 Oskari.clazz.define('Oskari.mapframework.bundle.terrain-profile.TerrainProfileBundleInstance',
     function () {
         this.active = false;
         this.feature = null;
-        this.popup = null;
+        this.popupControls = null;
         this.flyout = null;
         this.loc = Oskari.getMsg.bind(null, 'TerrainProfile');
 
@@ -33,6 +35,12 @@ Oskari.clazz.define('Oskari.mapframework.bundle.terrain-profile.TerrainProfileBu
             };
             sandbox.request(this, addToolButtonBuilder('TerrainProfile', 'basictools', buttonConf));
         },
+        closePopup: function () {
+            if (this.popupControls) {
+                this.popupControls.close();
+            }
+            this.popupControls = null;
+        },
         /**
          * @method setActive controls terrain profile functionality on/off state
          * @param {Boolean} activeState should the functionality be on?
@@ -42,7 +50,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.terrain-profile.TerrainProfileBu
                 if (this.active) {
                     return;
                 }
-                this.popup = this.createPopup();
+                this.createPopup();
                 this.startDrawing();
                 this.active = true;
             } else {
@@ -50,9 +58,8 @@ Oskari.clazz.define('Oskari.mapframework.bundle.terrain-profile.TerrainProfileBu
                     return;
                 }
                 this.active = false;
-                this.popup.close();
                 this.stopDrawing();
-                this.popup = null;
+                this.closePopup();
                 if (this.flyout) {
                     this.flyout.hide();
                 }
@@ -65,15 +72,15 @@ Oskari.clazz.define('Oskari.mapframework.bundle.terrain-profile.TerrainProfileBu
         cancelTool: function () {
             var builder = Oskari.requestBuilder('Toolbar.SelectToolButtonRequest');
             this.sandbox.request(this, builder());
+            this.closePopup();
         },
         /**
          * @method createPopup creates UI popup for terrain profile
         */
         createPopup: function () {
-            return Oskari.clazz.create('Oskari.mapframework.bundle.terrain-profile.TerrainPopup',
-                this.cancelTool.bind(this),
-                this.doQuery.bind(this)
-            );
+            if (!this.popupControls) {
+                this.popupControls = showTerrainPopup(() => this.doQuery(), () => this.cancelTool());
+            }
         },
         /**
          * @method startDrawing starts DrawRequest drawing
