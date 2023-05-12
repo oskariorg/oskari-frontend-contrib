@@ -26,11 +26,6 @@ Oskari.clazz.define(
         {
           type: "text/javascript",
           src:
-            "../../bundles/terrain-profile/view/TerrainFlyout.js"
-        },
-        {
-          type: "text/javascript",
-          src:
             "../../bundles/terrain-profile/MarkerHandler.js"
         },
         {

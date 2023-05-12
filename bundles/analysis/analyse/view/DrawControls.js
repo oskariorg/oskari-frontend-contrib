@@ -311,8 +311,6 @@ Oskari.clazz.define(
          */
         deactivateSelectTools: function () {
             var me = this;
-
-            me.selectionButtonsRenderer.removeButtonSelection();
             me.selectionPlugin.stopDrawing();
         },
 

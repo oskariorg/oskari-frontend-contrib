@@ -1,11 +1,11 @@
 import { showTerrainPopup } from './view/TerrainPopup';
+import { Messaging } from 'oskari-ui/util';
 
 Oskari.clazz.define('Oskari.mapframework.bundle.terrain-profile.TerrainProfileBundleInstance',
     function () {
         this.active = false;
         this.feature = null;
         this.popupControls = null;
-        this.flyout = null;
         this.loc = Oskari.getMsg.bind(null, 'TerrainProfile');
 
         function requestFunction (requestName, args) {
@@ -50,7 +50,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.terrain-profile.TerrainProfileBu
                 if (this.active) {
                     return;
                 }
-                this.createPopup();
+                this.createPopup(null, false);
                 this.startDrawing();
                 this.active = true;
             } else {
@@ -60,9 +60,6 @@ Oskari.clazz.define('Oskari.mapframework.bundle.terrain-profile.TerrainProfileBu
                 this.active = false;
                 this.stopDrawing();
                 this.closePopup();
-                if (this.flyout) {
-                    this.flyout.hide();
-                }
                 this.feature = null;
             }
         },
@@ -77,9 +74,9 @@ Oskari.clazz.define('Oskari.mapframework.bundle.terrain-profile.TerrainProfileBu
         /**
          * @method createPopup creates UI popup for terrain profile
         */
-        createPopup: function () {
+        createPopup: function (data, loading) {
             if (!this.popupControls) {
-                this.popupControls = showTerrainPopup(() => this.doQuery(), () => this.cancelTool());
+                this.popupControls = showTerrainPopup(() => this.doQuery(), data, this.markerHandler, loading, () => this.cancelTool());
             }
         },
         /**
@@ -87,7 +84,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.terrain-profile.TerrainProfileBu
          */
         startDrawing: function () {
             var builder = Oskari.requestBuilder('DrawTools.StartDrawingRequest');
-            this.sandbox.request(this, builder(this.__name, 'LineString', { modifyControl: true, allowMultipleDrawing: false }));
+            this.sandbox.request(this, builder(this.__name, 'LineString', { modifyControl: true, allowMultipleDrawing: false, showMeasureOnMap: true }));
         },
         /**
          * @method stopDrawing stops DrawRequest drawing
@@ -105,6 +102,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.terrain-profile.TerrainProfileBu
             }
             this.feature.properties = { numPoints: 100 };
             var url = Oskari.urls.getRoute('TerrainProfile');
+            this.showFlyout(null, true);
             jQuery.ajax({
                 type: 'GET',
                 dataType: 'json',
@@ -113,35 +111,26 @@ Oskari.clazz.define('Oskari.mapframework.bundle.terrain-profile.TerrainProfileBu
                     route: JSON.stringify(this.feature),
                     srs: this.sandbox.getMap().getSrsName()
                 },
-                success: this.showFlyout.bind(this),
+                success: (data) => {
+                    this.showFlyout(data, false);
+                },
                 error: (jqXHR, textStatus, errorThrown) => {
-                    this.flyout.showError();
+                    this.showFlyout(null, false);
+                    Messaging.error(this.loc('error'));
                     Oskari.log('TerrainProfile').warn('Could not load terrain profile data: ' + errorThrown);
                 }
             });
-            this.showFlyout(null);
         },
         /**
          * @method showFlyout shows graph flyout
          * @param {GeoJsonFeature} data visualization data
          */
-        showFlyout: function (data) {
-            if (this.flyout) {
-                this.flyout.update(data);
+        showFlyout: function (data, loading) {
+            if (this.popupControls) {
+                this.popupControls.update(data, loading);
             } else {
-                var p = jQuery('#mapdiv');
-                var position = p.position().left;
-                var offset = 40;
-                this.flyout = Oskari.clazz.create('Oskari.mapframework.bundle.terrain-profile.TerrainFlyout', this.loc('terrainHeightProfile'), {
-                    width: 'auto',
-                    cls: 'terrain-profile'
-                }, this.markerHandler);
-                this.flyout.addClassForContent('terrain-profile');
-                this.flyout.makeDraggable();
-                this.flyout.move(position + offset, 0, true);
-                this.flyout.update(data);
+                this.createPopup(data, loading);
             }
-            this.flyout.show();
         },
         eventHandlers: {
             'DrawingEvent': function (event) {
