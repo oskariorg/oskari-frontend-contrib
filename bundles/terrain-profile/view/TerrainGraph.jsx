@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
+import { ThemeConsumer } from 'oskari-ui/util';
 
 const processData = (data) => {
     const points = data.properties.distanceFromStart.map(function (d, i) {
@@ -8,7 +9,7 @@ const processData = (data) => {
     return [points];
 };
 
-const createGraph = (ref, data, markerHandler) => {
+const createGraph = (ref, data, markerHandler, theme) => {
     const graphMargin = { top: 25, bottom: 30, left: 45, right: 30 };
     const graphHeight = 300;
     const graphWidth = 600;
@@ -68,7 +69,7 @@ const createGraph = (ref, data, markerHandler) => {
             .data(processed);
 
         paths.enter().append('path')
-            .attr('fill', '#ebb819')
+            .attr('fill', theme.color.accent)
             .merge(paths)
             .attr('d', area);
 
@@ -214,11 +215,11 @@ const createGraph = (ref, data, markerHandler) => {
     updateGraph(data);
 };
 
-export const TerrainGraph = ({ data, markerHandler }) => {
+export const TerrainGraph = ThemeConsumer(({ theme, data, markerHandler }) => {
     const ref = useRef(null);
 
     useEffect(() => {
-        createGraph(ref.current, data, markerHandler);
+        createGraph(ref.current, data, markerHandler, theme);
     }, [data]);
 
     return (
@@ -227,4 +228,4 @@ export const TerrainGraph = ({ data, markerHandler }) => {
             className='terrainprofile-graph'
         />
     );
-};
+});

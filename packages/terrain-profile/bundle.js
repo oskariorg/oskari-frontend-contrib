@@ -20,10 +20,6 @@ Oskari.clazz.define(
       scripts: [
         {
           type: "text/javascript",
-          src: "oskari-frontend/libraries/d3/d3.min.js"
-        },
-        {
-          type: "text/javascript",
           src:
             "../../bundles/terrain-profile/MarkerHandler.js"
         },

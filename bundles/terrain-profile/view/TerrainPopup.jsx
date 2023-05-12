@@ -5,6 +5,7 @@ import { InfoIcon } from 'oskari-ui/components/icons';
 import { Message, Button, Spin } from 'oskari-ui';
 import styled from 'styled-components';
 import { TerrainGraph } from './TerrainGraph';
+import { ThemeProvider } from 'oskari-ui/util';
 
 const BUNDLE_NAME = 'TerrainProfile';
 const StyledContent = styled('div')`
@@ -20,10 +21,12 @@ const PopupContent = ({ showProfile, data, markerHandler, loading, onClose }) =>
     const component = (
         <StyledContent>
             {data && (
-                <TerrainGraph
-                    data={data}
-                    markerHandler={markerHandler}
-                />
+                <ThemeProvider>
+                    <TerrainGraph
+                        data={data}
+                        markerHandler={markerHandler}
+                    />
+                </ThemeProvider>
             )}
             <Message bundleKey={BUNDLE_NAME} messageKey='popupText' />
             <ButtonContainer>
