@@ -69,7 +69,7 @@ const createGraph = (ref, data, markerHandler, theme) => {
             .data(processed);
 
         paths.enter().append('path')
-            .attr('fill', theme.color.accent)
+            .attr('fill', theme?.color?.accent || '#ebb819')
             .merge(paths)
             .attr('d', area);
 
