@@ -20,7 +20,6 @@ Oskari.clazz.define(
       scripts: [
         {
           type: "text/javascript",
-          expose: "d3",
           src: "oskari-frontend/libraries/d3/d3.min.js"
         },
         {
