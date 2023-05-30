@@ -9,8 +9,12 @@ export const StyledList = styled('ul')`
     list-style-type: none;
 `;
 const StyledAlert = styled(Alert)`
-margin-top: 5px;
-margin-bottom: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+`;
+
+const EditButton = styled(Button)`
+    margin-left: 10px;
 `;
 export const StyledListItem = styled('li')`
     padding: 5px;
@@ -100,9 +104,9 @@ export const GeometryPanel = ({ type = '', feature = {}, original = {}, startDra
             <StyledSpace>
                 <StyledContainer>
                     <Message messageKey="ContentEditorView.geometrylist.title" />
-                    <Button onClick={() => startDrawing(type)}>
+                    <EditButton onClick={() => startDrawing(feature.geometry?.type || type)}>
                         <Message messageKey="ContentEditorView.tools.geometryEdit" />
-                    </Button>
+                    </EditButton>
                 </StyledContainer>
                 <br />
                 {geometryChanged && <StyledContainer>
