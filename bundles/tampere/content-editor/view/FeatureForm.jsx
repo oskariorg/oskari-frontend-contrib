@@ -32,6 +32,9 @@ const getFieldForType = (name, type, value, onUpdate) => {
 }
 
 const getDecorated = ({ name, type, value, originalValue, isNew, onUpdate }) => {
+    if (type === 'geometry') {
+        return null;
+    }
     const hasChanged = !isNew && originalValue !== value;
     let labelForOriginal = originalValue;
     if (!labelForOriginal) {
