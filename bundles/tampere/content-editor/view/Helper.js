@@ -22,6 +22,8 @@ const GEOM_TYPE_MAPPING = {
 const detectGeometryType= (type) => GEOM_TYPE_MAPPING[type] || GEOM_TYPE_MAPPING['gml:' + type];
 
 const describeLayer = (id) => {
+    // TODO: change to use DescribeLayer on 2.11+
+    // return fetch(Oskari.urls.getRoute('DescribeLayer', { id: id }), {
     return fetch(Oskari.urls.getRoute('GetWFSLayerFields', { layer_id: id }), {
         method: 'GET',
         headers: {
