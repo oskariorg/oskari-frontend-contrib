@@ -279,7 +279,8 @@ Oskari.clazz.define(
 
             // use the existing component to render selection buttons
             this.selectionButtonsRenderer = Oskari.clazz.create('Oskari.mapframework.bundle.featuredata2.PopupHandler', this.instance);
-            this.selectionButtonsRenderer.renderSelectionToolButtons(selectionToolDiv);
+
+            this.selectionButtonsRenderer.renderSelectionToolButtonsToContainer(selectionToolDiv);
 
             var emptyBtn = Oskari.clazz.create('Oskari.userinterface.component.buttons.CancelButton');
             emptyBtn.setHandler(() => {
@@ -311,8 +312,7 @@ Oskari.clazz.define(
          */
         deactivateSelectTools: function () {
             var me = this;
-
-            me.selectionButtonsRenderer.removeButtonSelection();
+            me.selectionButtonsRenderer.removeButtonSelectionFromContainer();
             me.selectionPlugin.stopDrawing();
         },
 
