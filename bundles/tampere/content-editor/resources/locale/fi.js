@@ -17,6 +17,7 @@ Oskari.registerLocalization(
             "geometrylist": {
                 "title": "Geometria",
                 "empty": "Merkitse geometria kartalle",
+                "notRecognized": "Geometrian tyyppiä ({type}) ei tunnistettu. Kaikki piirtomuodot sallitaan, mutta varmista rajapinnan tukevan näitä ennen tallennusta.",
                 "editing": "Tee merkintä kartalle",
                 "Point": "Piste",
                 "LineString": "Viiva",

@@ -15,8 +15,9 @@ Oskari.registerLocalization(
             },
             "newTitle": "New features",
             "geometrylist": {
-                "title": "Geomerty",
+                "title": "Geometry",
                 "empty": "Draw a geometry on the map",
+                "notRecognized": "Geometry type ({type}) not recognized. Allowing all types to be added. Make sure the interface is ok with this.",
                 "editing": "Draw on the map",
                 "Point": "Point",
                 "LineString": "Line",

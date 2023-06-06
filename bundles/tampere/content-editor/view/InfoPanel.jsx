@@ -5,14 +5,21 @@ import { Card } from 'oskari-ui/components/Card';
 import styled from 'styled-components';
 
 const Paragraph = styled('p')``;
+const StyledCard = styled(Card)`
+.ant-card-head-title {
+    white-space: normal;
+}
+`;
+
+
 export const InfoPanel = ({ layer = {}, startNewFeature, onClose}) => {
     return (
         <React.Fragment>
             <Message messageKey="ContentEditorView.info.layerLabel" />:
             <Space direction="vertical">
-                <Card title={layer.name}>
+                <StyledCard title={layer.name}>
                     <Message messageKey="ContentEditorView.info.featureModifyInfo" LabelComponent={Paragraph}/>
-                </Card>
+                </StyledCard>
                 
                 <Space>
                     <Button onClick={onClose}>

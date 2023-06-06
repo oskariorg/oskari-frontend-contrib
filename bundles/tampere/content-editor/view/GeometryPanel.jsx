@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Message, Button, Space } from 'oskari-ui';
+import { Alert, Message, Button, Space } from 'oskari-ui';
 import { StyledSpace, StyledContainer, StyledModIndicator } from './styled';
 import styled from 'styled-components';
 
@@ -8,7 +8,14 @@ export const StyledList = styled('ul')`
     width: 100%:
     list-style-type: none;
 `;
+const StyledAlert = styled(Alert)`
+    margin-top: 5px;
+    margin-bottom: 5px;
+`;
 
+const EditButton = styled(Button)`
+    margin-left: 10px;
+`;
 export const StyledListItem = styled('li')`
     padding: 5px;
     border: 1px solid gray;
@@ -44,30 +51,40 @@ const geometryMatch = (current = {}, original = {}) => {
 export const GeometryPanel = ({ type = '', feature = {}, original = {}, startDrawing, updateGeometry}) => {
     const isMulti = type.includes('Multi');
     const isGeomBtnShown = (btnType) => type.includes(btnType);
+    const isPoint = isGeomBtnShown('Point');
+    const isLine = isGeomBtnShown('LineString')
+    const isPolygon = isGeomBtnShown('Polygon');
+    const isRecognized = isPoint || isLine || isPolygon;
     useEffect(() => {
         initLayerOnMap();
         return cleanup;
     });
     if (!feature.geometry) {
-        return (<Space>
-            <Message messageKey="ContentEditorView.geometrylist.empty" />
-            
-            { isGeomBtnShown('Point') &&
-                <Button onClick={() => startDrawing('Point')}>
-                    <Message messageKey="ContentEditorView.tools.point" />
-                </Button>
-            }
-            { isGeomBtnShown('LineString') &&
-                <Button onClick={() => startDrawing('LineString')}>
-                    <Message messageKey="ContentEditorView.tools.line" />
-                </Button>
-            }
-            { isGeomBtnShown('Polygon') &&
-                <Button onClick={() => startDrawing('Polygon')}>
-                    <Message messageKey="ContentEditorView.tools.area" />
-                </Button>
-            }
-        </Space>);
+        return (
+            <React.Fragment>
+                <StyledSpace>
+                    <Message messageKey="ContentEditorView.geometrylist.empty" />
+                </StyledSpace>
+                { !isRecognized &&
+                    <StyledAlert message={<Message messageKey="ContentEditorView.geometrylist.notRecognized" messageArgs={{type}}/>} /> }
+                <Space>
+                    { (!isRecognized || isPoint) &&
+                        <Button onClick={() => startDrawing('Point')}>
+                            <Message messageKey="ContentEditorView.tools.point" />
+                        </Button>
+                    }
+                    { (!isRecognized || isLine) &&
+                        <Button onClick={() => startDrawing('LineString')}>
+                            <Message messageKey="ContentEditorView.tools.line" />
+                        </Button>
+                    }
+                    { (!isRecognized || isPolygon) &&
+                        <Button onClick={() => startDrawing('Polygon')}>
+                            <Message messageKey="ContentEditorView.tools.area" />
+                        </Button>
+                    }
+                </Space>
+            </React.Fragment>);
     }
     // has geometry
     const isNew = !feature.id;
@@ -87,9 +104,9 @@ export const GeometryPanel = ({ type = '', feature = {}, original = {}, startDra
             <StyledSpace>
                 <StyledContainer>
                     <Message messageKey="ContentEditorView.geometrylist.title" />
-                    <Button onClick={() => startDrawing(type)}>
+                    <EditButton onClick={() => startDrawing(feature.geometry?.type || type)}>
                         <Message messageKey="ContentEditorView.tools.geometryEdit" />
-                    </Button>
+                    </EditButton>
                 </StyledContainer>
                 <br />
                 {geometryChanged && <StyledContainer>
