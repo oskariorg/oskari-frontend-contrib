@@ -180,20 +180,19 @@ Oskari.clazz.define(
          * @param {Function} failure the failure callback
          *
          */
-        _getWFSLayerPropertiesAndTypes: function (layer_id, success2, failure) {
-            var url = Oskari.urls.getRoute('GetWFSLayerFields') + '&layer_id=' + layer_id;
-            jQuery.ajax({
-                type: 'GET',
-                dataType: 'json',
-                url: url,
-                beforeSend: function (x) {
-                    if (x && x.overrideMimeType) {
-                        x.overrideMimeType('application/j-son;charset=UTF-8');
-                    }
-                },
-                success: success2,
-                error: failure
+        _getWFSLayerPropertiesAndTypes: function (layer_id, success, failure) {
+            fetch(Oskari.urls.getRoute('DescribeLayer', { id: layer_id }), {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json'
+                }
+            }).then(response => {
+                return response.json();
+            }).then(json => {
+                success.call(json);
             });
+
+
         },
 
         /**
@@ -228,10 +227,12 @@ Oskari.clazz.define(
          */
         _handleWFSLayerPropertiesAndTypesResponse: function (layerId, propertyJson) {
             const layer = this.instance.getSandbox().findMapLayerFromSelectedMapLayers(layerId);
+            const types = {};
+            propertyJson.properties.forEach(property => types[property.name] = property.type );
             if (layer) {
-                layer.setPropertyTypes(propertyJson.types);
+                layer.setPropertyTypes(types);
             }
-        }
+        },
     }, {
         protocol: ['Oskari.mapframework.service.Service']
     }
