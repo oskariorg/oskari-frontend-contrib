@@ -126,6 +126,13 @@ const createGraph = (ref, data, markerHandler, theme) => {
         .text(Oskari.getMsg('TerrainProfile', 'resetGraph'));
 
     const brushed = (event) => {
+        if (navigator.userAgent.match(/firefox|fxios/i)) {
+            /**
+             * TODO: Zoom doesn't work on Firefox
+             * Disabled completely for now.
+             */
+            return;
+        }
         const selection = event.selection;
         if (!selection) {
             return;
@@ -169,7 +176,14 @@ const createGraph = (ref, data, markerHandler, theme) => {
 
 
     const mousemove = (e) => {
-        const x0 = x.invert(d3.pointer(e)[0]);
+        let xPos;
+        if (navigator.userAgent.match(/firefox|fxios/i)) {
+            // Fix for Firefox
+            xPos = e.offsetX;
+        } else {
+            xPos = d3.pointer(e)[0];
+        }
+        const x0 = x.invert(xPos);
         const i = bisectX(processed[0], x0, 1);
         const d0 = processed[0][i - 1];
         const d1 = processed[0][i];
