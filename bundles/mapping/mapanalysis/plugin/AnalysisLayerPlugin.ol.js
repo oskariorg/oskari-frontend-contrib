@@ -23,7 +23,7 @@ Oskari.clazz.define(
         layertype: 'analysislayer',
 
         getLayerTypeSelector: function () {
-            return this.layertype; // 'ANALYSIS';
+            // WFS plugin handles events
         },
 
         /**
@@ -31,7 +31,7 @@ Oskari.clazz.define(
          * Interface method for the module protocol.
          */
         _initImpl: function () {
-            const type = this.getLayerTypeSelector();
+            const type = this.layertype;
             const options = {
                 type,
                 ...this.loc('layer'),
