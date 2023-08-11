@@ -2010,10 +2010,10 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             featureList.attr('id', 'analyse-key-field');
             let joinKey;
             if (this.differenceLayer && targetLayer) {
-                const { data: diffData = {} } = this.differenceLayer.getAttributes();
-                const { data: targetData = {} } = targetLayer.getAttributes();
-                if (diffData.commonId === targetData.commonId) {
-                    joinKey = diffData.commonId;
+                const { commonId: diff } = this.differenceLayer.getWpsLayerParams();
+                const { commonId: target } = targetLayer.getWpsLayerParams();
+                if (diff === target) {
+                    joinKey = diff;
                 }
             }
             if (joinKey) {
@@ -3039,8 +3039,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             if (!selectedLayer) {
                 return;
             }
-            const { data = {} } = selectedLayer.getAttributes();
-            return data.noDataValue;
+            return selectedLayer.getWpsLayerParams().noDataValue;
         },
 
         /**
