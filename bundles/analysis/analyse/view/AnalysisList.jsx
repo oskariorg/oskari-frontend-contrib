@@ -65,14 +65,12 @@ export const AnalysisList = ({ data = [], controller, loading }) => {
             }
         }
     ];
-
     return (
         <StyledTable
             columns={columnSettings}
             dataSource={data.map(item => ({
-                key: item._id,
-                ...item,
-                name: Oskari.getLocalized(item._name)
+                key: item.getId(),
+                ...item.getLocaleValues()
             }))}
             pagination={false}
             loading={loading}
