@@ -1,5 +1,5 @@
 import olFormatGeoJSON from 'ol/format/GeoJSON';
-import { COLORS, FILL_COLORS, DEFAULT_STYLE } from './constants';
+import { COLORS, FILL_COLORS } from './constants';
 import { showStyleEditor } from './StyleForm';
 /**
  * @class Oskari.analysis.bundle.analyse.view.StartAnalyse
@@ -906,7 +906,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                     area : { color }
                 }
             };
-            return jQuery.extend(true, {}, DEFAULT_STYLE, style)
+            return jQuery.extend(true, {}, Oskari.custom.generateBlankStyle(), style)
         },
 
         /**
