@@ -1,5 +1,3 @@
-import { OSKARI_BLANK_STYLE } from 'oskari-ui/components/StyleEditor/index';
-export const DEFAULT_STYLE = { ...OSKARI_BLANK_STYLE };
 export const BUNDLE_KEY = 'Analyse';
 // Both color arrays have to be equal length
 export const COLORS = [

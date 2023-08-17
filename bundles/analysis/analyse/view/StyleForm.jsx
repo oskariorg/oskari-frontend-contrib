@@ -5,7 +5,7 @@ import { Message, Button } from 'oskari-ui';
 import { SecondaryButton, PrimaryButton, ButtonContainer } from 'oskari-ui/components/buttons';
 import { showPopup } from 'oskari-ui/components/window';
 import { StyleEditor } from 'oskari-ui/components/StyleEditor';
-import { BUNDLE_KEY, DEFAULT_STYLE } from './constants';
+import { BUNDLE_KEY } from './constants';
 
 const Content = styled.div`
     padding: 24px;
@@ -24,7 +24,7 @@ const StyleForm = ({ style: initStyle, onSave, onCancel, getRandom }) => {
             />
             <ButtonContainer>
                 <Button onClick={() => setStyle(getRandom())}>{getMessage('randomColor')}</Button>
-                <Button onClick={() => setStyle(DEFAULT_STYLE)}>{getMessage('defaultStyle')}</Button>
+                <Button onClick={() => setStyle(Oskari.custom.generateBlankStyle())}>{getMessage('defaultStyle')}</Button>
                 <SecondaryButton type='cancel' onClick={onCancel}/>
                 <PrimaryButton type='save' onClick={() => onSave(style) }/>
             </ButtonContainer>
