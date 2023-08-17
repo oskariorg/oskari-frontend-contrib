@@ -1,28 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Message, Confirm } from 'oskari-ui';
+import { Message } from 'oskari-ui';
 import { Table, getSorterFor, ToolsContainer } from 'oskari-ui/components/Table';
-import styled from 'styled-components';
 import { BUNDLE_KEY } from './constants';
-import { DeleteOutlined } from '@ant-design/icons';
-import { red } from '@ant-design/colors';
-import { IconButton } from 'oskari-ui/components/buttons';
-
-const StyledTable = styled(Table)`
-    tr {
-        th {
-            padding: 8px 8px;
-        }
-        td {
-            padding: 8px
-        }
-    }
-`;
-
-const deleteIconStyle = {
-    fontSize: '16px',
-    color: red.primary
-};
+import { DeleteButton } from 'oskari-ui/components/buttons';
 
 export const AnalysisList = ({ data = [], controller, loading }) => {
 
@@ -47,19 +28,10 @@ export const AnalysisList = ({ data = [], controller, loading }) => {
             render: (title, item) => {
                 return (
                     <ToolsContainer>
-                        <Confirm
+                        <DeleteButton
+                            type='icon'
                             title={<Message messageKey='personalDataTab.confirmDeleteMsg' messageArgs={{ name: item.name }} bundleKey={BUNDLE_KEY} />}
-                            onConfirm={() => controller.deleteAnalysis(item.key)}
-                            okText={<Message messageKey='personalDataTab.buttons.ok' bundleKey={BUNDLE_KEY} />}
-                            cancelText={<Message messageKey='personalDataTab.buttons.cancel' bundleKey={BUNDLE_KEY} />}
-                            placement='bottomLeft'
-                        >
-                            <IconButton
-                                className='t_icon t_delete'
-                                title={<Message messageKey='personalDataTab.grid.delete' />}
-                                icon={<DeleteOutlined style={deleteIconStyle} />}
-                            />
-                        </Confirm>
+                            onConfirm={() => controller.deleteAnalysis(item.key)} />
                     </ToolsContainer>
                 );
             }
@@ -67,7 +39,7 @@ export const AnalysisList = ({ data = [], controller, loading }) => {
     ];
 
     return (
-        <StyledTable
+        <Table
             columns={columnSettings}
             dataSource={data.map(item => ({
                 key: item._id,
