@@ -5,7 +5,7 @@
   "keywords": [
     "Oskari"
   ],
-  "dependencies": {
+  "peerDependencies": {
     "oskari-frontend": "git+https://git@github.com/oskariorg/oskari-frontend.git#develop"
   },
   "engines": {
