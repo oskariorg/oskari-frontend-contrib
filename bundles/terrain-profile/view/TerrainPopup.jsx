@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { showPopup, getNavigationDimensions, PLACEMENTS } from 'oskari-ui/components/window';
 import { ButtonContainer, SecondaryButton } from 'oskari-ui/components/buttons';
 import { InfoIcon } from 'oskari-ui/components/icons';
-import { Message, Button, Spin } from 'oskari-ui';
+import { Message, Button, Spin, Checkbox } from 'oskari-ui';
 import styled from 'styled-components';
 import { TerrainGraph } from './TerrainGraph';
 import { ThemeProvider } from 'oskari-ui/util';
@@ -18,6 +18,7 @@ const InfoContainer = styled('div')`
 `;
 
 const PopupContent = ({ showProfile, data, markerHandler, loading, onClose }) => {
+    const [showFromSeaLevel, setShowFromSeaLevel] = useState(false);
     const component = (
         <StyledContent>
             {data && (
@@ -25,10 +26,16 @@ const PopupContent = ({ showProfile, data, markerHandler, loading, onClose }) =>
                     <TerrainGraph
                         data={data}
                         markerHandler={markerHandler}
+                        fromSeaLevel={showFromSeaLevel}
                     />
                 </ThemeProvider>
             )}
             <Message bundleKey={BUNDLE_NAME} messageKey='popupText' />
+            <div>
+                <Checkbox checked={showFromSeaLevel} onChange={(e) => setShowFromSeaLevel(e.target.checked)}>
+                    <Message bundleKey={BUNDLE_NAME} messageKey='showFromSeaLevel' />
+                </Checkbox>
+            </div>
             <ButtonContainer>
                 <SecondaryButton
                     type='cancel'

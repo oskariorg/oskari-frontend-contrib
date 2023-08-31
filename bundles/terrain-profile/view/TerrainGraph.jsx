@@ -9,7 +9,7 @@ const processData = (data) => {
     return [points];
 };
 
-const createGraph = (ref, data, markerHandler, theme) => {
+const createGraph = (ref, data, markerHandler, fromSeaLevel, theme) => {
     const graphMargin = { top: 25, bottom: 30, left: 45, right: 30 };
     const graphHeight = 300;
     const graphWidth = 600;
@@ -50,7 +50,7 @@ const createGraph = (ref, data, markerHandler, theme) => {
         });
     const yAxis = d3.axisLeft(y)
         .tickSizeOuter(0)
-        .ticks(4)
+        .ticks(5)
         .tickSizeInner(-graphWidth + graphMargin.right + graphMargin.left)
         .tickFormat((d) => { return Oskari.getMsg('TerrainProfile', 'legendValue', { value: d }) + ' m'; });
 
@@ -59,7 +59,7 @@ const createGraph = (ref, data, markerHandler, theme) => {
         if (data) {
             processed = processData(data);
             x.domain([0, d3.max(processed[0], function (d) { return d.distance; })]);
-            recalculateYDomain(processed);
+            recalculateYDomain();
             resetScalingButton.style('display', 'none');
         }
         area.y0(y(0));
@@ -221,20 +221,25 @@ const createGraph = (ref, data, markerHandler, theme) => {
 
     const recalculateYDomain = () => {
         const extent = d3.extent(processed[0], function (d) { return d.height; });
-        if (extent[0] > 0) {
-            extent[0] = 0;
+        if (fromSeaLevel) {
+            if (extent[0] > 0) {
+                extent[0] = 0;
+            }
         }
         y.domain(extent);
     }
     updateGraph(data);
 };
 
-export const TerrainGraph = ThemeConsumer(({ theme, data, markerHandler }) => {
-    const ref = useRef(null);
+export const TerrainGraph = ThemeConsumer(({ theme, data, markerHandler, fromSeaLevel }) => {
+    let ref = useRef(null);
 
     useEffect(() => {
-        createGraph(ref.current, data, markerHandler, theme);
-    }, [data]);
+        if (ref?.current?.children?.length > 0) {
+            ref.current.removeChild(ref.current.children[0]);
+        }
+        createGraph(ref.current, data, markerHandler, fromSeaLevel, theme);
+    }, [data, fromSeaLevel]);
 
     return (
         <div
