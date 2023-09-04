@@ -62,7 +62,7 @@ const createGraph = (ref, data, markerHandler, fromSeaLevel, theme) => {
             recalculateYDomain();
             resetScalingButton.style('display', 'none');
         }
-        area.y0(y(0));
+        area.y0(y.range()[0]);
 
         const paths = pathContainer
             .selectAll('path')
@@ -82,21 +82,7 @@ const createGraph = (ref, data, markerHandler, fromSeaLevel, theme) => {
     // Set up container groups (for draw ordering)
     const pathContainer = svg.append('g');
 
-    svg.append('rect') // mask above graph
-        .attr('fill', '#fafafa')
-        .attr('x', 0)
-        .attr('y', -10)
-        .attr('width', graphWidth)
-        .attr('height', graphMargin.top + 10);
-
     const cursor = svg.append('g');
-
-    svg.append('rect') // mask below graph
-        .attr('fill', '#fafafa')
-        .attr('x', 0)
-        .attr('y', graphHeight - graphMargin.bottom)
-        .attr('width', graphWidth)
-        .attr('height', graphMargin.bottom + 10);
 
     const xAxisContainer = svg.append('g')
         .attr('transform', 'translate(0 ' + (graphHeight - graphMargin.bottom) + ')');
