@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { showPopup, getNavigationDimensions, PLACEMENTS } from 'oskari-ui/components/window';
 import { ButtonContainer, SecondaryButton } from 'oskari-ui/components/buttons';
 import { InfoIcon } from 'oskari-ui/components/icons';
-import { Message, Button, Spin, Checkbox } from 'oskari-ui';
+import { Message, Button, Spin, Switch } from 'oskari-ui';
 import styled from 'styled-components';
 import { TerrainGraph } from './TerrainGraph';
 import { ThemeProvider } from 'oskari-ui/util';
@@ -15,6 +15,14 @@ const StyledContent = styled('div')`
 const InfoContainer = styled('div')`
     margin-left: 5px;
     display: inline-block;
+`;
+const SeaLevelSwitch = styled('div')`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+`;
+const StyledSwitch = styled(Switch)`
+    margin-right: 10px;
 `;
 
 const PopupContent = ({ showProfile, data, markerHandler, loading, onClose }) => {
@@ -31,22 +39,27 @@ const PopupContent = ({ showProfile, data, markerHandler, loading, onClose }) =>
                 </ThemeProvider>
             )}
             <Message bundleKey={BUNDLE_NAME} messageKey='popupText' />
-            <div>
-                <Checkbox checked={showFromSeaLevel} onChange={(e) => setShowFromSeaLevel(e.target.checked)}>
-                    <Message bundleKey={BUNDLE_NAME} messageKey='showFromSeaLevel' />
-                </Checkbox>
-            </div>
+            <SeaLevelSwitch>
+                <StyledSwitch
+                    size='small'
+                    checked={showFromSeaLevel}
+                    onChange={(checked) => setShowFromSeaLevel(checked)}
+                />
+                <Message bundleKey={BUNDLE_NAME} messageKey='showFromSeaLevel' />
+            </SeaLevelSwitch>
             <ButtonContainer>
                 <SecondaryButton
                     type='cancel'
                     onClick={onClose}
                 />
-                <Button
-                    type='primary'
-                    onClick={showProfile}
-                >
-                    <Message bundleKey={BUNDLE_NAME} messageKey='showProfile' />
-                </Button>
+                {!data && (
+                    <Button
+                        type='primary'
+                        onClick={showProfile}
+                    >
+                        <Message bundleKey={BUNDLE_NAME} messageKey='showProfile' />
+                    </Button>
+                )}
             </ButtonContainer>
         </StyledContent>
     );
@@ -61,14 +74,16 @@ const PopupContent = ({ showProfile, data, markerHandler, loading, onClose }) =>
 };
 
 const Header = ({}) => (
-    <div>
-        <Message bundleKey={BUNDLE_NAME} messageKey='popupTitle' />
-        <InfoContainer>
-            <InfoIcon>
-                <Message bundleKey={BUNDLE_NAME} messageKey='headerTooltip' />
-            </InfoIcon>
-        </InfoContainer>
-    </div>
+    <ThemeProvider>
+        <div>
+            <Message bundleKey={BUNDLE_NAME} messageKey='popupTitle' />
+            <InfoContainer>
+                <InfoIcon>
+                    <Message bundleKey={BUNDLE_NAME} messageKey='headerTooltip' />
+                </InfoIcon>
+            </InfoContainer>
+        </div>
+    </ThemeProvider>
 );
 
 export const showTerrainPopup = (showProfile, data = null, markerHandler, loading = false, onClose) => {
