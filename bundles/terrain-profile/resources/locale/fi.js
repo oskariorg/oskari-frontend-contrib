@@ -10,7 +10,7 @@ Oskari.registerLocalization(
             "legendValue": "{value, number}",
             "noValue": "Ei arvoa",
             "resetGraph": "Palauta alkuperäinen profiilikuva",
-            "headerTooltip": "Profiilikuvan alareuna on merenpinnan tasolla. Muuta alareunan korkeutta hiirellä vetämällä haluamastasi korkeudesta ylöspäin.",
+            "headerTooltip": "Muuta alareunan korkeutta hiirellä vetämällä haluamastasi korkeudesta ylöspäin.",
             "showFromSeaLevel": "Näytä korkeus merenpinnasta",
             "error": "Maastoprofiilia ei onnistuttu hakemaan."
         }
