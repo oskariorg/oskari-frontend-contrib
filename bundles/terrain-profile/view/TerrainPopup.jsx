@@ -39,17 +39,19 @@ const PopupContent = ({ showProfile, data, markerHandler, loading, onClose }) =>
                 </ThemeProvider>
             )}
             <Message bundleKey={BUNDLE_NAME} messageKey='popupText' />
-            <SeaLevelSwitch>
-                <StyledSwitch
-                    size='small'
-                    checked={showFromSeaLevel}
-                    onChange={(checked) => setShowFromSeaLevel(checked)}
-                />
-                <Message bundleKey={BUNDLE_NAME} messageKey='showFromSeaLevel' />
-            </SeaLevelSwitch>
+            {data && (
+                <SeaLevelSwitch>
+                    <StyledSwitch
+                        size='small'
+                        checked={showFromSeaLevel}
+                        onChange={(checked) => setShowFromSeaLevel(checked)}
+                    />
+                    <Message bundleKey={BUNDLE_NAME} messageKey='showFromSeaLevel' />
+                </SeaLevelSwitch>
+            )}
             <ButtonContainer>
                 <SecondaryButton
-                    type='cancel'
+                    type='close'
                     onClick={onClose}
                 />
                 {!data && (
