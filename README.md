@@ -34,9 +34,8 @@ This repository, the main oskari-frontend repository and your applications repos
 3. Clone the contrib repository (this one): `git clone https://github.com/oskariorg/oskari-frontend-contrib.git`
     - Now we have directories `oskari-frontend` and `oskari-frontend-contrib` side by side
 4. Run `npm install` in `oskari-frontend` folder
-5. Run `npm install ../oskari-frontend` in this (`oskari-frontend-contrib`) folder
-6. Run `npm install ../oskari-frontend` in your applications folder (for example `sample-application`)
-7. Run `npm install ../oskari-frontend-contrib` in your applications folder (for example `sample-application`)
+5. Run `npm install ../oskari-frontend` in your applications folder (for example `sample-application`)
+6. Run `npm install ../oskari-frontend-contrib` in your applications folder (for example `sample-application`)
 
 In this model, it's left to the developer to checkout the correct branches/versions of the above repos.
 With the symlinks in place import-statements and other path references to `oskari-frontend` will resolve to the appropriate directories. 
@@ -50,8 +49,6 @@ If you would like to contribute your own bundles to this repo, please make a Pul
 ### Libraries
 
 Before adding a library dependency (either under `libraries/` or via NPM), you should check if the library is already included in `oskari-frontend` repo. If it is, you can reference it in your bundle.js with eg. `oskari-frontend/libraries/geostats/1.5.0/lib/geostats.min.js`. NPM package dependencies defined in `oskari-frontend` repo can be imported directly in code found in this repo eg. Open Layers `import olMap from 'ol/Map';`. Note: this is not how node module resolution usually works; it's a special feature of the Oskari build system aimed to avoid library code duplication & version conflicts. To see which packages can be used in this way, see `dependencies` in [oskari-frontend package.json](https://github.com/oskariorg/oskari-frontend/blob/master/package.json).
-
-If the library isn't included in `oskari-frontend` repo, you can add it into this repo, either as dependency in package.json (preferred) or under `libraries/`. Dependencies under `libraries/` require a reference in bundle.js, NPM dependencies do not; just `import` in your code.
 
 ## License
  
