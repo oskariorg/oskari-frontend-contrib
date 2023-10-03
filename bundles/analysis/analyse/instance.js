@@ -31,7 +31,6 @@ Oskari.clazz.define(
         this.isMapStateChanged = true;
         this.state = undefined;
         this.conf = {};
-        this.personalDataTab = undefined;
         this._log = Oskari.log(this.getName());
         this.loc = Oskari.getMsg.bind(null, 'Analyse');
         this._unsupportedWfsLayerVersions = ['2.0.0', '3.0.0'];
@@ -235,27 +234,14 @@ Oskari.clazz.define(
             const sandbox = Oskari.getSandbox();
             let myDataService = sandbox.getService('Oskari.mapframework.bundle.mydata.service.MyDataService');
     
-            const reqName = 'PersonalData.AddTabRequest';
             if (myDataService) {
                 myDataService.addTab('analysis', this.loc('personalDataTab.title'), AnalysisTab, new AnalysisHandler(this));
-            } else if (sandbox.hasHandler(reqName)) {
-                // fallback to old personaldata tabs
-                this._addTabToPersonalData();
             } else if (!appStarted) {
                 // Wait for the application to load all bundles and try again
                 Oskari.on('app.start', () => {
                     this._addTab(true);
                 });
             }
-        },
-        _addTabToPersonalData: function () {
-            const analysisTab = Oskari.clazz.create('Oskari.mapframework.bundle.analyse.view.PersonalDataTab', this);
-            const addTabReqBuilder = Oskari.requestBuilder('PersonalData.AddTabRequest');
-    
-            if (addTabReqBuilder) {
-                this.getSandbox().request(this, addTabReqBuilder(this.localization.personalDataTab.title, analysisTab.getContent(), false, 'analyse'));
-            }
-            this.personalDataTab = analysisTab;
         },
         /**
          * @static @property {Object} eventHandlers
@@ -581,10 +567,6 @@ Oskari.clazz.define(
                         loc.success.layerAdded.message.replace(/\{layer\}/, layer.getName())
                     );
                 }
-            }
-            // maplayers changed so update the tab content in personaldata
-            if (typeof this.personalDataTab !== 'undefined') {
-                this.personalDataTab.update();
             }
         }
     }, {
