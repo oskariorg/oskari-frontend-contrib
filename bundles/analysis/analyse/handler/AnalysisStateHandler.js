@@ -1,5 +1,7 @@
 import { StateHandler, controllerMixin, Messaging } from 'oskari-ui/util';
-import { createTempLayer, createFeatureLayer, eligibleForAnalyse, isUnsupportedWFS } from '../service/AnalyseHelper';
+import { createTempLayer, createFeatureLayer, eligibleForAnalyse, isUnsupportedWFS, getRandomizedStyle } from '../service/AnalyseHelper';
+import { PROPERTIES, FILTER, BUFFER, METHODS } from '../view/constants';
+import { showStyleEditor } from './StyleForm';
 
 class Handler extends StateHandler {
     constructor (instance) {
@@ -11,11 +13,21 @@ class Handler extends StateHandler {
             enabled: false,
             tempLayers: [],
             layerId: null,
-            filter: null
+            targetId: null,
+            filter: Object.values(FILTER)[1],
+            method: METHODS[0],
+            properties: {
+                type: Object.values(PROPERTIES)[0],
+                selected: []
+            },
+            methodParams: {},
+            style: getRandomizedStyle(),
+            showFeatureData: true,
+            showDataWithoutSaving: false
         });
         this.eventHandlers = this.createEventHandlers();
         this.featureLayer = null;
-        this.selectedUpdateListeners = [];
+        this.popupControls = null;
     };
 
     getName () {
@@ -68,12 +80,16 @@ class Handler extends StateHandler {
     }
 
     setAnalysisLayerId (layerId) {
+        // TODO: auto selections and isTemp
         this.updateState({layerId});
-        this.selectedUpdateListeners.forEach(consumer => consumer(this.getState()));
     }
 
-    setFilter (filter) {
-        this.updateState({ filter });
+    setTargetLayerId (targetId) {
+        this.updateState({targetId});
+    }
+
+    setValue (key, value) {
+        this.updateState({ [key]: value });
     }
 
     _selectAnalysisLayerId () {
@@ -94,14 +110,39 @@ class Handler extends StateHandler {
         this.updateState({ tempLayers, layerId });
     }
 
-    removeTempLayer (id) {
+    removeLayer (layerId) {
+        if (this.sandbox.isLayerAlreadySelected()) {
+            this.sandbox.postRequestByName('RemoveMapLayerRequest', [layerId]);
+            // listens remove event
+            return;
+        }
         const { tempLayers } = this.getState();
-        const layer = tempLayers.find(l => l.getId() === id);
+        const layer = tempLayers.find(l => l.getId() === layerId);
         if (!layer) {
             return;
         }
         this._getFeatureSource().removeFeature(layer.getFeature());
-        this.updateState({ tempLayers: tempLayers.filter(l => l.getId() !== id) });
+        this.updateState({ tempLayers: tempLayers.filter(l => l.getId() !== layerId) });
+    }
+
+    openStyleEditor () {
+        if (this.popupControls) {
+            return;
+        }
+        const { style } = this.getState();
+        const onSave = style => {
+            this.updateState({ style });
+            this.closeStyleEditor();
+        };
+        const onClose = () => this.closeStyleEditor();
+        this._popupControls = showStyleEditor(style, onSave, onClose)
+    }
+
+    closeStyleEditor () {
+        if (this._popupControls) {
+            this._popupControls.close();
+        }
+        this._popupControls = null;
     }
 
     _getFeatureSource () {
@@ -118,28 +159,16 @@ class Handler extends StateHandler {
         mapModule.removeLayer(this.featureLayer);
         this.featureLayer = null;
     }
-
-    /* getters for jQuery */
-    getSelectedMapLayer () {
-        const { layerId, tempLayers } = this.getState();
-        return this.sandbox.findMapLayerFromSelectedMapLayers(layerId) || tempLayers.find(l => l.getId() === layerId);
-    }
-
-    getLayers () {
-        const layers = this.sandbox.findAllSelectedMapLayers().filter(l => eligibleForAnalyse(l));
-        const { tempLayers = [] } = this.getState(); // fix timing
-        return [...layers, ...tempLayers];
-    }
 }
 
 const wrapped = controllerMixin(Handler, [
     'setEnabled',
+    'setValue',
     'addTempLayer',
-    'removeTempLayer',
+    'removeLayer',
     'setAnalysisLayerId',
-    'setFilter',
-    'getLayers',
-    'getSelectedMapLayer'
+    'setTargetLayerId',
+    'gatherSelections'
 ]);
 
 export { wrapped as AnalysisStateHandler };
