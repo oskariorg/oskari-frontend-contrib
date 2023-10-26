@@ -108,6 +108,7 @@ class Handler extends StateHandler {
         const tempLayers = [...this.getState().tempLayers, layer];
         const layerId = layer.getId();
         this.updateState({ tempLayers, layerId });
+        this.selectedUpdateListeners.forEach(consumer => consumer(this.getState()));
     }
 
     removeLayer (layerId) {

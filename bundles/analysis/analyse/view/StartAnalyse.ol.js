@@ -1,5 +1,5 @@
 import olFormatGeoJSON from 'ol/format/GeoJSON';
-import { COLORS, FILL_COLORS, LIMITS, FILTER, PROPERTIES, BUFFER, METHODS, AGGREGATE_OPTIONS, SPATIAL_OPTIONS, SPATIAL_JOIN_MODES } from './constants';
+import { LIMITS, FILTER, PROPERTIES, BUFFER, METHODS, AGGREGATE_OPTIONS, SPATIAL_OPTIONS, SPATIAL_JOIN_MODES } from './constants';
 import { showStyleEditor } from './StyleForm';
 import { isAnalysisLayer, isTempLayer, getRandomizedStyle } from '../service/AnalyseHelper';
 
@@ -283,7 +283,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 container.append(tooltipCont);
 
                 const input = toolContainer.find('input');
-                input.attr({value, name: 'analysis_method'});
+                input.attr({value, name: 'analysis-method'});
                 input.prop('checked', i === 0);
                 input.on('change', () => onChange(value));
                 container.append(toolContainer);
@@ -310,7 +310,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             var extra = this.template.paramsOptionExtra.clone();
             container.append(extra);
 
-            me._addExtraParameters(container, METHODS[0]);
+            me._addExtraParameters(extra, METHODS[0]);
 
             var columnsContainer = this.template.columnsContainer.clone();
             container.append(columnsContainer);
@@ -352,9 +352,9 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 this._createLabel(label, toolContainer, 'params_radiolabel');
 
                 const input = toolContainer.find('input');
-                input.attr({ value, name: 'analysis_properties'});
+                input.attr({ value, name: 'analysis-properties'});
                 input.prop('checked', i === 0);
-                if (value === 'select') {
+                if (value === PROPERTIES.SELECT) {
                     this._appendFeaturePropertyList(toolContainer);
                 }
                 columnsContainer.append(toolContainer);
@@ -379,6 +379,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             toolContainer.append(selectButton);
             listContainer.hide();
             const listElem = listContainer.find('ul')
+            listElem.attr('id', 'analysis-target-fields');
             listElem.empty();
             this._appendItemsToFeaturePropertyList(listElem);
 
@@ -406,7 +407,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 const listItem = this.template.featurePropertyListItem.clone();
                 listItem
                     .find('input')
-                    .prop('name', 'analyse-feature-property')
+                    .prop('name', 'analysis-feature-property')
                     .val(name);
                 listItem
                     .find('span')
@@ -533,7 +534,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             if (layer) {
                 return layer;
             }
-            return this.controller.getState().tempLayers.find(l => l.getId() === layerId);
+            return this.instance.getStateHandler().getState().tempLayers.find(l => l.getId() === layerId);
         },
 
         /**
@@ -585,7 +586,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 this.closeStyleEditor();
             };
             const onClose = () => this.closeStyleEditor();
-            this._popupControls = showStyleEditor(style, getRandomizedStyle, onSave, onClose)
+            this._popupControls = showStyleEditor(style, onSave, onClose)
         },
         closeStyleEditor: function () {
             if (this._popupControls) {
@@ -714,7 +715,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
 
                     toolContainer.find('input')
                         .prop('checked', true)
-                        .attr({ value, name: 'analysis_aggregate' });
+                        .attr({ value, name: 'analysis-aggregate-options' });
 
                     contentPanel.append(toolContainer);
                     toolContainer.find('input');
@@ -764,13 +765,14 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
 
                 if (showSpatial) {
                     this._addTitle(contentPanel, 'spatial.target', 'spatial.targetTooltip');
+                    contentPanel.append(targetLayerElem);
                     this._addTitle(contentPanel, 'spatial.intersectingLayer', 'spatial.intersectingLayerTooltip');
                     this._setShowFeatureData(true);
                 } else {
                     this._addTitle(contentPanel, 'intersect.target', 'intersect.targetLabelTooltip');
+                    contentPanel.append(targetLayerElem);
                     this._addTitle(contentPanel, 'intersect.label', 'intersect.labelTooltip');
                 }
-                contentPanel.append(targetLayerElem);
 
                 this._getLayers().forEach((layer, i) => {
                     const id = layer.getId();
@@ -780,7 +782,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                     const toolContainer = this.template.radioToolOption.clone();
                     this._createLabel(layer.getName(), toolContainer, 'params_radiolabel');
                     const input = toolContainer.find('input');
-                    input.attr('value', id);
+                    input.attr({value: id, name: 'analysis-intersect-layer'});
                     input.prop('checked', i === 0);
                     contentPanel.append(toolContainer);
                 });
@@ -791,12 +793,12 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                     this._addTitle(contentPanel, 'spatial.label', 'spatial.labelTooltipIntersect');
 
                     // spatial operators
-                    SPATIAL_OPTIONS.forEach(function (option, i) {
+                    SPATIAL_OPTIONS.forEach((option, i) => {
                         const toolContainer = this.template.radioToolOption.clone();
                         const label = this.loc(`AnalyseView.spatial.options.${option}`);
                         this._createLabel(label, toolContainer, 'params_radiolabel');
                         const input = toolContainer.find('input');
-                        input.attr('value', id);
+                        input.attr({value: option, name: 'analysis-spatial-options'});
                         input.prop('checked', i === 0);
                         contentPanel.append(toolContainer);
                     });
@@ -846,10 +848,13 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
 
                 // layers
                 layers.forEach((layer, i) => {
+                    if (layer.getId() === selectedId) {
+                        return;
+                    }
                     const toolContainer = this.template.checkboxToolOption.clone();
                     this._createLabel(layer.getName(), toolContainer, 'params_checklabel');
                     const input = toolContainer.find('input');
-                    input.attr('value', layer.getId());
+                    input.attr({value: layer.getId(), name: 'analysis-layer_union-layer'});
                     input.prop('checked', i === 0);
                     contentPanel.append(toolContainer);
                 });
@@ -876,8 +881,8 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 keys.forEach(key => {
                     const label = this.loc(`AnalyseView.areas_and_sectors.${key}`);
                     const tooltip = this.loc(`AnalyseView.areas_and_sectors.${key}_tooltip`);
-                    extraParams.find(`${key} div`).text(label);
-                    extraParams.find(`${key} input`).attr('placeholder', tooltip);
+                    extraParams.find(`.${key} div`).text(label);
+                    extraParams.find(`.${key} input`).attr('placeholder', tooltip);
                 });
                 contentPanel.append(extraParams);
                 this._setShowFeatureData(true);
@@ -903,31 +908,31 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 // Field for first layer, it's well possible that the layer doesn't have any...
                 this._addTitle(extraParams, 'difference.field', 'difference.firstLayerFieldTooltip');
                 if (this._layerHasProperties(targetLayer)) {
-                    const featureList = this.template.featurePropertyList.clone();
-                    featureList.attr('id', 'analyse-layer1-field');
+                    const listContainer = this.template.featurePropertyList.clone()
+                    const featureList = listContainer.find('ul');
+                    featureList.attr('id', 'analysis-target-fields');
                     this._addFeaturePropertyList(
                         targetLayer,
-                        featureList.find('ul')
+                        featureList
                     );
-                    extraParams.append(featureList);
+                    extraParams.append(listContainer);
                 }
 
                 // Second layer selection
                 this._addTitle(extraParams, 'difference.secondLayer', 'difference.secondLayerTooltip');
 
-                const layers = this.getLayers();
+                const layers = this._getLayers();
                 const differenceLayer = layers.find(l => l.getId() !== targetId);
                 const differenceId = differenceLayer?.getId();
                 const onChange = (layerId) => {
                     this._addFeatureList(
                         this._getLayerById(layerId),
-                        jQuery('#analyse-layer2-field').find('ul'),
-                        'analyse-layer2-field-property'
+                        jQuery('#analysis-difference-fields')
                     );
                     const differenceLayer = this._getLayerById(layerId);
                     const joinList = this._createJoinList(targetLayer, differenceLayer);
                     // Update the key list
-                    jQuery('div.analyse-featurelist#analyse-key-field').replaceWith(joinList);
+                    jQuery('#analysis-join-fields').replaceWith(joinList);
                 };
                 layers.forEach(layer => {
                     const layerId = layer.getId();
@@ -938,23 +943,24 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                     this._createLabel(layer.getName(), toolContainer, 'params_radiolabel');
                     toolContainer.find('label span').text();
                     const input = toolContainer.find('input');
-                    input.attr('value', layerId);
+                    input.attr({value: layerId, name: 'analysis-difference-layer'});
                     input.prop('checked', differenceId === layerId)
-                    input.on('change', onChange(layerId));
+                    input.on('change', () => onChange(layerId));
                     extraParams.append(toolContainer);
                 });
 
                 // Second layer field selection
                 this._addTitle(extraParams, 'difference.field', 'difference.secondLayerFieldTooltip');
-                const featureList = this.template.featurePropertyList.clone();
-                featureList.attr('id', 'analyse-layer2-field');
+                const listContainer = this.template.featurePropertyList.clone();
+                const featureList = listContainer.find('ul');
+                featureList.attr('id', 'analysis-difference-fields');
                 if (this._layerHasProperties(differenceLayer)) {
                     this._addFeaturePropertyList(
                         differenceLayer,
-                        featureList.find('ul')
+                        featureList
                     );
                 }
-                extraParams.append(featureList);
+                extraParams.append(listContainer);
 
                 this._addTitle(extraParams, 'difference.keyField', 'difference.keyFieldTooltip');
                 extraParams.append(this._createJoinList(targetLayer, differenceLayer));
@@ -981,9 +987,9 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 const targetId = targetLayer?.getId();
                 const showSpatial = true; // Show also spatial operator choice
 
-                const limitSelection = (autoSelect) => {
-                    const features = extraParams.find('.analyse-featurelist ul li input');
-                    const selectedFeatures = features.filter(':checked').length;
+                const limitSelection = (autoSelect, id) => {
+                    const features = extraParams.find(`#${id} input`);
+                    let selectedFeatures = features.filter(':checked').length;
                     if (autoSelect && selectedFeatures < 10) {
                         // Some selections can still be made...
                         const newSelections = features
@@ -1010,14 +1016,8 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                     const label = this.loc(`AnalyseView.spatial_join.${mode}Mode`);
                     this._createLabel(label, modeToolContainer, 'params_radiolabel');
                     const input = modeToolContainer.find('input');
-                    inout.attr('value', mode)
+                    input.attr({value: mode, name: 'analysis-spatial-modes'});
                     input.prop('checked', i===0);
-                    input.on('change', () => {
-                        // TODO: addpropertylist
-                        // limitSelection(false);
-                        const inputs = extraParams.find('input[name=analyse-layer1-field-property]');
-                        inputs.forEach(input => input.setAttribute('type', 'checkbox'));
-                    });
                     extraParams.append(modeToolContainer);
                 });
 
@@ -1029,24 +1029,26 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 // Field for first layer, it's well possible that the layer doesn't have any...
                 this._addTitle(extraParams, 'params.label', 'spatial_join.firstLayerFieldTooltip');
                 if (this._layerHasProperties(targetLayer)) {
-                    const featureList = this.template.featurePropertyList.clone();
-                    featureList.attr('id', 'analyse-layer1-field');
+                    const listContainer = this.template.featurePropertyList.clone();
+                    const featureList = listContainer.find('ul');
+                    featureList.attr('id', 'analysis-target-fields');
                     this._addFeaturePropertyList(
                         targetLayer,
-                        featureList.find('ul')
+                        featureList,
+                        true
                     );
-                    featureList.find('ul li').on('change', function () {
-                        limitSelection(false);
+                    featureList.find('li').on('change', function () {
+                        limitSelection(false, 'analysis-target-fields');
                     });
-                    extraParams.append(featureList);
+                    extraParams.append(listContainer);
                 }
 
                 // Second layer selection
                 this._addTitle(extraParams, 'spatial_join.secondLayer', 'spatial_join.secondLayerTooltip');
-                const layers = this.getLayers();
+                const layers = this._getLayers();
                 const differenceLayer = layers.find(l => l.getId() !== targetId);
-
-                layers.forEach((layer, i) => {
+                const differenceLayerId = differenceLayer?.getId();
+                layers.forEach((layer) => {
                     const layerId = layer.getId();
                     if (layerId === targetId) {
                         return;
@@ -1054,27 +1056,28 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                     const toolContainer = this.template.radioToolOption.clone();
                     this._createLabel(layer.getName(), toolContainer, 'params_radiolabel');
                     const input = toolContainer.find('input');
-                    input.attr('value', layerId);
-                    input.prop('checked', i===0);
+                    input.attr({value:layerId, name: 'analysis-spatial_join-layer'});
+                    input.prop('checked', layerId === differenceLayerId);
                     extraParams.append(toolContainer);
                 });
 
                 // Second layer field selection
                 this._addTitle(extraParams, 'params.label', 'spatial_join.secondLayerFieldTooltip');
-                const featureList = this.template.featurePropertyList.clone();
-                featureList.attr('id', 'analyse-layer2-field');
+                const listContainer = this.template.featurePropertyList.clone();
+                const featureList = listContainer.find('ul');
+                featureList.attr('id', 'analysis-spatial_join-fields');
                 if (this._layerHasProperties(differenceLayer)) {
                     this._addFeaturePropertyList(
                         differenceLayer,
-                        featureList.find('ul'),
+                        featureList,
                         true
                     );
-                    featureList.find('ul li').on('change', function () {
-                        limitSelection(false);
+                    featureList.find('li').on('change', function () {
+                        limitSelection(false, 'analysis-spatial_join-fields');
                     });
                 }
-                extraParams.append(featureList);
-                limitSelection(true);
+                extraParams.append(listContainer);
+                limitSelection(true, 'analysis-target-fields');
 
                 contentPanel.append(extraParams);
 
@@ -1092,7 +1095,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
 
                         const input = toolContainer.find('input');
                         input.prop('checked', i===0);
-                        input.attr('value', option);
+                        input.attr({value: option, name: 'analysis-spatial-options'});
                         contentPanel.append(toolContainer);
                     });
                 }
@@ -1103,7 +1106,9 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
 
         _createJoinList: function (targetLayer, differenceLayer) {
             // Check equal join keys
-            const featureList = this.template.featurePropertyList.clone();
+            const container = this.template.featurePropertyList.clone();
+            const featureList = container.find('ul');
+            featureList.attr('id', 'analysis-join-fields');
             let joinKey;
             if (differenceLayer && targetLayer) {
                 const { commonId: diff } = differenceLayer.getWpsLayerParams();
@@ -1112,62 +1117,30 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                     joinKey = diff;
                 }
             }
-            if (joinKey) {
-                featureList.find('ul').append(joinKey);
-            } else {
-                this._addFeaturePropertyList(
-                    targetLayer,
-                    featureList.find('ul')
-                );
-            }
+            this._addFeaturePropertyList(targetLayer, featureList, false, joinKey);
             return featureList;
         },
 
-        _addFeaturePropertyList: function (layer, container, multiSelect) {
+        _addFeaturePropertyList: function (layer, container, multiSelect, onlyKey) {
             // Make sure the container is empty
             container.empty();
-            const elementTemplate = multiSelect ? this.template.featurePropertyList : this.template.featurePropertyRadioButton;
+            const group = container.attr('id');
+            const elementTemplate = multiSelect ? this.template.featurePropertyListItem : this.template.featurePropertyRadioButton;
             const properties = layer.getPropertyTypes();
             const labels = layer.getPropertyLabels();
             Object.keys(properties).forEach((name, i) => {
+                if (onlyKey && name !== onlyKey) {
+                    return;
+                }
                 const elem = elementTemplate.clone();
                 const input = elem.find('input');
+                input.attr('name', group);
                 input.prop('checked', multiSelect ? true : i === 0);
                 input.val(name);
                 const label = labels[name] || name;
                 this._createLabel(label, elem);
                 container.append(elem);
             });
-        },
-
-        /**
-         * @private @method _refreshIntersectLayers
-         * Refreshes layer list in the intersect or clip parameters
-         *
-         *
-         */
-        _refreshIntersectLayers: function () {
-            var dataLayers = jQuery('div.basic_analyse div.analyse_option_cont.analyse_settings_cont input[type=radio]'),
-                paramLayer,
-                i,
-                j;
-
-            // No need to refresh?
-            if ((jQuery('div.basic_analyse div.extra_params input[type=radio][name=intersect]')).length === 0) {
-                return;
-            }
-
-            for (i = 0; i < dataLayers.length; i += 1) {
-                paramLayer = jQuery('div.basic_analyse div.extra_params input[type=radio][name=intersect][value=' + jQuery(dataLayers[i]).attr('id') + ']');
-                for (j = 0; j < dataLayers.length; j += 1) {
-                    if (jQuery(dataLayers[i]).prop('checked')) {
-                        paramLayer.prop('checked', false);
-                        paramLayer.parent().hide();
-                    } else {
-                        paramLayer.parent().show();
-                    }
-                }
-            }
         },
 
         /**
@@ -1195,7 +1168,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             } else {
                 this._refreshColumnsSelector(this.loc('AnalyseView.params.label'));
             }
-            this._addExtraParameters(contentPanel.parent(), method);
+            this._addExtraParameters(contentPanel, method);
         },
 
         /**
@@ -1210,7 +1183,6 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             this.showInfos();
             this._checkParamsSelection();
             this._checkMethodSelection();
-            this._refreshIntersectLayers();
             this.refreshExtraParameters();
         },
 
@@ -1229,7 +1201,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
          * Convenience method for getting the analysis method currently selected.
          */
         _getSelectedMethod: function () {
-            return this.mainPanel.find('input[name=analysis_method]:checked').val();
+            return this.mainPanel.find('input[name=analysis-method]:checked').val();
         },
         /**
          * @private @method _gatherSelections
@@ -1251,15 +1223,15 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             const method = this._getSelectedMethod();
 
             // Get the feature fields
-            var fieldSelection = container.find('input[name=analysis_properties]:checked').val();
+            var fieldSelection = container.find('input[name=analysis-properties]:checked').val();
             const fieldTypes = this._layerHasProperties(layer) ? layer.getPropertyTypes() : {};
             let fields = [];
             // All fields
-            if (fieldSelection === 'all') {
+            if (fieldSelection === PROPERTIES.ALL) {
                 fields = Object.keys(fieldTypes);
-            } else if (fieldSelection === 'select') {
+            } else if (fieldSelection === PROPERTIES.SELECT) {
                 // Selected fields
-                var fieldsList = jQuery('div.analyse-featurelist').find('ul li input:checked');
+                var fieldsList = this.mainPanel.find('#analysis-target-fields input:checked');
                 fields = jQuery.map(fieldsList, function (val) {
                     return val.value;
                 });
@@ -1309,16 +1281,16 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             const selectedLayer = this._getSelectedMapLayer();
             const buffer = container.find('.settings_buffer_field').val();
             const bufferUnit = container.find('.settings_buffer_units option:selected').val();
-            const bufferUnitMultiplier = this.bufferUnits[bufferUnit] || 1;
+            const bufferUnitMultiplier = BUFFER[bufferUnit] || 1;
             const bufferSize = buffer * bufferUnitMultiplier;
             // aggregate
-            var aggregateFunctions = container.find('input[name=aggre]:checked');
+            var aggregateFunctions = container.find('input[name=analysis-aggregate-options]:checked');
             aggregateFunctions = jQuery.map(aggregateFunctions, elem => elem.value);
             var aggregateAttribute = container.find('select.analyse-columns-dropdown option').filter(':selected').val();
             // union
-            var unionLayerId = container.find('input[name=union-layer]:checked').val();
+            var unionLayerId = container.find('input[name=analysis-layer_union-layer]:checked').val();
             // clip, intersect
-            let intersectLayerId = container.find('input[name=intersect-layer]:checked').val();
+            let intersectLayerId = container.find('input[name=analysis-intersect-layer]:checked').val();
             const intersectLayer =  this._getLayerById(intersectLayerId);
             let intersectFeatures;
             if (isTempLayer(intersectLayer)) {
@@ -1327,19 +1299,18 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             }
 
             var spatialOperator = null;
-            if (container.find('input[name=spatial_join_mode]:checked').val() === 'aggregate') {
-                spatialOperator = container.find('input[name=spatial_join_mode]:checked').val();
+            if (container.find('input[name=analysis-spatial-modes]:checked').val() === 'aggregate') {
+                spatialOperator = container.find('input[name=analysis-spatial-modes]:checked').val();
             } else {
-                spatialOperator = container.find('input[name=spatial-operator]:checked').val();
+                spatialOperator = container.find('input[name=analysis-spatial-options]:checked').val();
             }
 
             // layer union
-            var layerUnionLayers = this._getLayerUnionLayers(container);
-            const areaCount = container.find('input.settings_area_count_field').val();
-            const areaSize = container.find('input.settings_area_size_field').val();
+            let areaCount = container.find('.area_count input').val();
+            let areaSize = container.find('.area_size input').val();
             const areaUnit = container.find('.settings_area_size_units option:selected').val();
-            const areaUnitMultiplier = this.bufferUnits[areaUnit] || 1;
-                sectorCount = container.find('input.settings_sector_count_field').val();
+            const areaUnitMultiplier = BUFFER[areaUnit] || 1;
+            const sectorCount = container.find('.sector_count input').val();
 
             areaSize *= areaUnitMultiplier;
             if (areaCount > 12) {
@@ -1349,20 +1320,19 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             const layerUnionLayers = jQuery.map(container.find('input[name=layer_union_layer]:checked'), elem => elem.value);
             layerUnionLayers.push(selectedLayer.getId());
 
-            var differenceLayerId = container.find('input[name=differenceLayer]:checked').val(),
-                differenceFieldA1 = container.find('input[name=analyse-layer1-field-property]:checked').val(),
-                differenceFieldB1 = container.find('input[name=analyse-layer2-field-property]:checked').val(),
-                featuresA1 = container.find('input[name=analyse-layer1-field-property]:checked').map(function () {
+            const differenceLayerId = container.find('input[name=analysis-difference-layer]:checked').val();
+            const differenceFieldA1 = container.find('#analysis-target-fields input:checked').val();
+            const differenceFieldB1 = container.find('#analysis-difference-fields input:checked').val();
+            const featuresA1 = container.find('#analysis-target-fields input:checked').map(function () {
                     return this.value;
-                }).get(),
-                featuresB1 = container.find('input[name=analyse-layer2-field-property]:checked').map(function () {
+                }).get();
+            const featuresB1 = container.find('#analysis-spatial_join-fields input:checked').map(function () {
                     return this.value;
-                }).get(),
-                keyField = container.find('input[name=analyse-key-field-property]:checked').val();
-            // Predefined key
-            if (typeof keyField === 'undefined') {
-                keyField = container.find('div#analyse-key-field > ul').text();
-            }
+                }).get();
+            const keyField = container.find('#analysis-join-fields input:checked').val();
+
+            const spatialJoinLayerId = container.find('input[name=analysis-spatial_join-layer]:checked').val();
+   
             const no_data = me._getNoDataValue();
             var methodSelections = {
                 'buffer': {
@@ -1374,7 +1344,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 'aggregate': {
                     methodParams: {
                         functions: aggregateFunctions, // TODO: param name?
-                        locales: aggregateFunctions.map(func => this._getAggregateLocalization(func)),
+                        locales: aggregateFunctions.map(func => this.loc(`AnalyseView.aggregate.options.${func}`)),
                         attribute: aggregateAttribute,
                         no_data
                     }
@@ -1428,7 +1398,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 },
                 'spatial_join': {
                     methodParams: {
-                        layerId: differenceLayerId,
+                        layerId: spatialJoinLayerId,
                         featuresA1: featuresA1,
                         featuresB1: featuresB1,
                         operator: spatialOperator,
@@ -1438,19 +1408,6 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 }
             };
             return methodSelections[method];
-        },
-
-        /**
-         * @private @method _getAggregateLocalization
-         *
-         * @param {String}  funcKey Aggregate function key
-         *
-         * @return {String} Localized aggregate function name
-         * Get localized name for aggregate function
-         */
-        _getAggregateLocalization: function (funcKey) {
-            const fullKey = 'oskari_analyse_' + funcKey;
-            return this.loc('AnalyseView.aggregate.options').find(opt => opt.id === fullKey)?.label;
         },
 
         /**
@@ -1478,11 +1435,12 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                     data.filter2 = JSON.stringify(this.getFilterJSON(targetId));
                 }
                 // if we don't wan't to save data, let's give some data to the grid
+                let noDataCnt = false;
                 if (this._showFeatureDataWithoutSaving) {
                     data.saveAnalyse = false;
-                    const fields = functions;
+                    const fields = selections.methodParams.functions;
                     const locales = selections.methodParams.locales;
-                    // const noDataCnt = fields.includes('NoDataCnt');
+                    noDataCnt = fields.includes('NoDataCnt');
 
                     fields.unshift('key');
                     locales.unshift(this.loc('AnalyseView.aggregatePopup.property'));
@@ -1522,7 +1480,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
 
         getFilterJSON: function (layerId) {
             const featureIds = this.instance.getSelectionsForLayer(layerId);
-            const { filter } = this.controller.getState();
+            const { filter } = this.instance.getStateHandler().getState();
             if (filter === FILTER.BBOX || featureIds.length === 0) {
                 return { bbox: this.instance.getSandbox().getMap().getBbox() };
             }
@@ -1620,7 +1578,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 // Store temp geometry layer
                 const name = this.mainPanel.find('.settings_name_field').val() ? this.mainPanel.find('.settings_name_field').val() : '_';
                 const feature = this._getOLGeometry(geojson);
-                this.instance.getStateHandler().addTempLayer({ feature, name });
+                this.controller.addTempLayer({ feature, name });
                 onClose();
             });
 
@@ -1752,9 +1710,9 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
         },
 
         _disableMethodsForTempLayer: function (methodLabels) {
-            methodLabels.find('input#oskari_analyse_aggregate').prop('disabled', true).prop('checked', false);
-            methodLabels.find('input#oskari_analyse_difference').prop('disabled', true).prop('checked', false);
-            methodLabels.find('input#oskari_analyse_buffer').prop('checked', true);
+            methodLabels.find('input[value="aggregate"]').prop('disabled', true).prop('checked', false);
+            methodLabels.find('input[value="difference"]').prop('disabled', true).prop('checked', false);
+            methodLabels.find('input[value="buffer"]').prop('checked', true);
         },
 
         _enableAllMethods: function (methodLabels) {
@@ -1765,7 +1723,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             var paramsCont = jQuery('.analyse-columns-container');
 
             paramsCont
-                .find('#oskari_analyse_all')
+                .find('input[value="all"]')
                 .prop('disabled', false)
                 .prop('checked', true)
                 .trigger('change');
@@ -1775,15 +1733,15 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             var paramsCont = jQuery('.analyse-columns-container');
 
             paramsCont
-                .find('#oskari_analyse_all')
+                .find('input[value="all"]')
                 .prop('disabled', true);
 
             paramsCont
-                .find('#oskari_analyse_select')
+                .find('input[value="select"]')
                 .prop('disabled', true);
 
             paramsCont
-                .find('#oskari_analyse_none')
+                .find('input[value="none"]')
                 .prop('checked', true)
                 .trigger('change');
         },
@@ -1792,11 +1750,11 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartAnalyse',
             var paramsCont = jQuery('.analyse-columns-container');
 
             paramsCont
-                .find('#oskari_analyse_all')
+                .find('input[value="all"]')
                 .prop('disabled', true);
 
             paramsCont
-                .find('#oskari_analyse_select')
+                .find('input[value="select"]')
                 .prop('checked', true)
                 .trigger('change');
         },
