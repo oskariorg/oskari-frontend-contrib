@@ -231,6 +231,6 @@ Oskari.clazz.category(
         },
         _notifyGenerigError: function (cause) {
             this._notifyValidationError('invalidSetup', 'title');
-            Oskari.log(this.instance.getName()).warning(cause);
+            Oskari.log(this.instance.getName()).warn(cause);
         }
     });

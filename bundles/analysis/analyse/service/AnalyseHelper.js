@@ -9,7 +9,7 @@ import { pointerMove as conditionPointerMove } from 'ol/events/condition';
 import olFeature from 'ol/Feature';
 import { Point as olGeomPoint } from 'ol/geom';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
-import { COLORS } from '../view/constants';
+import { COLORS, FILL_COLORS } from '../view/constants';
 
 const ANALYSIS_LAYER_TYPE = 'analysislayer';
 const TEMP_LAYER_TYPE = 'temp';
@@ -35,6 +35,9 @@ export const isAnalysisLayer = (layer) => {
 };
 
 export const isTempLayer = (layer) => {
+    if (!layer) {
+        return false;
+    }
     return layer.isLayerOfType(TEMP_LAYER_TYPE);
 };
 
