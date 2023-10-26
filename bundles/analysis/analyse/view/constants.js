@@ -14,3 +14,36 @@ export const FILL_COLORS = [
     '#f768a1', '#fb6a4a', '#78c679', '#41b6c4',
     '#fe9929'
 ];
+
+export const LIMITS = {
+    properties: 10,
+    areas: 12,
+    decimals: 2
+};
+
+export const FILTER = {
+    // ALL: 'all', not supported, requires property filter
+    BBOX: 'bbox',
+    FEATURES: 'features'
+};
+
+export const PROPERTIES = {
+    ALL: 'all',
+    NONE: 'none',
+    SELECT: 'select'
+};
+
+export const BUFFER = {
+    'm': 1,
+    'km': 1000
+};
+
+export const METHODS = [
+    'buffer', 'aggregate', 'union', 'clip', 'intersect', 'layer_union', 'areas_and_sectors', 'difference', 'spatial_join'
+];
+
+export const AGGREGATE_OPTIONS = ['Count', 'Sum', 'Min', 'Max', 'Average', 'StdDev', 'Median', 'NoDataCnt'];
+
+export const SPATIAL_OPTIONS = ['intersect', 'contains'];
+
+export const SPATIAL_JOIN_MODES = ['normal', 'aggregate'];

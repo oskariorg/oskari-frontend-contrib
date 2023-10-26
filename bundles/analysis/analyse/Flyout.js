@@ -77,7 +77,7 @@ Oskari.clazz.define(
          * @return {String} localized text for the title of the flyout
          */
         getTitle: function () {
-            return this.instance.getLocalization('flyouttitle');
+            return this.instance.loc('flyouttitle');
         },
 
         /**
@@ -88,7 +88,7 @@ Oskari.clazz.define(
          * flyout
          */
         getDescription: function () {
-            return this.instance.getLocalization('desc');
+            return this.instance.loc('desc');
         },
 
         /**
@@ -122,7 +122,7 @@ Oskari.clazz.define(
             this.view = Oskari.clazz.create(
                 'Oskari.analysis.bundle.analyse.view.StartView',
                 this.instance,
-                this.instance.getLocalization('StartView')
+                this.instance.loc
             );
         },
 
@@ -139,7 +139,7 @@ Oskari.clazz.define(
             if (!Oskari.user().isLoggedIn()) {
                 this.view = Oskari.clazz.create('Oskari.analysis.bundle.analyse.view.NotLoggedIn',
                     this.instance,
-                    this.instance.getLocalization('NotLoggedView'));
+                    this.instance.loc);
                 this.view.render(flyout);
             } else if (jQuery.cookie('analyse_info_seen') !== '1' || layersWithSelections.length > 1) {
                 this.view.render(flyout);

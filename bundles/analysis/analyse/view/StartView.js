@@ -9,11 +9,10 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartView',
      * @static
      * @param {Oskari.analysis.bundle.analyse.AnalyseBundleInstance} instance
      *      reference to component that created this view
-     * @param {Object} localization
-     *      localization data in JSON format
+     * @param {Function} loc
      */
 
-    function (instance, localization) {
+    function (instance, loc) {
         this.instance = instance;
         this.template = jQuery(
             '<div class="startview">' +
@@ -50,7 +49,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartView',
             '</li>'
         );
         this.labelTemplate = jQuery('<label for="analyse_info_seen"></label>');
-        this.loc = localization;
+        this.loc = loc;
         this.appendAlwaysCheckbox = true;
         this.content = undefined;
         this.buttons = {};
@@ -69,11 +68,11 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartView',
             container.append(content);
 
             const startInfo = this.templateAnalyseInfo.clone();
-            startInfo.append(this.loc.text);
+            startInfo.append(this.loc('StartView.text'));
             container.prepend(startInfo);
 
             const discounted = this.templateAnalyseInfo.clone();
-            discounted.append(this.loc.discountedNotice);
+            discounted.append(this.loc('StartView.discountedNotice'));
             container.prepend(discounted);
 
             // in analyse mode features can be selected only from one layer at once
@@ -100,7 +99,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartView',
             );
             continueButton.addClass('primary');
             continueButton.setId('oskari_analysis_analyse_view_start_view_buttons_continue');
-            continueButton.setTitle(this.loc.buttons['continue']);
+            continueButton.setTitle(this.loc('StartView.buttons.continue'));
             continueButton.setHandler(function () {
                 me.emptySelectionsFromLayers.forEach(layerId => me.instance.emptySelections(layerId));
                 me.instance.enableAnalyseMode();
@@ -111,7 +110,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartView',
                 content.append('<br><br>');
                 var checkbox = this.checkboxTemplate.clone(),
                     label = this.labelTemplate.clone();
-                label.append(me.loc.infoseen.label);
+                label.append(me.loc('StartView.infoseen.label'));
                 checkbox.on(
                     'change',
                     function () {
@@ -151,7 +150,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.StartView',
             }
             const layerList = this.layerList.clone();
             const labelTemplate = this.layerLabelTemplate.clone();
-            labelTemplate.find('label').append(this.loc.layersWithFeatures);
+            labelTemplate.find('label').append(this.loc('StartView.layersWithFeatures'));
             layersWithSelections.forEach(layerId => {
                 const layerListRadioElement = this.layerListRadioElement.clone();
                 layerListRadioElement

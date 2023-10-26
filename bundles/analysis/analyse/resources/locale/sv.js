@@ -17,9 +17,9 @@ Oskari.registerLocalization(
             "title": "Analys",
             "content": {
                 "label": "Kartlager",
-                "drawToolsLabel": "Objekt verktyg",
+                "selectionToolsLabel": "Objekt verktyg",
                 "tooltip": "Välj ett karlager för en grund av analys. Om något kartlager är inte på listan, klicka \"Mera kartlager\". Om du vill fokusera kartan till en särkild plats, klicka \"Sök platser\". För att flitrera objekt klicka filterknapp. Ta bort kartlager från kartvyn genom att klicka korsknapp.",
-                "drawToolsTooltip": "Tilllägg tillfälliga objekt, klippa befintliga objekt eller välj objekt genom att begränsa dem med geometriska mönster som du ritar.",
+                "selectionToolsTooltip": "Tilllägg tillfälliga objekt, klippa befintliga objekt eller välj objekt genom att begränsa dem med geometriska mönster som du ritar.",
                 "features": {
                     "title": "Tillägg objekt",
                     "buttons": {
@@ -81,8 +81,14 @@ Oskari.registerLocalization(
                     }
                 },
                 "selectionTools": {
-                    "title": "Välj objekt",
+                    "title": "Välj objekten",
                     "description": "Välj objekt genom att begränsa dem med geometriska monstret du ritar. Klippande objket väljas. Valet avses endast utvalda kartlagret.",
+                    "filter": {
+                        "all": "Alla objekt",
+                        "bbox": "Objekten syns på kartvyn",
+                        "features": "Objekten som är valda på kartlagret",
+                        "featuresTooltip": "Utvalda objekten är markerade på kartan och av objektdata."
+                    },
                     "button": {
                         "empty": "Ta bort valen"
                     }
@@ -95,102 +101,58 @@ Oskari.registerLocalization(
             "method": {
                 "label": "Metod",
                 "tooltip": "Välj en metod som du anväder i analys funktionen. Klicka i-symbol bredvid metodnamn om du vill läsa mera information om mefoden.",
-                "options": [
-                    {
-                        "id": "oskari_analyse_buffer",
+                "options": {
+                    "buffer": {
                         "label": "Zon",
-                        "classForMethod": "buffer",
-                        "selected": true,
                         "tooltip": "Tilllägg en zon omkring sina utvalda objekt. Du kan använda zoner i andra analys efteråt."
                     },
-                    {
-                        "id": "oskari_analyse_aggregate",
+                    "aggregate": {
                         "label": "Statistiska mått",
-                        "classForPreview": "aggregate",
                         "tooltip": "Beräkna statistiska mått för sina utvalda objekt. Skyddade objekt tas inte med i beräkning."
                     },
-                    {
-                        "id": "oskari_analyse_union",
+                    "union": {
                         "label": "Union",
-                        "classForPreview": "union",
                         "tooltip": "Kombinera sina utvalda objekt till en ny objekt."
                     },
-                    {
-                        "id": "oskari_analyse_clip",
+                    "clip": {
                         "label": "Klippning",
-                        "classForPreview": "clip",
                         "tooltip": "Klippa sina jutvalda objekt med objekt frän ett annat kartlager. Resultaten innehåller objekt som år inom objekt av klippande karlager."
                     },
-                    {
-                        "id": "oskari_analyse_intersect",
+                    "intersect": {
                         "label": "Geometrisk filter",
-                        "classForPreview": "intersect",
                         "tooltip": "Välj objekt på grund av klippandes kartlagret. Objekt som väljas är delvis eller helt inom klippande objekt."
                     },
-                    {
-                        "id": "oskari_analyse_layer_union",
+                    "layer_union": {
                         "label": "Union av analyslager",
-                        "classForPreview": "layer_union",
                         "tooltip": "Kombinera sina utvalda kartlager. Kartlager måste ha samma attribut."
                     },
-                    {
-                        "id": "oskari_analyse_areas_and_sectors",
+                    "areas_and_sectors": {
                         "label": "Zoner och sektorer",
-                        "classForPreview": "areas_and_sectors",
                         "tooltip": "Tilllägg flera zoner och sektorer omkring sina utvalda objekter."
                     },
-                    {
-                        "id": "oskari_analyse_difference",
+                    "difference": {
                         "label": "Förändringsberäkning",
-                        "classForPreview": "difference",
                         "tooltip": "Beräkna förandring mellan två kartlager. Kartlager har samma data från olika tider."
                     },
-                    {
-                        "id": "oskari_analyse_spatial_join",
+                    "spatial_join": {
                         "label": "Spatial join",
-                        "classForPreview": "spatial_join",
                         "tooltip": "Kombinera attribut data frå två olika kartlager. Attributer kombineras baserad på geografisk position."
                     }
-                ]
+                }
             },
             "aggregate": {
                 "label": "Statistiska mått",
                 "labelTooltip": "Välj statistiska mått som beräknas på grund av attribut data.",
-                "options": [
-                    {
-                        "id": "oskari_analyse_Count",
-                        "label": "Antal objekt",
-                        "selected": true
-                    },
-                    {
-                        "id": "oskari_analyse_Sum",
-                        "label": "Summa"
-                    },
-                    {
-                        "id": "oskari_analyse_Min",
-                        "label": "Minsta värde"
-                    },
-                    {
-                        "id": "oskari_analyse_Max",
-                        "label": "Största värde"
-                    },
-                    {
-                        "id": "oskari_analyse_Average",
-                        "label": "Medelvärde"
-                    },
-                    {
-                        "id": "oskari_analyse_StdDev",
-                        "label": "Standardavvikelse"
-                    },
-                    {
-                        "id": "oskari_analyse_Median",
-                        "label": "Median"
-                    },
-                    {
-                        "id": "oskari_analyse_NoDataCnt",
-                        "label": "Skyddade objekt"
-                    }
-                ],
+                "options": {
+                    "Count" : "Antal objekt",
+                    "Sum": "Summa",
+                    "Min": "Minsta värde",
+                    "Max": "Största värde",
+                    "Average": "Medelvärde",
+                    "StdDev": "Standardavvikelse",
+                    "Median": "Median",
+                    "NoDataCnt": "Skyddade objekt"
+                },
                 "attribute": "Välj en attribut",
                 "footer": "Skyddade objekt tas inte med i beräkning.",
                 "aggregateAdditionalInfo": "Obs! Du har valt attribut data som innehåller text. Endast antal objekt kan beräknas för dem. Om antal objekt inte har valts, textlig attributdata tas inte med i analysresultatet."
@@ -258,17 +220,10 @@ Oskari.registerLocalization(
                 "intersectingLayer": "Klippande kartlager",
                 "intersectingLayerTooltip": "Välj ett klippande kartlager. Objekt på ursprunglig kartlager ska klippas på grund av det här kartlagret.",
                 "labelTooltipIntersect": "Välj om resultaten innehåller klippande eller ingående objekt.",
-                "options": [
-                    {
-                        "id": "oskari_analyse_intersect",
-                        "label": "Klippande objekt",
-                        "selected": true
-                    },
-                    {
-                        "id": "oskari_analyse_contains",
-                        "label": "Ingående"
-                    }
-                ]
+                "options": {
+                    "intersect": "Klippande objekt",
+                    "contains": "Ingående"
+                }
             },
             "spatial_join": {
                 "firstLayer": "Objektlager",
@@ -314,21 +269,11 @@ Oskari.registerLocalization(
                 "aggreLabelTooltip": "Välj högst 10 attributer. Statistiska mått beräknas till dem.",
                 "labelTooltip": "Välj högst 10 attributer som tas med i resultaten.",
                 "tooltip": "",
-                "options": [
-                    {
-                        "id": "oskari_analyse_all",
-                        "selected": true,
-                        "label": "Alla"
-                    },
-                    {
-                        "id": "oskari_analyse_none",
-                        "label": "Inga"
-                    },
-                    {
-                        "id": "oskari_analyse_select",
-                        "label": "Välj från listan"
-                    }
-                ]
+                "options": {
+                    "all": "Alla",
+                    "none": "Inga",
+                    "select": "Välj från listan"
+                }
             },
             "output": {
                 "label": "Utseende",
@@ -400,36 +345,6 @@ Oskari.registerLocalization(
             "buttons": {
                 "continue": "Börja analys",
                 "cancel": "Avbryt"
-            }
-        },
-        "categoryform": {
-            "name": {
-                "label": "Namn",
-                "placeholder": "Skriv analyslager namn."
-            },
-            "drawing": {
-                "label": "",
-                "point": {
-                    "label": "Punkt",
-                    "color": "Färg",
-                    "size": "Storlek"
-                },
-                "line": {
-                    "label": "Linje",
-                    "color": "Färg",
-                    "size": "Tjocklek"
-                },
-                "area": {
-                    "label": "Område",
-                    "fillcolor": "Ifyllnadsfärg",
-                    "linecolor": "Linjens färg",
-                    "size": "Linjens tjocklek"
-                }
-            },
-            "edit": {
-                "title": "Editera kartlagret",
-                "save": "Lagra",
-                "cancel": "Tillbaka"
             }
         },
         "personalDataTab": {

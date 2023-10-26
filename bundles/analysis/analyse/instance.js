@@ -1,5 +1,7 @@
 import { AnalysisHandler } from './handler/AnalysisHandler';
+import { AnalysisStateHandler } from './handler/AnalysisStateHandler';
 import { AnalysisTab } from './view/AnalysisTab';
+import { isAnalysisLayer } from './service/AnalyseHelper';
 /**
  * @class Oskari.analysis.bundle.analyse.AnalyseBundleInstance
  *
@@ -21,21 +23,16 @@ Oskari.clazz.define(
         this.sandbox = undefined;
         this.started = false;
         this.plugins = {};
-        this.localization = undefined;
         this.analyse = undefined;
-        this.buttonGroup = 'viewtools';
-        this.ignoreEvents = false;
         this.dialog = undefined;
         this.analyseHandler = undefined;
         this.analyseService = undefined;
-        this.isMapStateChanged = true;
         this.state = undefined;
         this.conf = {};
         this._log = Oskari.log(this.getName());
-        this.loc = Oskari.getMsg.bind(null, 'Analyse');
-        this._unsupportedWfsLayerVersions = ['2.0.0', '3.0.0'];
+        this.loc = Oskari.getMsg.bind(null, this.getName());
         this._featureSelectionService = null;
-        this._WFSLayerService = null;
+        this._stateHandler = null;
     }, {
         /**
          * @static @property __name
@@ -61,22 +58,8 @@ Oskari.clazz.define(
         getSandbox: function () {
             return this.sandbox;
         },
-        getWFSLayerService: function () {
-            if (!this._WFSLayerService) {
-                this._WFSLayerService = this.sandbox.getService('Oskari.mapframework.bundle.mapwfs2.service.WFSLayerService');
-            }
-            return this._WFSLayerService;
-        },
-        // FIXME:
-        // change to store this.analysisLayerId, remove analysisWFSLayerId from WFSLayerService and handle selection properly
-        // remove wfslayerservice.setAnalysisWFSLayerId() from every analysis component
-        // remove this._WFSLayerService
-        getAnalysisLayerId: function () {
-            const service = this.getWFSLayerService();
-            if (!service) {
-                return;
-            }
-            return service.getAnalysisWFSLayerId();
+        getStateHandler: function () {
+            return this._stateHandler;
         },
         getSelectionService: function () {
             if (!this._featureSelectionService) {
@@ -91,40 +74,21 @@ Oskari.clazz.define(
             }
             return service.getLayerIdsWithSelections();
         },
-        getSelectionsForLayer: function (layerId) {
+        getSelectionsForLayer: function (optLayerId) {
             const service = this.getSelectionService();
             if (!service) {
                 return [];
             }
+            const layerId = optLayerId || this.getStateHandler().getState().layerId;
             return service.getSelectedFeatureIdsByLayer(layerId);
         },
-        emptySelections: function (layerId) {
+        emptySelections: function (optLayerId) {
             const service = this.getSelectionService();
             if (!service) {
                 return;
             }
+            const layerId = optLayerId || this.getStateHandler().getState().layerId;
             return service.removeSelection(layerId);
-        },
-
-        /**
-         * @public @method getLocalization
-         * Returns JSON presentation of bundles localization data for current language.
-         * If key-parameter is not given, returns the whole localization data.
-         *
-         * @param {String} key (optional) if given, returns the value for key
-         *
-         * @return {String/Object} returns single localization string or
-         *      JSON object for complete data depending on localization
-         *      structure and if parameter key is given
-         */
-        getLocalization: function (key) {
-            if (!this._localization) {
-                this._localization = Oskari.getLocalization(this.getName());
-            }
-            if (key) {
-                return this._localization[key];
-            }
-            return this._localization;
         },
 
         /**
@@ -147,8 +111,6 @@ Oskari.clazz.define(
             me.started = true;
 
             me.sandbox = sandbox;
-
-            me.localization = Oskari.getLocalization(me.getName());
 
             sandbox.register(me);
             for (p in me.eventHandlers) {
@@ -175,6 +137,7 @@ Oskari.clazz.define(
             me.mapLayerService = sandbox.getService(
                 'Oskari.mapframework.service.MapLayerService'
             );
+            this._stateHandler = new AnalysisStateHandler(this);
 
             // Let's extend UI
             var request = Oskari.requestBuilder('userinterface.AddExtensionRequest')(me);
@@ -247,60 +210,19 @@ Oskari.clazz.define(
          * @static @property {Object} eventHandlers
          */
         eventHandlers: {
-            MapLayerVisibilityChangedEvent: function (event) {
-                if (this.analyse && this.analyse.isEnabled && this.isMapStateChanged) {
-                    this.isMapStateChanged = false;
-                    this._log.debug('ANALYSE REFRESH');
-                    // this.analyse.refreshAnalyseData();
-                }
-            },
-            AfterMapMoveEvent: function (event) {
-                this.isMapStateChanged = true;
-                if (this.analyse && this.analyse.isEnabled) {
-                    // this.analyse.refreshAnalyseData();
-                }
-            },
-            AfterMapLayerAddEvent: function (event) {
-                this.isMapStateChanged = true;
-                if (this.analyse && this.analyse.isEnabled) {
-                    const maplayer = event.getMapLayer();
-                    if (this.wfsLayerHasUnsupportedVersion(maplayer)) {
-                        const loc = this.getLocalization('AnalyseView');
-                        this.showMessage(
-                            loc.error.title,
-                            loc.error.not_supported_wfs_maplayer
-                        );
-                        this._log.warn('tried to add unsupported layer to analysis');
-                    } else {
-                        this.analyse.refreshAnalyseData(maplayer.getId());
-                    }
-                }
-            },
-            AfterMapLayerRemoveEvent: function (event) {
-                this.isMapStateChanged = true;
-                if (this.analyse && this.analyse.isEnabled) {
-                    this.analyse.refreshAnalyseData();
-                    // Remove the filter JSON of the layer
-                    var layer = event.getMapLayer();
-                    this.analyse.removeFilterJson(layer.getId());
-                }
-            },
-            AfterChangeMapLayerStyleEvent: function (event) {
-                this.isMapStateChanged = true;
-                if (this.analyse && this.analyse.isEnabled) {
-                    // this.analyse.refreshAnalyseData();
-                }
-            },
-            /**
-             * @method MapLayerEvent
-             * @param {Oskari.mapframework.event.common.MapLayerEvent} event
-             */
             MapLayerEvent: function (event) {
-                this._afterMapLayerEvent(event);
+                if (event.getOperation() !== 'add') {
+                    return;
+                }
+                // Let's show the user a dialog when the new analysislayer gets added to the map.
+                const layer = this.mapLayerService.findMapLayer(event.getLayerId());
+                if (layer && isAnalysisLayer(layer)) {
+                    this.showMessage(
+                        this.loc('AnalyseView.success.layerAdded.title'),
+                        this.loc('AnalyseView.success.layerAdded.message', { layer: layer.getName() })
+                    );
+                }
             },
-            /**
-             * @method userinterface.ExtensionUpdatedEvent
-             */
             'userinterface.ExtensionUpdatedEvent': function (event) {
                 var me = this;
 
@@ -313,10 +235,6 @@ Oskari.clazz.define(
 
                 me.displayContent(isOpen);
             }
-        },
-
-        wfsLayerHasUnsupportedVersion(layer){
-            return layer.getLayerType() === 'wfs' && this._unsupportedWfsLayerVersions.includes(layer.getVersion());
         },
         /**
          * @public @method stop
@@ -402,7 +320,7 @@ Oskari.clazz.define(
          * @return {String} Localized text for the title of the component
          */
         getTitle: function () {
-            return this.getLocalization('title');
+            return this.loc('title');
         },
 
         /**
@@ -412,7 +330,7 @@ Oskari.clazz.define(
          * @return {String} Localized text for the description of the component
          */
         getDescription: function () {
-            return this.getLocalization('desc');
+            return this.loc('desc');
         },
 
         /**
@@ -437,14 +355,9 @@ Oskari.clazz.define(
             this.analyse = Oskari.clazz.create(
                 'Oskari.analysis.bundle.analyse.view.StartAnalyse',
                 this,
-                this.getLocalization('AnalyseView')
+                this.loc
             );
             this.analyse.render(root);
-            // TODO: check if these can be removed from code:
-            // previously the analyse instance was just hidden and
-            //  these were called when returning to analysing functionality:
-            // this.analyse.refreshAnalyseData();
-            // this.analyse.refreshExtraParameters();
             if (this.state) {
                 this.analyse.setState(this.state);
             }
@@ -484,7 +397,6 @@ Oskari.clazz.define(
                 this.analyse.setEnabled(false);
                 this.analyse.destroy();
             }
-            this.getWFSLayerService().setAnalysisWFSLayerId(null);
         },
         /**
          * @public @method displayContent
@@ -546,28 +458,6 @@ Oskari.clazz.define(
             );
             dialog.show(title, message);
             dialog.fadeout(5000);
-        },
-
-        /**
-         * @private @method _afterMapLayerEvent
-         *
-         * @param {Object} event
-         *
-         */
-        _afterMapLayerEvent: function (event) {
-            var layerId = event.getLayerId(),
-                loc = this.getLocalization('AnalyseView');
-            // Let's show the user a dialog when the new analysislayer gets added to the map.
-            if (event.getOperation() === 'add') {
-                var layer = this.mapLayerService.findMapLayer(layerId);
-
-                if (layer && layer.isLayerOfType('ANALYSIS')) {
-                    this.showMessage(
-                        loc.success.layerAdded.title,
-                        loc.success.layerAdded.message.replace(/\{layer\}/, layer.getName())
-                    );
-                }
-            }
         }
     }, {
         /**

@@ -17,9 +17,9 @@ Oskari.registerLocalization(
             "title": "Analyysi",
             "content": {
                 "label": "Karttatasot",
-                "drawToolsLabel": "Kohdetyökalut",
+                "selectionToolsLabel": "Kohdetyökalut",
                 "tooltip": "Valitse yksi aineisto analyysin pohjaksi. Lisää karttatasoja voit hakea \"Lisää karttatasoja\"-painikkeella aukeavalta listalta. Kohdista karttanäkymä haluamaasi paikkaan joko siirtämällä karttaa hiirellä tai klikkaamalla \"Hae paikkahaulla\" ja hakemalla haluamasi paikka.",
-                "drawToolsTooltip": "Lisää väliaikainen kohde, leikkaa olemassa olevaa kohdetta tai valitse kohteita rajaamalla niitä piirtämilläsi kuvioilla.",
+                "selectionToolsTooltip": "Lisää väliaikainen kohde, leikkaa olemassa olevaa kohdetta tai valitse kohteita rajaamalla niitä piirtämilläsi kuvioilla.",
                 "features": {
                     "title": "Lisäys",
                     "buttons": {
@@ -81,116 +81,78 @@ Oskari.registerLocalization(
                     }
                 },
                 "selectionTools": {
-                    "title": "Valinta",
+                    "title": "Kohteiden valinta",
                     "description": "Valinta kohdistuu vain valittuun karttatasoon",
+                    "filter": {
+                        "all": "Kaikki kohteet",
+                        "bbox": "Kartalla näkyvät kohteet",
+                        "features": "Valitut kohteet tasolta",
+                        "featuresTooltip": "Valitut kohteet näkyvät korostettuna kartalla ja kohdetietotaulukossa."
+                    },
                     "button": {
                         "empty": "Poista valinnat"
                     }
                 },
                 "search": {
                     "title": "Hae kohteita",
-                    "resultLink": "Käytä analyysissa."
+                    "resultLink": "Käytä analyysissa"
                 }
             },
             "method": {
                 "label": "Menetelmä",
                 "tooltip": "Valitse menetelmä, jota käytät analyysissa. Kunkin menetelmän kuvauksen voit lukea menetelmän kohdalta i-painikkeella.",
-                "options": [
-                    {
-                        "id": "oskari_analyse_buffer",
+                "options": {
+                    "buffer": {
                         "label": "Vyöhyke",
-                        "classForMethod": "buffer",
-                        "selected": true,
                         "tooltip": "Lisää vyöhyke valittujen kohteiden ympärille. Voit käyttää vyöhykkeitä muiden analyysien pohjana."
                     },
-                    {
-                        "id": "oskari_analyse_aggregate",
+                    "aggregate": {
                         "label": "Tunnuslukujen laskenta",
-                        "classForPreview": "aggregate",
                         "tooltip": "Laske tunnusluvut valituille kohteille. Tietosuojatut kohteet eivät ole mukana laskennassa."
                     },
-                    {
-                        "id": "oskari_analyse_union",
+                    "union": {
                         "label": "Yhdiste",
-                        "classForPreview": "union",
                         "tooltip": "Yhdistä valitut kohteet yhdeksi kohteeksi."
                     },
-                    {
-                        "id": "oskari_analyse_clip",
+                    "clip": {
                         "label": "Leikkaus",
-                        "classForPreview": "clip",
                         "tooltip": "Leikkaa kohteita toisen tason kohteilla. Lopputulokseen otetaan mukaan ne kohteet, jotka ovat leikkaavan tason kohteiden sisäpuolella."
                     },
-                    {
-                        "id": "oskari_analyse_intersect",
+                    "intersect": {
                         "label": "Leikkaavien kohteiden suodatus",
-                        "classForPreview": "intersect",
                         "tooltip": "Valitse leikattavalta tasolta ne kohteet, jotka ovat osittain tai kokonaan leikkaavan tason kohteiden sisällä."
                     },
-                    {
-                        "id": "oskari_analyse_layer_union",
+                    "layer_union": {
                         "label": "Analyysitasojen yhdiste",
-                        "classForPreview": "layer_union",
                         "tooltip": "Yhdistä valitut tasot. Tasoilla on oltavat samat ominaisuustiedot."
                     },
-                    {
-                        "id": "oskari_analyse_areas_and_sectors",
+                    "areas_and_sectors": {
                         "label": "Vyöhykkeet ja sektorit",
-                        "classForPreview": "areas_and_sectors",
                         "tooltip": "Lisää useita vyöhykkeitä ja sektoreita valittujen kohteiden ympärille."
                     },
-                    {
-                        "id": "oskari_analyse_difference",
+                    "difference": {
                         "label": "Muutoksen laskenta",
-                        "classForPreview": "difference",
                         "tooltip": "Laske muutos kahden eri karttatason välillä. Karttatasot esittävät samaa aineistoa eri aikoina."
                     },
-                    {
-                        "id": "oskari_analyse_spatial_join",
+                    "spatial_join": {
                         "label": "Yhdistäminen sijainnin perusteella",
-                        "classForPreview": "spatial_join",
                         "tooltip": "Yhdistä kohdetason ominaisuustiedot lähdetason ominaisuustietoihin kohteiden sijainnin perusteella."
                     }
-                ]
+                }
             },
             "aggregate": {
                 "label": "Tunnusluku",
                 "labelTooltip": "Valitse tunnusluvut, jotka lasketaan valittujen ominaisuustietojen perusteella.",
-                "options": [
-                    {
-                        "id": "oskari_analyse_Count",
-                        "label": "Kohteiden lukumäärä",
-                        "selected": true
-                    },
-                    {
-                        "id": "oskari_analyse_Sum",
-                        "label": "Summa"
-                    },
-                    {
-                        "id": "oskari_analyse_Min",
-                        "label": "Pienin arvo"
-                    },
-                    {
-                        "id": "oskari_analyse_Max",
-                        "label": "Suurin arvo"
-                    },
-                    {
-                        "id": "oskari_analyse_Average",
-                        "label": "Keskiarvo"
-                    },
-                    {
-                        "id": "oskari_analyse_StdDev",
-                        "label": "Keskihajonta"
-                    },
-                    {
-                        "id": "oskari_analyse_Median",
-                        "label": "Mediaani"
-                    },
-                    {
-                        "id": "oskari_analyse_NoDataCnt",
-                        "label": "Tietosuojattujen kohteiden lukumäärä"
-                    }
-                ],
+                "options": {
+                    "Count" : "Kohteiden lukumäärä",
+                    "Sum": "Summa",
+                    "Min": "Pienin arvo",
+                    "Max": "Suurin arvo",
+                    "Average": "Keskiarvo",
+                    "StdDev": "Keskihajonta",
+                    "Median": "Mediaani",
+                    "NoDataCnt": "Tietosuojattujen kohteiden lukumäärä"
+                },
                 "attribute": "Valitse ominaisuustieto",
                 "footer": "Tietosuojatut kohteet eivät ole mukana laskennassa.",
                 "aggregateAdditionalInfo": "Huom! Olet valinnut tekstiä sisältäviä ominaisuustietoja. Niille voi laskea ainoastaan kohteiden lukumäärän. Jos kohteiden lukumäärä ei ole valittuna, tekstiä sisältäviä ominaisuustietoja ei oteta mukaan analyysin lopputulokseen."
@@ -258,17 +220,10 @@ Oskari.registerLocalization(
                 "intersectingLayer": "Leikkaava taso",
                 "intersectingLayerTooltip": "Valitse taso, jonka kohteiden perusteella valitaan kohteita alkuperäiseltä tasolta.",
                 "labelTooltipIntersect": "Valitse, otetaanko mukaan alkuperäisen tason kohteet, jotka leikkaavat leikkaavan tason kohteita vai ovat kokonaan kohteiden sisäpuolella.",
-                "options": [
-                    {
-                        "id": "oskari_analyse_intersect",
-                        "label": "Leikkaavat kohteet",
-                        "selected": true
-                    },
-                    {
-                        "id": "oskari_analyse_contains",
-                        "label": "Sisältyvät kohteet"
-                    }
-                ]
+                "options": {
+                    "intersect": "Leikkaavat kohteet",
+                    "contains": "Sisältyvät kohteet"
+                }
             },
             "spatial_join": {
                 "firstLayer": "Kohdetaso",
@@ -314,21 +269,11 @@ Oskari.registerLocalization(
                 "aggreLabelTooltip": "Valitse enintään 10 ominaisuustietoa, joille lasketaan tunnusluvut.",
                 "labelTooltip": "Valitse enintään 10 ominaisuustietoa, jotka otetaan mukaan lopputulokseen.",
                 "tooltip": "",
-                "options": [
-                    {
-                        "id": "oskari_analyse_all",
-                        "selected": true,
-                        "label": "Kaikki"
-                    },
-                    {
-                        "id": "oskari_analyse_none",
-                        "label": "Ei mitään"
-                    },
-                    {
-                        "id": "oskari_analyse_select",
-                        "label": "Valitse listalta"
-                    }
-                ]
+                "options": {
+                    "all": "Kaikki",
+                    "none": "Ei mitään",
+                    "select": "Valitse listalta"
+                }
             },
             "output": {
                 "label": "Kohteiden esitystapa",
@@ -400,36 +345,6 @@ Oskari.registerLocalization(
             "buttons": {
                 "continue": "Siirry analyysiin",
                 "cancel": "Poistu"
-            }
-        },
-        "categoryform": {
-            "name": {
-                "label": "Nimi",
-                "placeholder": "Anna karttatasolle nimi."
-            },
-            "drawing": {
-                "label": "",
-                "point": {
-                    "label": "Piste",
-                    "color": "Väri",
-                    "size": "Koko"
-                },
-                "line": {
-                    "label": "Viiva",
-                    "color": "Väri",
-                    "size": "Paksuus"
-                },
-                "area": {
-                    "label": "Alue",
-                    "fillcolor": "Täyttöväri",
-                    "linecolor": "Reunaviivan väri",
-                    "size": "Reunaviivan paksuus"
-                }
-            },
-            "edit": {
-                "title": "Muokkaa karttatasoa",
-                "save": "Tallenna",
-                "cancel": "Peruuta"
             }
         },
         "personalDataTab": {

@@ -11,15 +11,14 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.NotLoggedIn',
      * @static
      * @param {Oskari.analysis.bundle.analyse.AnalyseBundleInstance} instance
      *     reference to component that created this view
-     * @param {Object} localization
-     *     localization data in JSON format
+     * @param {Function} loc
      */
-    function (instance, localization) {
+    function (instance, loc) {
         this.instance = instance;
         this.template = jQuery('<div class="notLoggedIn"></div>');
         this.loginTemplate = jQuery('<div class="notLoggedIn"><a></a></div>');
         this.registerTemplate = jQuery('<div class="notLoggedIn"><a></a></div>');
-        this.loc = localization;
+        this.loc = loc;
     }, {
         /**
          * @method render
@@ -33,17 +32,17 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.NotLoggedIn',
             var register = this.registerTemplate.clone();
             const discounted = this.template.clone();
 
-            discounted.append(this.loc.discountedNotice);
+            discounted.append(this.loc('NotLoggedView.discountedNotice'));
             container.prepend(discounted);
 
-            content.append(this.loc.text);
+            content.append(this.loc('NotLoggedView.text'));
             container.append(content);
 
             var loginUrl = Oskari.getLocalized(conf.loginUrl) || Oskari.urls.getLocation('login');
             if (loginUrl) {
                 var loginLink = login.find('a');
                 loginLink.attr('href', loginUrl);
-                loginLink.append(this.loc.signup);
+                loginLink.append(this.loc('NotLoggedView.signup'));
                 container.append(login);
             }
 
@@ -51,7 +50,7 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.view.NotLoggedIn',
             if (registerUrl) {
                 var registerLink = register.find('a');
                 registerLink.attr('href', registerUrl);
-                registerLink.append(this.loc.register);
+                registerLink.append(this.loc('NotLoggedView.register'));
                 container.append(register);
             }
         }

@@ -1,173 +1,97 @@
+import olFormatGeoJSON from 'ol/format/GeoJSON';
+import { getDrawRequestType } from '../service/AnalyseHelper';
+
+const STYLE = {
+    draw: {
+        fill: {
+            color: 'rgba(35,216,194,0.3)'
+        },
+        stroke: {
+            color: 'rgba(35,216,194,1)',
+            width: 2
+        },
+        image: {
+            radius: 4,
+            fill: {
+                color: 'rgba(35,216,194,0.7)'
+            }
+        }
+    },
+    modify: {
+        fill: {
+            color: 'rgba(0,0,238,0.3)'
+        },
+        stroke: {
+            color: 'rgba(0,0,238,1)',
+            width: 2
+        },
+        image: {
+            radius: 4,
+            fill: {
+                color: 'rgba(0,0,0,1)'
+            }
+        }
+    }
+};
+
+const DRAW_OPTIONS = {
+    allowMultipleDrawing: 'multiGeom',
+    showMeasureOnMap: true,
+    style: STYLE
+};
+const DRAW_ID = 'analyseDrawLayer';
+
 Oskari.clazz.define(
     'Oskari.analysis.bundle.analyse.view.DrawControls',
-    function (instance, loc, stopDrawingFunction, startDrawingFunction) {
+    function (instance, mapModule) {
         this.instance = instance;
         this.sandbox = this.instance.getSandbox();
-        this.loc = loc;
-        this.drawStopper = stopDrawingFunction;
-        this.drawStarter = startDrawingFunction;
-        this.selectionPlugin = this.sandbox.findRegisteredModuleInstance('MainMapModuleMapSelectionPlugin');
-        this.mapModule = this.sandbox.findRegisteredModuleInstance('MainMapModule');
-
-        if (!this.selectionPlugin) {
-            var config = {
-                id: 'FeatureData'
-            };
-            this.selectionPlugin = Oskari.clazz.create('Oskari.mapframework.bundle.featuredata2.plugin.MapSelectionPlugin', config, this.sandbox);
-            this.mapModule.registerPlugin(this.selectionPlugin);
-            this.mapModule.startPlugin(this.selectionPlugin);
-        }
+        this.mapModule = mapModule;
+        this.loc = this.instance.loc;
+        this.eventHandlers = {};
+        this.storeDrawing = false;
     }, {
         /**
          * @static @property _templates
          */
         _templates: {
-            help: '<div class="help icon-info"></div>',
-            buttons: '<div class="buttons"></div>',
-            layersContainer: '<div class="layers"></div>',
             toolContainer: '<div class="toolContainer">' +
                 '  <h4 class="title"></h4>' +
                 '</div>',
-            tool: '<div class="tool"></div>',
-            drawFilterContainer: '<div class="drawFilterContainer">' +
-                '  <h4 class="title"></h4>' +
-                '</div>',
-            drawFilter: '<div class="drawFilter"></div>',
-            selectionToolsContainer: '<div class="toolContainer">' +
-                '   <h4 class="title"></h4>' +
-                '   <div class="toolContainerToolDiv"></div>' +
-                '   <div class="toolContainerFooter"></div>' +
-                '   <div class="toolContainerButtons"></div>' +
-                '</div>',
-            search: '<div class="analyse-search"></div>'
+            tool: '<div class="tool"></div>'
         },
-
-        /**
-         * Creates the content layer selection panel for analyse
-         *
-         * @method createDataPanel
-         * @private
-         * @param {Object} loc
-         * @return {Oskari.userinterface.component.AccordionPanel}
-         *         Returns the created panel
-         */
-        createDataPanel: function (loc) {
-            var panel = Oskari.clazz.create(
-                    'Oskari.userinterface.component.AccordionPanel'
-                ),
-                panelHeader = panel.getHeader(),
-                panelContainer = panel.getContainer(),
-                layersCont = jQuery(this._templates.layersContainer).clone(),
-                tooltipCont = jQuery(this._templates.help).clone();
-
-            panel.setTitle(loc.content.label);
-            tooltipCont.attr('title', loc.content.tooltip);
-            tooltipCont.addClass('header-icon-info');
-
-            panelHeader.append(tooltipCont);
-            panelContainer.append(layersCont);
-            panelContainer.append(this.createDataButtons(loc));
-
-            return panel;
+        getName: function () {
+            return this.instance.getName() + 'DrawControls';
         },
-
-        createDrawToolsPanel: function (loc) {
-            var panel = Oskari.clazz.create(
-                    'Oskari.userinterface.component.AccordionPanel'
-                ),
-                panelHeader = panel.getHeader(),
-                panelContainer = panel.getContainer(),
-                tooltipCont = jQuery(this._templates.help).clone();
-
-            panel.setTitle(loc.content.drawToolsLabel);
-            tooltipCont.attr('title', loc.content.drawToolsTooltip);
-            tooltipCont.addClass('header-icon-info');
-
-            panelHeader.append(tooltipCont);
-            panelContainer.append(this.createDrawButtons(loc));
-
-            // don't create buttons since geometryeditor is not yet changed to work with ol4
-            // panelContainer.append(this._createDrawFilterButtons(loc));
-
-            panelContainer.append(this.createSelectToolButtons(loc));
-
-            this.drawToolsPanel = panel;
-
-            return panel;
+        stop: function () {
+            this.closeHelpDialog();
+            Object.getOwnPropertyNames(this.eventHandlers).forEach(p => this.sandbox.unregisterFromEventByName(this, p));
         },
-
-        /**
-         * Creates and returns the data button which opens the layer selector
-         * and the search button which opens the search flyout.
-         *
-         * @method createDataButtons
-         * @private
-         * @param {Object} loc
-         * @return {jQuery}
-         */
-        createDataButtons: function (loc) {
-            var me = this,
-                buttons = jQuery(this._templates.buttons).clone(),
-                dataButton = Oskari.clazz.create(
-                    'Oskari.userinterface.component.Button'
-                ),
-                searchButton = Oskari.clazz.create(
-                    'Oskari.userinterface.component.Button'
-                );
-
-            dataButton.setId(
-                'oskari_analysis_analyse_view_analyse_buttons_data'
-            );
-            dataButton.setTitle(loc.buttons.data);
-            dataButton.addClass('primary');
-            dataButton.setHandler(function () {
-                me._openFlyoutAs('LayerSelector');
-            });
-            dataButton.insertTo(buttons);
-
-            searchButton.setId(
-                'oskari_analysis_analyse_view_analyse_content_search_title'
-            );
-            searchButton.setTitle(loc.content.search.title);
-            searchButton.addClass('primary');
-            searchButton.setHandler(function () {
-                me._openFlyoutAs('Search');
-            });
-            searchButton.insertTo(buttons);
-
-            return buttons;
+        start: function () {
+            this.eventHandlers = this.createEventHandlers();
         },
-
-        /**
-         * Sends a request to open a Flyout impersonating
-         * as the bundle provided in the name param.
-         *
-         * @method _openFlyoutAs
-         * @private
-         * @param  {String} name
-         */
-        _openFlyoutAs: function (name) {
-            var me = this,
-                extension = {
-                    getName: function () {
-                        return name;
-                    }
-                },
-                rn = 'userinterface.UpdateExtensionRequest';
-
-            if (name === 'LayerSelector') {
-                var requestName = 'ShowFilteredLayerListRequest';
-                me.sandbox.postRequestByName(
-                    requestName,
-                    ['featuredata', true]
-                );
-                clearTimeout(this._flyoutTimeOut);
-                this._flyoutTimeOut = setTimeout(function () {
-                    me.sandbox.postRequestByName(rn, [extension, 'attach', rn, '0', '424']);
-                }, 100);
-            } else {
-                me.sandbox.postRequestByName(rn, [extension, 'attach', rn, '0', '424']);
+        createEventHandlers: function () {
+            const handlers = {
+                'DrawingEvent': (event) => this.drawingHandler(event)
+            };
+            Object.getOwnPropertyNames(handlers).forEach(p => this.sandbox.registerForEventByName(this, p));
+            return handlers;
+        },
+        drawingHandler: function (event) {
+            if (event.getId() !== DRAW_ID || !this.storeDrawing || !event.getIsFinished()) {
+                return;
             }
+            // 'multiGeom' -> gathers drawn shapes into a single feature
+            const feature = new olFormatGeoJSON().readFeatures(event.getGeoJson())[0];
+            this.instance.getStateHandler().addTempLayer({feature});
+            this._stopDrawing(true);
+        },
+        onEvent: function (e) {
+            var handler = this.eventHandlers[e.getName()];
+            if (!handler) {
+                return;
+            }
+            return handler.apply(this, [e]);
         },
 
         /**
@@ -175,224 +99,62 @@ Oskari.clazz.define(
          * temporary features which can be used in analysis.
          *
          * @method createDrawButtons
-         * @param {Object} loc
          * @return {jQuery}
          */
-        createDrawButtons: function (loc) {
-            var me = this,
-                toolContainer = jQuery(this._templates.toolContainer).clone(),
-                toolTemplate = jQuery(this._templates.tool),
-                tools = ['point', 'line', 'area'];
+        createDrawButtons: function () {
+            const toolContainer = jQuery(this._templates.toolContainer).clone();
+            const toolTemplate = jQuery(this._templates.tool);
+            const tools = ['point', 'line', 'area'];
 
-            toolContainer.find('h4').html(loc.content.features.title);
+            toolContainer.find('h4').html(this.loc('AnalyseView.content.features.title'));
 
-            return _.foldl(tools, function (container, tool) {
-                var toolDiv = toolTemplate.clone();
+            tools.forEach(tool => {
+                const toolDiv = toolTemplate.clone();
                 toolDiv.addClass('add-' + tool);
-                toolDiv.attr({
-                    'title': loc.content.features.tooltips[tool],
-                    'id': 'oskari_analysis_analyse_view_analyse_content_features_' + tool
+                toolDiv.attr('title', this.loc(`content.features.tooltips.${tool}`));
+                toolDiv.on('click', () => {
+                    const drawType = getDrawRequestType(tool);
+                    this.sandbox.postRequestByName('DrawTools.StartDrawingRequest', [DRAW_ID, drawType, DRAW_OPTIONS]);
+                    this.showDrawHelpper(tool);
                 });
-                toolDiv.on('click', function () {
-                    me.closeHelpDialog();
-                    // if selection tool is left active, deactivate it
-                    me.deactivateSelectTools();
-
-                    me.drawStarter({
-                        drawMode: tool
-                    });
-
-                    var controlButtons = me.createDrawControls(),
-                        loc = me.loc.content.drawDialog,
-                        dialogTitle = loc[tool].title,
-                        dialogText = loc[tool].add;
-
-                    me.helpDialog = Oskari.clazz.create(
-                        'Oskari.userinterface.component.Popup'
-                    );
-                    me.helpDialog.show(dialogTitle, dialogText, controlButtons);
-                    me.helpDialog.addClass('analyse-draw-dialog');
-                    me.helpDialog.moveTo('div.tool.add-' + tool, 'bottom');
-                });
-                container.append(toolDiv);
-
-                return container;
-            }, toolContainer);
-        },
-
-        /**
-         * Creates and returns the draw filter buttons from which the user can filter
-         * by drawing which features are going to be used in analysis.
-         *
-         * @method _createDrawFilterButtons
-         * @private
-         * @param {Object} loc
-         * @return {jQuery}
-         */
-        createDrawFilterButtons: function (loc) {
-            var me = this,
-                drawFilterContainer = jQuery(me._templates.drawFilterContainer).clone(),
-                drawFilterTemplate = jQuery(me._templates.drawFilter),
-                drawFilters = ['point', 'line', 'edit'];
-
-            drawFilterContainer.find('h4').html(loc.content.drawFilter.title);
-
-            return _.foldl(drawFilters, function (container, drawFilter) {
-                var drawFilterDiv = drawFilterTemplate.clone(),
-                    groupName = 'analysis-selection-';
-                drawFilterDiv.addClass(groupName + drawFilter);
-
-                // disabled by default
-                drawFilterDiv.addClass('disabled');
-                drawFilterDiv.attr('title', me.loc.content.drawFilter.tooltip[drawFilter]);
-                drawFilterDiv.on('click', function () {
-                    // if selection tool is left active, deactivate it
-                    me.deactivateSelectTools();
-
-                    if (jQuery(this).hasClass('disabled')) {
-                        return;
-                    }
-
-                    me._startNewDrawFiltering({
-                        mode: drawFilter,
-                        sourceGeometry: me.getSelectedGeometry()
-                    });
-                });
-                container.append(drawFilterDiv);
-
-                return container;
-            }, drawFilterContainer);
-        },
-
-        /**
-         * Creates and returns the selection tool buttons from which the user can select features from wfs map layers
-         *
-         * @method createSelectToolButtons
-         * @param {Object} loc
-         * @return {jQuery}
-         */
-        createSelectToolButtons: function (loc) {
-            const selectionToolsContainer = jQuery(this._templates.selectionToolsContainer).clone();
-            const selectionToolDiv = jQuery(this._templates.tool).clone();
-            const selectionToolButtonsContainer = selectionToolsContainer.find('div.toolContainerButtons');
-            const hasSelections = this.instance.getLayerIdsWithSelections().length > 0;
-
-            // use the existing component to render selection buttons
-            this.selectionButtonsRenderer = Oskari.clazz.create('Oskari.mapframework.bundle.featuredata2.PopupHandler', this.instance);
-
-            this.selectionButtonsRenderer.renderSelectionToolButtonsToContainer(selectionToolDiv);
-
-            var emptyBtn = Oskari.clazz.create('Oskari.userinterface.component.buttons.CancelButton');
-            emptyBtn.setHandler(() => {
-                const analysisId = this.instance.getAnalysisLayerId();
-                if (analysisId) {
-                    this.instance.emptySelections(analysisId);
-                } else {
-                    this.selectControl.unselectAll();
-                }
+                toolContainer.append(toolDiv);
             });
-            emptyBtn.setTitle(loc.content.selectionTools.button.empty);
-            emptyBtn.insertTo(selectionToolButtonsContainer);
-
-            if (!hasSelections) {
-                emptyBtn.setEnabled(false);
-            }
-
-            selectionToolsContainer.find('div.toolContainerToolDiv').append(selectionToolDiv);
-            selectionToolsContainer.find('div.toolContainerButtons').append(emptyBtn);
-            selectionToolsContainer.find('h4').html(loc.content.selectionTools.title);
-            selectionToolsContainer.find('div.toolContainerFooter').html(loc.content.selectionTools.description);
-
-            return selectionToolsContainer;
+            return toolContainer;
         },
-        /**
-         * Deactivates select tools
-         *
-         * @method deactivateSelectTools
-         */
-        deactivateSelectTools: function () {
-            var me = this;
-            me.selectionButtonsRenderer.removeButtonSelectionFromContainer();
-            me.selectionPlugin.stopDrawing();
-        },
+        showDrawHelpper: function (tool) {
+            this.closeHelpDialog();
 
-        /**
-         * @method toggleEmptySelectionBtn
-         * Enables / disables the empty selections - button in selection tools
-         */
-        toggleEmptySelectionBtn: function (enable) {
-            var selectionToolsContainer = jQuery('div.toolContainer');
-            if (enable) {
-                selectionToolsContainer.find('.toolContainerButtons').find('input[type=button]').prop({'disabled': false});
-            } else {
-                selectionToolsContainer.find('.toolContainerButtons').find('input[type=button]').prop({'disabled': true});
-            }
-        },
+            const dialog = Oskari.clazz.create('Oskari.userinterface.component.Popup');
+            dialog.addClass('analyse-draw-dialog');
+            const title = this.loc(`AnalyseView.content.drawDialog.${tool}.title`);
+            const text = this.loc(`AnalyseView.content.drawDialog.${tool}.add`);
 
-        /**
-         * @method createDrawControls
-         * Creates and returns the draw control buttons where the user
-         * can either save or discard the drawn feature.
-         *
-         *
-         * @return {Oskari.userinterface.component.Button[]}
-         */
-        createDrawControls: function () {
-            var me = this,
-                loc = this.loc.content.features.buttons,
-                cancelBtn = Oskari.clazz.create(
-                    'Oskari.userinterface.component.buttons.CancelButton'),
-                finishBtn = Oskari.clazz.create(
-                    'Oskari.userinterface.component.Button'
-                );
-
-            cancelBtn.setId(
-                'oskari_analysis_analyse_view_analyse_content_features_cancel'
-            );
-            cancelBtn.setHandler(function () {
-                me.drawStopper(true);
-                me.closeHelpDialog();
-                me.activateWFSLayer(true);
+            const cancelBtn = Oskari.clazz.create('Oskari.userinterface.component.buttons.CancelButton');
+            cancelBtn.setHandler(() => {
+                this._stopDrawing(true);
+                this.closeHelpDialog();
+            });
+            const finishBtn = Oskari.clazz.create('Oskari.userinterface.component.Button');
+            finishBtn.setTitle(this.loc('AnalyseView.content.features.buttons.finish'));
+            finishBtn.setPrimary(true);
+            finishBtn.setHandler(() => {
+                this._stopDrawing();
+                this.closeHelpDialog();
             });
 
-            finishBtn.setTitle(loc.finish);
-            finishBtn.setId(
-                'oskari_analysis_analyse_view_analyse_content_features_finish'
-            );
-            finishBtn.addClass('primary');
-            finishBtn.setHandler(function () {
-                me.drawStopper(false);
-                me.closeHelpDialog();
-                me.activateWFSLayer(true);
-            });
-
-            return [cancelBtn, finishBtn];
+            dialog.show(title, text, [cancelBtn, finishBtn]);
+            dialog.moveTo('.tool.add-' + tool, 'bottom');
+            this.helpDialog = dialog;
+        },
+        _stopDrawing: function (isCancel = false) {
+            this.storeDrawing = !isCancel;
+            this.sandbox.postRequestByName('DrawTools.StopDrawingRequest', [DRAW_ID, isCancel, isCancel]);
         },
 
         closeHelpDialog: function () {
             if (this.helpDialog) {
                 this.helpDialog.close(true);
                 this.helpDialog = null;
-            }
-        },
-
-        activateWFSLayer: function (activate) {
-            var sandbox = this.sandbox,
-                evtB = Oskari.eventBuilder(
-                    'DrawFilterPlugin.SelectedDrawingEvent'
-                ),
-                gfiReqBuilder = Oskari.requestBuilder(
-                    'MapModulePlugin.GetFeatureInfoActivationRequest'
-                );
-
-            // notify components to reset any saved "selected place" data
-            if (evtB) {
-                sandbox.notifyAll(evtB());
-            }
-
-            // enable or disable gfi requests
-            if (gfiReqBuilder) {
-                sandbox.request(this.instance, gfiReqBuilder(activate));
             }
         }
     }

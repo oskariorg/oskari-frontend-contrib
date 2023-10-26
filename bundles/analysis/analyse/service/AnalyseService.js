@@ -13,7 +13,7 @@ Oskari.clazz.define(
     function (instance) {
         this.instance = instance;
         this.sandbox = instance.sandbox;
-        this.loc = instance.getLocalization('AnalyseView');
+        this.loc = instance.loc;
     }, {
         __name: 'Analyse.AnalyseService',
         __qname: 'Oskari.analysis.bundle.analyse.service.AnalyseService',
@@ -105,7 +105,7 @@ Oskari.clazz.define(
                 },
                 // Error callback
                 function (jqXHR, textStatus, errorThrown) {
-                    me.instance.showMessage(me.loc.error.title, me.loc.error.loadLayersFailed);
+                    me.instance.showMessage(me.loc('AnalyseView.error.title'), me.loc('AnalyseView.error.loadLayersFailed'));
                 }
             );
         },
@@ -154,25 +154,6 @@ Oskari.clazz.define(
         },
 
         /**
-         * @private @method _returnAnalysisOfTypeAggregate
-         *
-         * @param {Function} cb Callback
-         *
-         */
-        _returnAnalysisOfTypeAggregate: function (cb) {
-            this.analyselayers = [];
-            this._getAnalysisLayers(function (response) {
-                this.analyselayers = response.analysislayers;
-                var analysisOfTypeAggregate = _.where(
-                    this.analyselayers, {
-                        method: 'aggregate'
-                    }
-                );
-                cb(analysisOfTypeAggregate);
-            });
-        },
-
-        /**
          * @private @method _getWFSLayerPropertiesAndTypes
          * Get WFS layer properties and property types
          *
@@ -214,7 +195,7 @@ Oskari.clazz.define(
                 },
                 // Error callback
                 function (jqXHR, textStatus, errorThrown) {
-                    me.instance.showMessage(me.loc.error.title, me.loc.error.loadLayerTypesFailed);
+                    me.instance.showMessage(me.loc('AnalyseView.error.title'), me.loc('AnalyseView.error.loadLayerTypesFailed'));
                 });
         },
 
