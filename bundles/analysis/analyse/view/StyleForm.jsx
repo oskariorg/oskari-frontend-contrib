@@ -5,7 +5,7 @@ import { Message, Button } from 'oskari-ui';
 import { SecondaryButton, PrimaryButton, ButtonContainer } from 'oskari-ui/components/buttons';
 import { showPopup } from 'oskari-ui/components/window';
 import { StyleEditor } from 'oskari-ui/components/StyleEditor';
-import { BUNDLE_KEY  } from './constants';
+import { BUNDLE_KEY  } from '../constants';
 import { getRandomizedStyle } from '../service/AnalyseHelper';
 
 const Content = styled.div`

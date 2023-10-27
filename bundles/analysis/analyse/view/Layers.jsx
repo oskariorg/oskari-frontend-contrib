@@ -2,9 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Controller } from 'oskari-ui/util';
-import { Message, Radio } from 'oskari-ui';
+import { Message, Radio, Button } from 'oskari-ui';
 import { MetadataIcon } from 'oskari-ui/components/icons';
 import { Content, RadioGroup } from './styled';
+import { ButtonContainer, IconButton } from 'oskari-ui/components/buttons'
 
 //div
 const LayerBox = styled(Radio.Choice)`
@@ -37,8 +38,8 @@ export const Layers = ({ controller, state, layers }) => {
         <Content>
             <RadioGroup value={state.layerId}
                 onChange={(e) => controller.setAnalysisLayerId(e.target.value)}>
-                {allLayers.map((layer) => (
-                    <LayerBox key={layer.getId()} disabled={disabled}>
+                {layers.map((layer) => (
+                    <LayerBox key={layer.getId()}>
                         <LayerTitle>{layer.getName()}</LayerTitle>
                         <MetadataIcon metadataId={layer.getMetadataIdentifier()} />
                         <IconButton type='delete'
@@ -46,12 +47,12 @@ export const Layers = ({ controller, state, layers }) => {
                     </LayerBox>
                 ))}
             </RadioGroup>
-            {allLayers.length === 0 && <Message messageKey='AnalyseView.content.noLayers' /> }
+            {layers.length === 0 && <Message messageKey='AnalyseView.content.noLayers' /> }
             <ButtonContainer>
-                <Button onClick={() => controller.openSelectedLayerList()}>
+                <Button type='primary' onClick={() => controller.openSelectedLayerList()}>
                     <Message messageKey='AnalyseView.buttons.data' />
                 </Button>
-                <Button onClick={() => controller.openPlaceSearch()}>
+                <Button type='primary' onClick={() => controller.openPlaceSearch()}>
                     <Message messageKey='AnalyseView.content.search.title' />
                 </Button>
             </ButtonContainer>

@@ -4,7 +4,7 @@ import { Controller } from 'oskari-ui/util';
 import { Message } from 'oskari-ui';
 import { Content, Label } from '../styled';
 import { InfoIcon } from 'oskari-ui/components/icons';
-import { AGGREGATE_OPTIONS } from '../constants';
+import { AGGREGATE_OPTIONS } from '../../constants';
 
 export const Aggregate = ({ 
     controller,

@@ -5,13 +5,14 @@ import { Controller } from 'oskari-ui/util';
 import { TextInput, Switch, Message, Radio, Select, Option } from 'oskari-ui';
 import { InfoIcon } from 'oskari-ui/components/icons';
 import { Content, RadioGroup, Label } from './styled';
-import { PROPERTIES, LIMITS } from './constants';
+import { PROPERTIES, LIMITS } from '../constants';
+import { MethodParams } from './method/MethodParams';
 
 const SKIP_SELECTION = ['difference', 'spatial_join'];
 const propOptions = Object.values(PROPERTIES);
 
 
-const PropertySelection = ({ controller, state, layer }) => {
+const PropertySelection = ({ controller, state, analysisLayer }) => {
     const { method, properties: { type, selected }} = state;
     if (SKIP_SELECTION.includes(method)) {
         return null;
@@ -64,7 +65,7 @@ const PropertySelection = ({ controller, state, layer }) => {
     );
 };
 
-export const Layers = ({ controller, state, layers }) => {
+export const Params = ({ controller, state, layers }) => {
     const analysisLayer = layers.find(l => l.getId() === state.layerId);
         
     return (
@@ -97,7 +98,7 @@ export const Layers = ({ controller, state, layers }) => {
     );
 };
 
-Layers.propTypes = {
+Params.propTypes = {
     state: PropTypes.object.isRequired,
     controller: PropTypes.instanceOf(Controller).isRequired
 };

@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Controller } from 'oskari-ui/util';
 import { Message, Radio } from 'oskari-ui';
-import { Content, RadioGroup } from './styled';
+import { Content, RadioGroup } from '../styled';
 import { InfoIcon } from 'oskari-ui/components/icons';
+
 import { Buffer } from './Buffer';
 import { Aggregate } from './Aggregate';
 import { Difference } from './Difference';
@@ -30,15 +31,15 @@ export const MethodParams = ({
     const targetLayer = layers.find(l => l.getId() === targetLayerId);
     return (
         <Content>
-            {method === 'buffer' && <Buffer params={methodParams}/>}
-            {method === 'aggregate' && <Aggregate params={methodParams}/>}
-            {method === 'union' && <Union params={methodParams}/>}
-            {method === 'clip' && <Intersect params={methodParams} skipSpatial/>}
-            {method === 'intersect' && <Intersect params={methodParams}/>}
-            {method === 'layer_union' && <LayerUnion params={methodParams}/>}
-            {method === 'areas_and_sectors' && <AreasAndSectors params={methodParams}/>}
-            {method === 'difference' && <Difference params={methodParams}/>}
-            {method === 'spatial_join' && <SpatialJoin params={methodParams}/>}
+            {method === 'buffer' && <Buffer controller={controller} params={methodParams}/>}
+            {method === 'aggregate' && <Aggregate controller={controller} params={methodParams}/>}
+            {method === 'union' && <Union controller={controller} params={methodParams}/>}
+            {method === 'clip' && <Intersect controller={controller} params={methodParams} skipSpatial/>}
+            {method === 'intersect' && <Intersect controller={controller} params={methodParams}/>}
+            {method === 'layer_union' && <LayerUnion controller={controller} params={methodParams}/>}
+            {method === 'areas_and_sectors' && <AreasAndSectors controller={controller} params={methodParams}/>}
+            {method === 'difference' && <Difference controller={controller} params={methodParams}/>}
+            {method === 'spatial_join' && <SpatialJoin controller={controller} params={methodParams}/>}
         </Content>
     );
 };

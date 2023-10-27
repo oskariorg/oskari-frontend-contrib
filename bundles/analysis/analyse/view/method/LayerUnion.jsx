@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Controller } from 'oskari-ui/util';
 import { Message, Radio } from 'oskari-ui';
-import { Content, RadioGroup } from './styled';
+import { Content, RadioGroup } from '../styled';
 import { InfoIcon } from 'oskari-ui/components/icons';
 
 const METHODS = [
@@ -31,7 +31,6 @@ export const LayerUnion = ({
     layers
 }) => {
     const targetLayer = layers.find(l => l.getId() === state.targetLayerId);
-    if ()
     return (
         <Content>
             <RadioGroup value={state.method}

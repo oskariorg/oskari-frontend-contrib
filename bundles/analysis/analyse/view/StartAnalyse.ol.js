@@ -1,5 +1,5 @@
 import olFormatGeoJSON from 'ol/format/GeoJSON';
-import { LIMITS, FILTER, PROPERTIES, BUFFER, METHODS, AGGREGATE_OPTIONS, SPATIAL_OPTIONS, SPATIAL_JOIN_MODES } from './constants';
+import { LIMITS, FILTER, PROPERTIES, BUFFER, METHODS, AGGREGATE_OPTIONS, SPATIAL_OPTIONS, SPATIAL_JOIN_MODES } from '../constants';
 import { showStyleEditor } from './StyleForm';
 import { isAnalysisLayer, isTempLayer, getRandomizedStyle } from '../service/AnalyseHelper';
 
