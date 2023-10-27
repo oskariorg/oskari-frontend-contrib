@@ -1,7 +1,8 @@
 import { StateHandler, controllerMixin, Messaging } from 'oskari-ui/util';
 import { createTempLayer, createFeatureLayer, eligibleForAnalyse, isUnsupportedWFS, getRandomizedStyle } from '../service/AnalyseHelper';
-import { PROPERTIES, FILTER, BUFFER, METHODS } from '../view/constants';
-import { showStyleEditor } from './StyleForm';
+import { PROPERTIES, FILTER, BUFFER, METHODS } from '../constants';
+import { showStyleEditor } from '../view/StyleForm';
+import { getInitPropertiesSelections } from './AnalysisStateHelper';
 
 class Handler extends StateHandler {
     constructor (instance) {
@@ -23,7 +24,8 @@ class Handler extends StateHandler {
             methodParams: {},
             style: getRandomizedStyle(),
             showFeatureData: true,
-            showDataWithoutSaving: false
+            showDataWithoutSaving: false,
+            noDataCnt: false  // TODO: or get from layer  when needed
         });
         this.eventHandlers = this.createEventHandlers();
         this.featureLayer = null;
@@ -32,6 +34,25 @@ class Handler extends StateHandler {
 
     getName () {
         return 'AnalysisStateHandler';
+    }
+
+    _getInitState () {
+        const selections = this.instance.getLayerIdsWithSelections();
+        const layer = selections[0] || this._getAnalysisLayers()[0];
+        const layerId = layer?.getId();
+        const method = METHODS[0];
+        const filter = selections[0] ? FILTER.FEATURES : FILTER.BBOX;
+        const methodParams = this._initMethodParams(layer);
+        const properties = getInitPropertiesSelections(layerlayer);
+        return { layerId, method, filter, methodParams, properties };
+    }
+
+    _initMethodParams () {
+        return {};
+    }
+
+    _getAnalysisLayers () {
+        return this.getSandbox().findAllSelectedMapLayers().filter(l => eligibleForAnalyse(l));
     }
 
     createEventHandlers () {
@@ -63,20 +84,19 @@ class Handler extends StateHandler {
     }
 
     onEvent (e) {
-        var handler = this.eventHandlers[e.getName()];
-        if (!handler) {
+        const handler = this.eventHandlers[e.getName()];
+        if (!handler || !this.getState().enabled) {
             return;
         }
-
         return handler.apply(this, [e]);
     }
 
     setEnabled (enabled) {
-        this._selectAnalysisLayerId();
+        const state = enabled ? this._getInitState() : {};
         if(!enabled) {
             this._removeFeatureSource();
         }
-        this.updateState({ enabled });
+        this.updateState({ ...state, enabled });
     }
 
     setAnalysisLayerId (layerId) {
@@ -90,12 +110,6 @@ class Handler extends StateHandler {
 
     setValue (key, value) {
         this.updateState({ [key]: value });
-    }
-
-    _selectAnalysisLayerId () {
-        const selections = this.instance.getLayerIdsWithSelections();
-        const layerId = selections[0] || this.getLayers()[0]?.getId();
-        this.setAnalysisLayerId(layerId);
     }
 
     addTempLayer (data) {
@@ -159,6 +173,10 @@ class Handler extends StateHandler {
         const mapModule = this.sandbox.findRegisteredModuleInstance('MainMapModule');
         mapModule.removeLayer(this.featureLayer);
         this.featureLayer = null;
+    }
+
+    gatherSelections () {
+        return {};
     }
 }
 
