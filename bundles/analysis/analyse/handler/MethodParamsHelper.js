@@ -1,3 +1,22 @@
+import { isTempLayer } from '../service/AnalyseHelper';
+import { LIMITS, PROPERTIES } from '../constants';
+
+export const getInitPropertiesSelections = (layer, selected) => {
+    let type = PROPERTIES.ALL;
+    if (isTempLayer(layer) || isUserLayer(layer)) {
+        type = PROPERTIES.NONE;
+        selected = isUserLayer(layer) ? [''] : [];
+        return { type, selected };
+    }
+    const props = Object.keys(layer.getPropertyTypes());
+    let selected = props;
+    if (props.length > LIMITS.properties) {
+        type = PROPERTIES.SELECT;
+        // auto-select
+    }
+    return { type, selected };
+}
+
 export const gatherMethodParams = state => {
     const { method } = state;
     if (method === 'buffer') {
