@@ -2,7 +2,7 @@ import { StateHandler, controllerMixin, Messaging } from 'oskari-ui/util';
 import { createTempLayer, createFeatureLayer, eligibleForAnalyse, isUnsupportedWFS, getRandomizedStyle, isTempLayer } from '../service/AnalyseHelper';
 import { PROPERTIES, FILTER, BUFFER, METHODS } from '../constants';
 import { showStyleEditor } from '../view/StyleForm';
-import { getInitPropertiesSelections } from './AnalysisStateHelper';
+import { getInitPropertiesSelections, getInitMethodParams  } from './AnalysisStateHelper';
 
 class Handler extends StateHandler {
     constructor (instance) {
@@ -15,6 +15,7 @@ class Handler extends StateHandler {
             tempLayers: [],
             layerId: null,
             targetId: null,
+            name: '',
             filter: Object.values(FILTER)[1],
             method: METHODS[0],
             properties: {
@@ -49,7 +50,8 @@ class Handler extends StateHandler {
         const methodParams = getInitMethodParams(layer, method);
         const properties = getInitPropertiesSelections(layer, targetLayer, method);
         const isTemp = isTempLayer(layer);
-        return { layerId, method, filter, methodParams, properties, isTemp };
+        const name = layer ? layer.getName().substring(0, 15) + '_' : '';
+        return { layerId, method, filter, methodParams, properties, isTemp, name };
     }
 
     _initMethodParams () {
@@ -145,6 +147,14 @@ class Handler extends StateHandler {
         this.updateState({ tempLayers: tempLayers.filter(l => l.getId() !== layerId) });
     }
 
+    _findLayer (layerId) {
+        const layer = this.sandbox.findMapLayerFromSelectedMapLayers(layerId);
+        if (layer) {
+            return layer;
+        }
+        return this.getState().tempLayers.find(l => l.getId() === layerId);
+    }
+
     openStyleEditor () {
         if (this.popupControls) {
             return;
@@ -181,6 +191,11 @@ class Handler extends StateHandler {
     }
 
     gatherSelections () {
+        const state = this.getState();
+        const layer = this._findLayer(state.layerId);
+        return { error: 'noLayer' };
+        const { noData } = layer.getWpsLayerParams();
+        // method: 'intersect', // use intersect method for clip
         return {};
     }
 }
