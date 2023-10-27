@@ -1,5 +1,5 @@
 import { StateHandler, controllerMixin, Messaging } from 'oskari-ui/util';
-import { createTempLayer, createFeatureLayer, eligibleForAnalyse, isUnsupportedWFS, getRandomizedStyle } from '../service/AnalyseHelper';
+import { createTempLayer, createFeatureLayer, eligibleForAnalyse, isUnsupportedWFS, getRandomizedStyle, isTempLayer } from '../service/AnalyseHelper';
 import { PROPERTIES, FILTER, BUFFER, METHODS } from '../constants';
 import { showStyleEditor } from '../view/StyleForm';
 import { getInitPropertiesSelections } from './AnalysisStateHelper';
@@ -25,7 +25,9 @@ class Handler extends StateHandler {
             style: getRandomizedStyle(),
             showFeatureData: true,
             showDataWithoutSaving: false,
-            noDataCnt: false  // TODO: or get from layer  when needed
+            // TODO: or get from layer  when needed
+            noDataCnt: false,
+            isTemp: false
         });
         this.eventHandlers = this.createEventHandlers();
         this.featureLayer = null;
@@ -40,11 +42,14 @@ class Handler extends StateHandler {
         const selections = this.instance.getLayerIdsWithSelections();
         const layer = selections[0] || this._getAnalysisLayers()[0];
         const layerId = layer?.getId();
+        // is temp layer suitable for target -> [...layer, ...tempLayers]
+        const targetLayer = this._getAnalysisLayers().find(l => l.getId() !== layerId);
         const method = METHODS[0];
         const filter = selections[0] ? FILTER.FEATURES : FILTER.BBOX;
-        const methodParams = this._initMethodParams(layer);
-        const properties = getInitPropertiesSelections(layerlayer);
-        return { layerId, method, filter, methodParams, properties };
+        const methodParams = getInitMethodParams(layer, method);
+        const properties = getInitPropertiesSelections(layer, targetLayer, method);
+        const isTemp = isTempLayer(layer);
+        return { layerId, method, filter, methodParams, properties, isTemp };
     }
 
     _initMethodParams () {
@@ -52,7 +57,7 @@ class Handler extends StateHandler {
     }
 
     _getAnalysisLayers () {
-        return this.getSandbox().findAllSelectedMapLayers().filter(l => eligibleForAnalyse(l));
+        return this.sandbox.findAllSelectedMapLayers().filter(l => eligibleForAnalyse(l));
     }
 
     createEventHandlers () {
