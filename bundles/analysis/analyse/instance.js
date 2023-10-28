@@ -1,7 +1,13 @@
+import React from 'react';
+import { Message } from 'oskari-ui';
 import { AnalysisHandler } from './handler/AnalysisHandler';
 import { AnalysisStateHandler } from './handler/AnalysisStateHandler';
 import { AnalysisTab } from './view/AnalysisTab';
-import { isAnalysisLayer } from './service/AnalyseHelper';
+import { showSidePanel } from 'oskari-ui/components/window';
+import { MainPanel } from './view/MainPanel';
+import { eligibleForAnalyse } from './service/AnalyseHelper';
+
+
 /**
  * @class Oskari.analysis.bundle.analyse.AnalyseBundleInstance
  *
@@ -23,49 +29,36 @@ Oskari.clazz.define(
         this.sandbox = undefined;
         this.started = false;
         this.plugins = {};
-        this.analyse = undefined;
-        this.dialog = undefined;
-        this.analyseHandler = undefined;
+        this.tabHandler = undefined;
+        this.stateHandler = null;
         this.analyseService = undefined;
-        this.state = undefined;
-        this.conf = {};
-        this._log = Oskari.log(this.getName());
         this.loc = Oskari.getMsg.bind(null, this.getName());
-        this._featureSelectionService = null;
-        this._stateHandler = null;
+        this.featureSelectionService = null;
+        this.sidePanel = null;
     }, {
         /**
          * @static @property __name
          */
         __name: 'Analyse',
 
-        /**
-         * @public @method getName
-         *
-         *
-         * @return {String} the name for the component
-         */
         getName: function () {
             return this.__name;
         },
 
-        /**
-         * @public @method getSandbox
-         *
-         *
-         * @return {Oskari.Sandbox}
-         */
         getSandbox: function () {
             return this.sandbox;
         },
+        getService: function () {
+            return this.service;
+        },
         getStateHandler: function () {
-            return this._stateHandler;
+            return this.stateHandler;
         },
         getSelectionService: function () {
-            if (!this._featureSelectionService) {
-                this._featureSelectionService = this.sandbox.getService('Oskari.mapframework.service.VectorFeatureSelectionService');
+            if (!this.featureSelectionService) {
+                this.featureSelectionService = this.sandbox.getService('Oskari.mapframework.service.VectorFeatureSelectionService');
             }
-            return this._featureSelectionService;
+            return this.featureSelectionService;
         },
         getLayerIdsWithSelections: function () {
             const service = this.getSelectionService();
@@ -98,64 +91,39 @@ Oskari.clazz.define(
          *
          */
         start: function () {
-            var me = this,
-                conf = me.conf,
-                sandboxName = (conf ? conf.sandbox : null) || 'sandbox',
-                sandbox = Oskari.getSandbox(sandboxName),
-                p;
-
-            if (me.started) {
+            if (this.started) {
                 return;
             }
+            const conf = this.conf || {};
+            const sandboxName = conf.sandbox || 'sandbox';
+            const sandbox = Oskari.getSandbox(sandboxName);
+            this.sandbox = sandbox;
+            this.started = true;
 
-            me.started = true;
-
-            me.sandbox = sandbox;
-
-            sandbox.register(me);
-            for (p in me.eventHandlers) {
-                if (me.eventHandlers.hasOwnProperty(p)) {
-                    sandbox.registerForEventByName(me, p);
-                }
-            }
+            sandbox.register(this);
 
             // requesthandler
-            me.analyseHandler = Oskari.clazz.create(
-                'Oskari.analysis.bundle.analyse.request.AnalyseRequestHandler',
-                me
-            );
-            sandbox.requestHandler(
-                'analyse.AnalyseRequest',
-                me.analyseHandler
-            );
-            me.analyseService = Oskari.clazz.create(
-                'Oskari.analysis.bundle.analyse.service.AnalyseService',
-                me
-            );
-            sandbox.registerService(me.analyseService);
+            this.analyseHandler = Oskari.clazz.create('Oskari.analysis.bundle.analyse.request.AnalyseRequestHandler', this);
+            sandbox.requestHandler('analyse.AnalyseRequest', this.analyseHandler);
+            this.analyseService = Oskari.clazz.create('Oskari.analysis.bundle.analyse.service.AnalyseService', this);
+            sandbox.registerService(this.analyseService);
 
-            me.mapLayerService = sandbox.getService(
-                'Oskari.mapframework.service.MapLayerService'
-            );
-            this._stateHandler = new AnalysisStateHandler(this);
+            this.stateHandler = new AnalysisStateHandler(this);
+            this.stateHandler.addStateListener(state => this.updatePanel(state));
 
             // Let's extend UI
-            var request = Oskari.requestBuilder('userinterface.AddExtensionRequest')(me);
-            sandbox.request(me, request);
-
-            // draw ui
-            me._createUi();
+            const request = Oskari.requestBuilder('userinterface.AddExtensionRequest')(this);
+            sandbox.request(this, request);
 
             // Load analysis layers
             if (Oskari.user().isLoggedIn()) {
-                me.analyseService.loadAnalyseLayers();
+                this.analyseService.loadAnalyseLayers();
             }
 
             /* stateful */
-            if (conf && conf.stateful === true) {
-                sandbox.registerAsStateful(me.mediator.bundleId, me);
+            if (conf.stateful === true) {
+                sandbox.registerAsStateful(this.mediator.bundleId, this);
             }
-
             this._addTab();
         },
 
@@ -178,23 +146,8 @@ Oskari.clazz.define(
         update: function () {
 
         },
-
-        /**
-         * @public @method onEvent
-         * Event is handled forwarded to correct #eventHandlers if found or discarded if not.
-         *
-         * @param {Oskari.mapframework.event.Event} event a Oskari event object
-         *
-         */
-        onEvent: function (event) {
-            var handler = this.eventHandlers[event.getName()];
-            if (!handler) {
-                return;
-            }
-            return handler.apply(this, [event]);
-        },
         _addTab: function (appStarted) {
-            const sandbox = Oskari.getSandbox();
+            const sandbox = this.getSandbox();
             let myDataService = sandbox.getService('Oskari.mapframework.bundle.mydata.service.MyDataService');
     
             if (myDataService) {
@@ -207,68 +160,22 @@ Oskari.clazz.define(
             }
         },
         /**
-         * @static @property {Object} eventHandlers
-         */
-        eventHandlers: {
-            MapLayerEvent: function (event) {
-                if (event.getOperation() !== 'add') {
-                    return;
-                }
-                // Let's show the user a dialog when the new analysislayer gets added to the map.
-                const layer = this.mapLayerService.findMapLayer(event.getLayerId());
-                if (layer && isAnalysisLayer(layer)) {
-                    this.showMessage(
-                        this.loc('AnalyseView.success.layerAdded.title'),
-                        this.loc('AnalyseView.success.layerAdded.message', { layer: layer.getName() })
-                    );
-                }
-            },
-            'userinterface.ExtensionUpdatedEvent': function (event) {
-                var me = this;
-
-                if (event.getExtension().getName() !== me.getName()) {
-                    // not me -> do nothing
-                    return;
-                }
-
-                var isOpen = event.getViewState() !== 'close';
-
-                me.displayContent(isOpen);
-            }
-        },
-        /**
          * @public @method stop
          * Implements BundleInstance protocol stop method
          *
          *
          */
         stop: function () {
-            var me = this,
-                sandbox = me.sandbox(),
-                p;
+            const sandbox = this.getSandbox();
+            sandbox.removeRequestHandler('analyse.AnalyseRequest', this.analyseHandler);
+            this.analyseHandler = null;
 
-            if (me.analyse) {
-                me.analyse.destroy();
-                me.analyse = undefined;
-            }
-            for (p in me.eventHandlers) {
-                if (me.eventHandlers.hasOwnProperty(p)) {
-                    sandbox.unregisterFromEventByName(me, p);
-                }
-            }
+            const request = Oskari.requestBuilder('userinterface.RemoveExtensionRequest')(this);
+            sandbox.request(this, request);
 
-            sandbox.removeRequestHandler(
-                'analyse.AnalyseRequest',
-                me.analyseHandler
-            );
-            me.analyseHandler = null;
-
-            var request = Oskari.requestBuilder('userinterface.RemoveExtensionRequest')(me);
-            sandbox.request(me, request);
-
-            me.sandbox.unregisterStateful(me.mediator.bundleId);
-            me.sandbox.unregister(me);
-            me.started = false;
+            sandbox.unregisterStateful(this.mediator.bundleId);
+            sandbox.unregister(this);
+            this.started = false;
         },
 
         /**
@@ -333,131 +240,60 @@ Oskari.clazz.define(
             return this.loc('desc');
         },
 
-        /**
-         * @private @method _createUi
-         * (re)creates the UI for "analyse" functionality
-         *
-         *
-         */
-        _createUi: function () {
-            this.plugins['Oskari.userinterface.Flyout'].createUi();
-            this.plugins['Oskari.userinterface.Tile'].refresh();
-        },
-
-         /**
-         * @public @method enableAnalyseMode
-         *
-         */
-        enableAnalyseMode: function() {
-            const root = this.setEnabled(true);
-
-            // proceed with analyse view
-            this.analyse = Oskari.clazz.create(
-                'Oskari.analysis.bundle.analyse.view.StartAnalyse',
-                this,
-                this.loc
-            );
-            this.analyse.render(root);
-            if (this.state) {
-                this.analyse.setState(this.state);
-            }
-            this.analyse.show();
-            this.analyse.setEnabled(true);
-        },
-
         setEnabled: function (blnEnabled) {
-            const root = jQuery(Oskari.dom.getRootEl());
-            const navigation = root.find('nav');
-            navigation.css('display', blnEnabled ? 'none' : 'block');
-            const MODE_TOGGLE = 'mapAnalyseMode';
-            const mapContainer = Oskari.dom.getMapContainerEl();
+            // trigger an event letting other bundles know we require the whole UI
+            const eventBuilder = Oskari.eventBuilder('UIChangeEvent');
+            this.sandbox.notifyAll(eventBuilder(this.mediator.bundleId));
             if (blnEnabled) {
-                // trigger an event letting other bundles know we require the whole UI
-                var eventBuilder = Oskari.eventBuilder('UIChangeEvent');
-                this.sandbox.notifyAll(eventBuilder(this.mediator.bundleId));
-                mapContainer.classList.add(MODE_TOGGLE);
-                this.sandbox.mapMode = MODE_TOGGLE;
-
-                // hide flyout
-                this.sandbox.postRequestByName('userinterface.UpdateExtensionRequest', [this, 'close']);
+                this.showPanel();
             } else {
-                mapContainer.classList.remove(MODE_TOGGLE);
-                delete this.sandbox._mapMode;
+                this.closePanel();
             }
-            return root;
+            this.stateHandler.getController().setEnabled(blnEnabled);
+            // hide flyout
+            this.sandbox.postRequestByName('userinterface.UpdateExtensionRequest', [this, 'close']);
         },
-
-        /**
-         * @public @method disableAnalyseMode
-         *
-         */
-        disableAnalyseMode: function() {
-            this.setEnabled(false);
-            if (this.analyse) {
-                this.analyse.setEnabled(false);
-                this.analyse.destroy();
-            }
+        getProps: function () {
+            return {
+                controller: this.stateHandler.getController(),
+                state: this.stateHandler.getState(),
+                featureIds: this.getSelectionsForLayer(),
+                layers:  this.getSandbox().findAllSelectedMapLayers().filter(l => eligibleForAnalyse(l)),
+                onClose: () => this.setEnabled(false)
+            };
         },
-        /**
-         * @public @method displayContent
-         *
-         * @param {Boolean} isOpen
-         *
-         */
-        displayContent: function (isOpen) {
-            if (isOpen) {
-                this.plugins['Oskari.userinterface.Flyout'].refresh();
+        updatePanel: function () {
+            if (!this.sidePanel) {
+                return;
             }
-            this.sandbox.postRequestByName(
-                'MapModulePlugin.ToggleFullScreenControlRequest',
-                [!isOpen]
+            this.sidePanel.update(
+                <Message bundleKey={this.getName()} messageKey='AnalyseView.title' />,
+                <MainPanel {...this.getProps() } />
             );
         },
-
-        /**
-         * @public @method setState
-         * Sets the bundle state
-         * bundle documentation for details.
-         *
-         * @param {Object} state bundle state as JSON
-         *
-         */
-        setState: function (state) {
-            this.state = state;
+        showPanel: function () {
+            if (this.sidePanel) {
+                return;
+            }
+            const props = this.getProps();
+            this.sidePanel = showSidePanel(
+                <Message bundleKey={this.getName()} messageKey='AnalyseView.title' />,
+                <MainPanel {...props } />,
+                props.onClose,
+                { width: 350, id: this.getName() }
+            );
         },
+        closePanel: function () {
+            if (!this.sidePanel) {
+                return;
+            }
+            this.sidePanel.close();
+            this.sidePanel = null;
+        },
+        setState: function (state) {},
 
-        /**
-         * @public @method getState
-         * Returns bundle state as JSON. State is bundle specific, check the
-         * bundle documentation for details.
-         *
-         *
-         * @return {Object}
-         */
         getState: function () {
-            var state = this.state || {};
-
-            if (this.analyse) {
-                state = this.analyse.getState();
-            }
-
-            return state;
-        },
-
-        /**
-         * @public @method showMessage
-         * Shows user a message with ok button
-         *
-         * @param {String} title popup title
-         * @param {String} message popup message
-         *
-         */
-        showMessage: function (title, message) {
-            var dialog = Oskari.clazz.create(
-                'Oskari.userinterface.component.Popup'
-            );
-            dialog.show(title, message);
-            dialog.fadeout(5000);
+            return {};
         }
     }, {
         /**
