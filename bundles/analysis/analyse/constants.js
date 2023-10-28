@@ -1,4 +1,5 @@
 export const BUNDLE_KEY = 'Analyse';
+export const COOKIE_KEY = 'analyse_info_seen';
 // Both color arrays have to be equal length
 export const COLORS = [
     '#e31a1c', '#2171b5', '#238b45', '#88419d',
