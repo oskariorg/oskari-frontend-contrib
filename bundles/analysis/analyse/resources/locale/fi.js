@@ -20,6 +20,9 @@ Oskari.registerLocalization(
                 "selectionToolsLabel": "Kohdetyökalut",
                 "tooltip": "Valitse yksi aineisto analyysin pohjaksi. Lisää karttatasoja voit hakea \"Lisää karttatasoja\"-painikkeella aukeavalta listalta. Kohdista karttanäkymä haluamaasi paikkaan joko siirtämällä karttaa hiirellä tai klikkaamalla \"Hae paikkahaulla\" ja hakemalla haluamasi paikka.",
                 "selectionToolsTooltip": "Lisää väliaikainen kohde, leikkaa olemassa olevaa kohdetta tai valitse kohteita rajaamalla niitä piirtämilläsi kuvioilla.",
+                "noLayersSelected": "Ei valittuja karttatasoja",
+                "noLayersForMethod": "Valitulle metodille ei ole sopivia tasoja",
+                "noProperties": "Tasolla ei ole ominaisuustietoja",
                 "features": {
                     "title": "Lisäys",
                     "buttons": {
@@ -196,11 +199,11 @@ Oskari.registerLocalization(
                 "label": "Vyöhykkeet ja sektorit",
                 "labelTooltip": "Määrittele vyöhykkeille koko ja lukumäärä sekä sektoreille lukumäärä.",
                 "area_count": "Vyöhykkeiden lukumäärä",
-                "area_count_tooltip": "Määrä välillä 0-12",
+                "area_count_tooltip": "Määrä välillä 0-{max}",
                 "area_size": "Vyöhykkeiden koko",
                 "area_size_tooltip": "Koko",
                 "sector_count": "Sektorien lukumäärä",
-                "sector_count_tooltip": "Määrä välillä 0-12"
+                "sector_count_tooltip": "Määrä välillä 0-{max}"
             },
             "difference": {
                 "firstLayer": "Aikaisempi ajankohta",
@@ -266,8 +269,8 @@ Oskari.registerLocalization(
             "params": {
                 "label": "Mukaan otettavat ominaisuustiedot",
                 "aggreLabel": "Ominaisuustiedot joille tunnusluvut lasketaan",
-                "aggreLabelTooltip": "Valitse enintään 10 ominaisuustietoa, joille lasketaan tunnusluvut.",
-                "labelTooltip": "Valitse enintään 10 ominaisuustietoa, jotka otetaan mukaan lopputulokseen.",
+                "aggreLabelTooltip": "Valitse enintään {limit} ominaisuustietoa, joille lasketaan tunnusluvut.",
+                "labelTooltip": "Valitse enintään {limit} ominaisuustietoa, jotka otetaan mukaan lopputulokseen.",
                 "tooltip": "",
                 "options": {
                     "all": "Kaikki",
@@ -324,7 +327,7 @@ Oskari.registerLocalization(
             "infos": {
                 "title": "Ominaisuustiedot",
                 "layer": "Tason",
-                "over10": "kohteilla on yli 10 ominaisuustietoa. Valitse analyysin lopputulokseen enintään 10 ominaisuustietoa. Valinnan voit tehdä parametrien valinnan yhteydessä.",
+                "over10": "kohteilla on yli {limit} ominaisuustietoa. Valitse analyysin lopputulokseen enintään {limit} ominaisuustietoa. Valinnan voit tehdä parametrien valinnan yhteydessä.",
                 "userlayer": "Omien aineistojen ominaisuustietoja ei voida käyttää analyyseissä, kohteiden geometrioilla voi kuitenkin tehdä analyysejä (vyöhyke, yhdiste, leikkaus)."
             },
             "aggregatePopup": {

@@ -20,6 +20,9 @@ Oskari.registerLocalization(
                 "selectionToolsLabel": "Feature Tools",
                 "tooltip": "Select one map layer for analysis. You can search more map layers by clicking \"Add map layer\" and selecting a map layer from the list. You can focus your map view to the place you  want by dragging the map with a mouse or by clicking \"Search places\" and searching the place you want.",
                 "selectionToolsTooltip": "Add a temporary feature, clip an existing feature or select features with a geometry you draw.",
+                "noLayersSelected": "No map layers selected",
+                "noLayersForMethod": "No suitable map layers for method",
+                "noProperties": "Layer doesn't have properties",
                 "features": {
                     "title": "Add Feature",
                     "buttons": {
@@ -198,11 +201,11 @@ Oskari.registerLocalization(
                 "label": "Buffers and sectors",
                 "labelTooltip": "Define a size and a number of buffers and a number of sectors.",
                 "area_count": "Buffer count",
-                "area_count_tooltip": "Count between 0-12",
+                "area_count_tooltip": "Count between 0-{max}",
                 "area_size": "Buffer size",
                 "area_size_tooltip": "Size",
                 "sector_count": "Sector count",
-                "sector_count_tooltip": "Count between 0-12"
+                "sector_count_tooltip": "Count between 0-{max}"
             },
             "difference": {
                 "firstLayer": "Older map layer",

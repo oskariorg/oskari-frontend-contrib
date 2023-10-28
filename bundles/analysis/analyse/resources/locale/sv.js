@@ -20,6 +20,9 @@ Oskari.registerLocalization(
                 "selectionToolsLabel": "Objekt verktyg",
                 "tooltip": "Välj ett karlager för en grund av analys. Om något kartlager är inte på listan, klicka \"Mera kartlager\". Om du vill fokusera kartan till en särkild plats, klicka \"Sök platser\". För att flitrera objekt klicka filterknapp. Ta bort kartlager från kartvyn genom att klicka korsknapp.",
                 "selectionToolsTooltip": "Tilllägg tillfälliga objekt, klippa befintliga objekt eller välj objekt genom att begränsa dem med geometriska mönster som du ritar.",
+                "noLayersSelected": "Inga kartlager har valts",
+                "noLayersForMethod": "Inga passande kartlager för metod",
+                "noProperties": "Kartlager har inga egenskaper",
                 "features": {
                     "title": "Tillägg objekt",
                     "buttons": {
@@ -196,11 +199,11 @@ Oskari.registerLocalization(
                 "label": "Zoner och sektorer",
                 "labelTooltip": "Ge zon antal och storlek, och sektor storlek.",
                 "area_count": "Zon antal",
-                "area_count_tooltip": "Antal mellan 0-12",
+                "area_count_tooltip": "Antal mellan 0-{max}",
                 "area_size": "Zon storlek",
                 "area_size_tooltip": "Storlek",
                 "sector_count": "Sektor antal",
-                "sector_count_tooltip": "Antal mellan 0-12"
+                "sector_count_tooltip": "Antal mellan 0-{max}"
             },
             "difference": {
                 "firstLayer": "Tidigare tidspunkt",
@@ -266,8 +269,8 @@ Oskari.registerLocalization(
             "params": {
                 "label": "Resultat attribut",
                 "aggreLabel": "Attribut data för statistiska mått",
-                "aggreLabelTooltip": "Välj högst 10 attributer. Statistiska mått beräknas till dem.",
-                "labelTooltip": "Välj högst 10 attributer som tas med i resultaten.",
+                "aggreLabelTooltip": "Välj högst {limit} attributer. Statistiska mått beräknas till dem.",
+                "labelTooltip": "Välj högst {limit} attributer som tas med i resultaten.",
                 "tooltip": "",
                 "options": {
                     "all": "Alla",
