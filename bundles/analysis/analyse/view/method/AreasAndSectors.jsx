@@ -1,18 +1,46 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
 import { Controller } from 'oskari-ui/util';
-import { Message, Radio } from 'oskari-ui';
-import { Content, RadioGroup } from '../styled';
+import { Message, TextInput, Select, Option } from 'oskari-ui';
+import { Content, Label, InlineGroup } from '../styled';
 import { InfoIcon } from 'oskari-ui/components/icons';
+import { BUNDLE_KEY, LIMITS, BUFFER } from '../../constants';
+
+const getPlaceholder = key =>
+    Oskari.getMsg(BUNDLE_KEY, `AnalyseView.areas_and_sectors.${key}_tooltip`, { max: LIMITS.areas});
+
+const bufferOpts = Object.keys(BUFFER);
 
 export const AreasAndSectors = ({ 
     params,
     controller
 }) => {
-    const targetLayer = layers.find(l => l.getId() === state.targetLayerId);
+    const { unit, size, area_count, sector_count } = params;
     return (
         <Content>
+            <Label>
+                <Message messageKey='AnalyseView.areas_and_sectors.label' />
+                <InfoIcon title={<Message messageKey='AnalyseView.areas_and_sectors.labelTooltip' />} />
+            </Label>
+            <Message messageKey='AnalyseView.areas_and_sectors.area_size' />
+            <InlineGroup>
+                <TextInput value={ size }
+                    onChange={ event => controller.setMethodParam('size', event.target.value) } />
+                <Select value={unit}
+                    onChange={val => controller.setMethodParam('unit', val)} >
+                    {bufferOpts.map(opt => (
+                        <Option value={opt} key={opt}>{opt}</Option>
+                    ))}
+                </Select>
+            </InlineGroup>
+            <Message messageKey='AnalyseView.areas_and_sectors.area_count' />
+            <TextInput value={ area_count }
+                placeholder={getPlaceholder('area_count')}
+                onChange={ event => controller.setMethodParam('area_count', event.target.value) } />
+            <Message messageKey='AnalyseView.areas_and_sectors.sector_count' />
+            <TextInput value={ sector_count }
+                placeholder={getPlaceholder('sector_count')}
+                onChange={ event => controller.setMethodParam('sector_count', event.target.value) } />
         </Content>
     );
 };

@@ -1,47 +1,46 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
 import { Controller } from 'oskari-ui/util';
-import { Message, Radio } from 'oskari-ui';
-import { Content, RadioGroup } from '../styled';
-import { InfoIcon } from 'oskari-ui/components/icons';
+import { Message } from 'oskari-ui';
+import { Content } from '../styled';
+import { LayerSelect } from './LayerSelect';
+import { isAnalysisLayer, getProperties } from '../../service/AnalyseHelper';
 
-const METHODS = [
-    'buffer',
-    'aggregate',
-    'union',
-    'clip',
-    'intersect',
-    'layer_union',
-    'areas_and_sectors',
-    'difference',
-    'spatial_join'
-];
+const LABELS = {
+    title: 'AnalyseView.layer_union.label',
+    tooltip: 'AnalyseView.layer_union.labelTooltip',
+    noLayers: 'AnalyseView.layer_union.noLayersAvailable'
+};
 
-// Radio.Choice
-const MethodContainer = styled('div')`
-    display: flex;
-    flex-direction: row;
-`;
+const isValidLayer = (layer, props) => {
+    if (!isAnalysisLayer(layer)){
+        return false;
+    }
+    const layerProps = getProperties(layer);
+    if (layerProps.length !== props.length) {
+        return false;
+    }
+    return layerProps.every(p => props.includes(p));
+}
 
 export const LayerUnion = ({ 
     state,
     controller,
-    analysisLayer,
+    layer,
     layers
 }) => {
-    const targetLayer = layers.find(l => l.getId() === state.targetLayerId);
+    if (!isAnalysisLayer(layer)) {
+        return (
+            <Message messageKey='AnalyseView.layer_union.notAnalyseLayer'/>
+        );
+    }
+    const { layerId } = state;
+    const props = getProperties(layer);
+    const validLayers = layers.filter(l => l.getId() !== layerId && isValidLayer(l, props));
+
     return (
         <Content>
-            <RadioGroup value={state.method}
-                onChange={(e) => controller.setMethod(e.target.value)}>
-                {METHODS.map((method) => (
-                    <Radio.Choice key={method} disabled={disabled.includes(method)}>
-                        <Message messageKey={`AnalyseView.method.options.${method}.label`}/>
-                        <InfoIcon title={<Message messageKey={`AnalyseView.method.options.${value}.tooltip`}/>} />
-                    </Radio.Choice>
-                ))}
-            </RadioGroup>
+            <LayerSelect layers={validLayers} state={state} controller={controller} labels={LABELS}/>
         </Content>
     );
 };
@@ -49,6 +48,6 @@ export const LayerUnion = ({
 LayerUnion.propTypes = {
     state: PropTypes.object.isRequired,
     controller: PropTypes.instanceOf(Controller).isRequired,
-    analysisLayer: PropTypes.object,
+    layer: PropTypes.object,
     layers: PropTypes.array.isRequired
 };
