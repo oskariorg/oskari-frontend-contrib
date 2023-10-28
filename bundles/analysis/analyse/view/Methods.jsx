@@ -18,7 +18,7 @@ export const Methods = ({ controller, state }) => {
     return (
         <Content>
             <RadioGroup value={state.method}
-                onChange={(e) => controller.setValue('method', e.target.value)}>
+                onChange={(e) => controller.setMethod(e.target.value)}>
                 {METHODS.map(method => (
                     <RadioButton key={method} value={method} disabled={disabled.includes(method)}>
                         <Message messageKey={`AnalyseView.method.options.${method}.label`}/>

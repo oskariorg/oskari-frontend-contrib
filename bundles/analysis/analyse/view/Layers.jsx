@@ -39,7 +39,7 @@ export const Layers = ({ controller, state, layers }) => {
             <RadioGroup value={state.layerId}
                 onChange={(e) => controller.setAnalysisLayerId(e.target.value)}>
                 {layers.map((layer) => (
-                    <LayerBox key={layer.getId()}>
+                    <LayerBox key={layer.getId()} value={layer.getId()}>
                         <LayerTitle>{layer.getName()}</LayerTitle>
                         <MetadataIcon metadataId={layer.getMetadataIdentifier()} />
                         <IconButton type='delete'
@@ -47,7 +47,7 @@ export const Layers = ({ controller, state, layers }) => {
                     </LayerBox>
                 ))}
             </RadioGroup>
-            {layers.length === 0 && <Message messageKey='AnalyseView.content.noLayers' /> }
+            {layers.length === 0 && <Message messageKey='AnalyseView.content.noLayersSelected' /> }
             <ButtonContainer>
                 <Button type='primary' onClick={() => controller.openSelectedLayerList()}>
                     <Message messageKey='AnalyseView.buttons.data' />

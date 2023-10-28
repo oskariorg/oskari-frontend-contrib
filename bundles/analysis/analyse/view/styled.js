@@ -1,10 +1,9 @@
 import styled from 'styled-components';
-import { Radio, InfoIcon } from 'oskari-ui';
+import { Radio, Switch } from 'oskari-ui';
 
-export const Content = styled('div')`
+export const Content = styled.div`
     display: flex;
     flex-direction: column;
-    margin-right: 10px;
 `;
 
 export const RadioGroup = styled(Radio.Group)`
@@ -18,21 +17,24 @@ export const RadioButton = styled(Radio.Choice)`
     margin-bottom: 10px;
 `;
 
-export const Group = styled('div')`
+export const Group = styled.div`
     display: flex;
     flex-direction: column;
     margin-bottom: 10px;
 `;
-export const InlineGroup = styled('div')`
+export const InlineGroup = styled.div`
     display: flex;
     flex-flow: row nowrap;
     margin-bottom: 10px;
 `;
 
-export const Label = styled('div')`
+export const Label = styled.div`
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
     font-weight: bold;
     margin-bottom: 10px;
+`;
+export const StyledSwitch = styled(Switch)`
+    margin-right: 5px;
 `;

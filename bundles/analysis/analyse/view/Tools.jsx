@@ -35,7 +35,7 @@ export const Tools = ({ controller, filter, featureIds }) => {
             <RadioGroup value={filter}
                 onChange={(e) => controller.setValue('filter', e.target.value)}>
                 {filterOptions.map((opt) => (
-                    <Radio.Choice key={opt}>
+                    <Radio.Choice key={opt} value={opt}>
                         <Message messageKey={`AnalyseView.content.selectionTools.filter.${opt}`} />
                     </Radio.Choice>
                 ))}
