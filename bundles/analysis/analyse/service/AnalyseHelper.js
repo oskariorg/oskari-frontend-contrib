@@ -9,9 +9,10 @@ import { pointerMove as conditionPointerMove } from 'ol/events/condition';
 import olFeature from 'ol/Feature';
 import { Point as olGeomPoint } from 'ol/geom';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
-import { COLORS, FILL_COLORS } from '../view/constants';
+import { COLORS, FILL_COLORS } from '../constants';
 
 const ANALYSIS_LAYER_TYPE = 'analysislayer';
+const USER_LAYER_TYPE = 'userlayer';
 const TEMP_LAYER_TYPE = 'temp';
 const LAYER_SEQ =  'analysisTempLayer'
 const UNSUPPORTED_WFS = ['2.0.0', '3.0.0'];
@@ -34,12 +35,28 @@ export const isAnalysisLayer = (layer) => {
     return layer.isLayerOfType(ANALYSIS_LAYER_TYPE);
 };
 
+export const isUserLayer = (layer) => {
+    if (!layer) {
+        return false;
+    }
+    return layer.isLayerOfType(USER_LAYER_TYPE);
+};
+
 export const isTempLayer = (layer) => {
     if (!layer) {
         return false;
     }
     return layer.isLayerOfType(TEMP_LAYER_TYPE);
 };
+
+export const getProperties = (layer) => {
+    // userlayer can't use normal properties because them values are inside property_json)
+    if (!layer || isUserLayer(layer)) {
+        return [];
+    }
+    // TODO: return only visible properties. Should we get all?
+    return Object.keys(layer.getPropertyTypes());
+}
 
 export const getRandomizedStyle = () => {
     const index = Math.floor(Math.random() * (COLORS.length - 1))
