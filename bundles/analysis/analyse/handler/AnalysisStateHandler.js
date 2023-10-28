@@ -47,8 +47,8 @@ class Handler extends StateHandler {
         const targetLayer = this._getAnalysisLayers().find(l => l.getId() !== layerId);
         const method = METHODS[0];
         const filter = selections[0] ? FILTER.FEATURES : FILTER.BBOX;
-        const methodParams = getInitMethodParams(layer, method);
-        const properties = getInitPropertiesSelections(layer, targetLayer, method);
+        const methodParams = getInitMethodParams(method, layer, targetLayer);
+        const properties = getInitPropertiesSelections(method, layer, targetLayer);
         const isTemp = isTempLayer(layer);
         const name = layer ? layer.getName().substring(0, 15) + '_' : '';
         return { layerId, method, filter, methodParams, properties, isTemp, name };
@@ -79,7 +79,7 @@ class Handler extends StateHandler {
             AfterMapLayerRemoveEvent: (event) => {
                 const layerId = event.getMapLayer().getId();
                 if (this.getState().layerId === layerId) {
-                    this._selectAnalysisLayerId();
+                    this.setAnalysisLayerId();
                 } else {
                     // selected layers aren't stored to state, trigger change
                     this.notify();
@@ -113,6 +113,21 @@ class Handler extends StateHandler {
 
     setTargetLayerId (targetId) {
         this.updateState({targetId});
+    }
+
+    setMethod (method) {
+        const methodParams = getInitMethodParams(method);
+        this.updateState({ method, methodParams });
+    }
+
+    setMethodParam (key, value) {
+        const old = this.getState().methodParams;
+        this.updateState({ methodParams: {...old, [key]: value }});
+    }
+
+    setProperties (key, value) {
+        const old = this.getState().properties;
+        this.updateState({ properties: {...old, [key]: value }});
     }
 
     setValue (key, value) {
@@ -207,6 +222,9 @@ const wrapped = controllerMixin(Handler, [
     'removeLayer',
     'setAnalysisLayerId',
     'setTargetLayerId',
+    'setMethod',
+    'setMethodParam',
+    'setProperties',
     'gatherSelections'
 ]);
 

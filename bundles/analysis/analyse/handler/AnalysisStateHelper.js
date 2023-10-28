@@ -1,23 +1,17 @@
-import { isUserLayer } from '../service/AnalyseHelper';
-import { LIMITS, PROPERTIES, BUFFER, BUNDLE_KEY } from '../constants';
+import { isUserLayer, getProperties } from '../service/AnalyseHelper';
+import { LIMITS, PROPERTIES, BUFFER, BUNDLE_KEY, AGGREGATE_OPTIONS, SPATIAL_OPTIONS } from '../constants';
 
-export const getInitPropertiesSelections = (layer, method) => {
-    // HACK!!
-    // There should be one propertety in filter - in other case all properties are retreaved by WPS
-    // Userlayer has forced selection for no properties => fields is empty array
-    // Add feature_id field (can't use normal fields because them values are inside property_json)
-     // TODO: hasPreProcessedProperties etc to get rid of userlayer
-    if (!layer || isUserLayer(layer)) {
-        return {
-            type: PROPERTIES.NONE,
-            selected: layer ? ['feature_id'] : []
-        };
-    }
+export const getInitPropertiesSelections = (method, layer) => {
     let type = PROPERTIES.ALL;
-    const propTypes = layer.getPropertyTypes();
-    let selected = Object.keys(propTypes);
+    let selected = getProperties(layer);
     if (!selected.length) {
         type = PROPERTIES.NONE;
+        // There should be one propertety in filter - in other case all properties are retreaved by WPS
+        // Add feature_id field for userlayer (can't use normal fields because them values are inside property_json)
+        // TODO: hasPreProcessedProperties etc to get rid of userlayer
+        if (isUserLayer(layer)) {
+            selected = ['feature_id'];
+        }
     } else if (selected.length > LIMITS.properties) {
         type = PROPERTIES.SELECT;
         // auto-select
@@ -30,7 +24,21 @@ export const getInitPropertiesSelections = (layer, method) => {
     return { type, selected };
 };
 
-export const getInitMethodParams = (layer, targetLayer, method) => {
+export const getInitMethodParams = (method, layer, targetLayer) => {
+    if (method === 'buffer' || method === 'areas_and_sectors') {
+        return { size: 0, unit: Object.keys(BUFFER)[0] };
+    }
+    if (method === 'aggregate') {
+        return { functions: [...AGGREGATE_OPTIONS] };
+    }
+    if (method === 'intersect') {
+        return { operator: SPATIAL_OPTIONS[0] }
+    }
+    if (method === 'intersect') {
+        return { operator: SPATIAL_OPTIONS[0] }
+    }
+    // difference validates params on gatherSelections
+    // others doesn't require selections
     return {};
 };
 
@@ -44,9 +52,9 @@ export const gatherMethodParams = state => {
         };
     }
     if (method === 'areas_and_sectors') {
-        const { areaSize, areUnit, ...rest } = methodParams;
+        const { size, unit, ...rest } = methodParams;
         return {
-            areaDistance: areaSize * BUFFER[areUnit],
+            areaDistance: size * BUFFER[unit],
             ...rest
         };
     }
@@ -58,6 +66,7 @@ export const gatherMethodParams = state => {
 
     const common = { no_data, layerId };
     if (method === 'difference') {
+        // difference validates params on gatherSelections
         const { property, targetProperty, joinKey } = methodParams;
         return {
             fieldA1: property,
