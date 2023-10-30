@@ -1,8 +1,8 @@
 import { StateHandler, controllerMixin, Messaging } from 'oskari-ui/util';
-import { createTempLayer, createFeatureLayer, eligibleForAnalyse, isUnsupportedWFS, getRandomizedStyle, isTempLayer } from '../service/AnalyseHelper';
-import { PROPERTIES, FILTER, BUFFER, METHODS } from '../constants';
+import { createTempLayer, createFeatureLayer, eligibleForAnalyse, isUnsupportedWFS, getRandomizedStyle, isTempLayer, getProperties } from '../service/AnalyseHelper';
+import { PROPERTIES, FILTER, METHODS } from '../constants';
 import { showStyleEditor } from '../view/StyleForm';
-import { getInitPropertiesSelections, getInitMethodParams  } from './AnalysisStateHelper';
+import { getInitPropertiesSelections, getInitMethodParams, gatherMethodParams  } from './AnalysisStateHelper';
 
 class Handler extends StateHandler {
     constructor (instance) {
@@ -25,10 +25,7 @@ class Handler extends StateHandler {
             methodParams: {},
             style: getRandomizedStyle(),
             showFeatureData: true,
-            showDataWithoutSaving: false,
-            // TODO: or get from layer  when needed
-            noDataCnt: false,
-            isTemp: false
+            showDataWithoutSaving: false
         });
         this.eventHandlers = this.createEventHandlers();
         this.featureLayer = null;
@@ -49,9 +46,8 @@ class Handler extends StateHandler {
         const filter = selections[0] ? FILTER.FEATURES : FILTER.BBOX;
         const methodParams = getInitMethodParams(method, layer, targetLayer);
         const properties = getInitPropertiesSelections(method, layer, targetLayer);
-        const isTemp = isTempLayer(layer);
         const name = layer ? layer.getName().substring(0, 15) + '_' : '';
-        return { layerId, method, filter, methodParams, properties, isTemp, name };
+        return { layerId, method, filter, methodParams, properties, name };
     }
 
     _initMethodParams () {
@@ -104,6 +100,19 @@ class Handler extends StateHandler {
             this._removeFeatureSource();
         }
         this.updateState({ ...state, enabled });
+    }
+
+    openFlyout (flyout) {
+        if ('layerlist') {
+            const filter = 'featuredata';
+            this.sandbox.postRequestByName('ShowFilteredLayerListRequest', [filter, true])
+        }
+        if ('search') {
+            const extension = {
+                getName: () => 'Search'
+            };
+            this.sandbox.postRequestByName('userinterface.UpdateExtensionRequest', [extension, 'attach']);
+        }
     }
 
     setAnalysisLayerId (layerId) {
@@ -205,27 +214,89 @@ class Handler extends StateHandler {
         this.featureLayer = null;
     }
 
-    gatherSelections () {
+    commitAnalysis () {
         const state = this.getState();
         const layer = this._findLayer(state.layerId);
-        return { error: 'noLayer' };
-        const { noData } = layer.getWpsLayerParams();
-        // method: 'intersect', // use intersect method for clip
-        return {};
+        if (!layer) {
+            return { error: 'noLayer' };
+        }
+        const isTemp = isTempLayer(layer);
+        const selections = {
+            layerId: isTemp ? -1 : layer.getId(),
+            name: state.name,
+            fields: _getPropertiesSelection(layer),
+            fieldTypes: layer.getPropertyTypes(),
+            method: state.method,
+            layerType: layer.getType(),
+            style: state.style,
+            bbox: this.instance.getSandbox().getMap().getBbox(),
+            opacity: layer.getOpacity(),
+            methodParams: gatherMethodParams(state, layer)
+        };
+
+        if (isTemp) {
+            selections.features = [layer.getFeatureAsGeoJSON()];
+        }
+        // use intersect method for clip
+        if (selections.method === 'clip') {
+            selections.method = 'intersect';
+        }
+        if (!validateSelections(selections)) {
+            return { error: 'selections' };
+        }
+        const data = {
+            analyse: JSON.stringify(selections),
+            filter1: JSON.stringify(_getFilterJSON(state.layerId))
+        };
+
+        if (state.targetId) {
+            data.filter2 = JSON.stringify(_getFilterJSON(state.targetId))
+        }
+        if (state.showDataWithoutSaving) {
+            data.saveAnalyse = false;
+        }
+        const showOptions = {
+            featureData: state.showFeatureData,
+            noSave: state.showDataWithoutSaving
+        };
+        this.instance.getService().sendAnalyseData(data, showOptions);
+    }
+
+    _getPropertiesSelection (layer) {
+        const { type, selected } = this.getState().properties;
+        if (type === PROPERTIES.NONE) {
+            return [];
+        }
+        if (type === PROPERTIES.SELECT) {
+            return selected;
+        }
+        return getProperties(layer);
+    }
+
+    _getFilterJSON (layerId) {
+        const featureIds = this.instance.getSelectionsForLayer(layerId);
+        const { filter } = this.getState();
+        if (filter === FILTER.BBOX || featureIds.length === 0) {
+            return { bbox: this.instance.getSandbox().getMap().getBbox() };
+        }
+        return { featureIds };
     }
 }
 
 const wrapped = controllerMixin(Handler, [
     'setEnabled',
-    'setValue',
     'addTempLayer',
     'removeLayer',
+    'openSelectedLayerList',
+    'startDraw',
+    'openFlyout',
     'setAnalysisLayerId',
     'setTargetLayerId',
+    'setValue',
     'setMethod',
     'setMethodParam',
     'setProperties',
-    'gatherSelections'
+    'commitAnalysis'
 ]);
 
 export { wrapped as AnalysisStateHandler };

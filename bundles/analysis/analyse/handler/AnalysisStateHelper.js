@@ -1,9 +1,11 @@
-import { isUserLayer, getProperties } from '../service/AnalyseHelper';
-import { LIMITS, PROPERTIES, BUFFER, BUNDLE_KEY, AGGREGATE_OPTIONS, SPATIAL_OPTIONS } from '../constants';
+import { isUserLayer, getProperties, isTempLayer } from '../service/AnalyseHelper';
+import { LIMITS, PROPERTIES, BUFFER, BUNDLE_KEY, AGGREGATE_OPTIONS, SPATIAL_OPTIONS, SPATIAL_JOIN_MODES, METHOD_OPTIONS } from '../constants';
+
 
 export const getInitPropertiesSelections = (method, layer) => {
     let type = PROPERTIES.ALL;
     let selected = getProperties(layer);
+    const {autoSelectNumbers} = METHOD_OPTIONS[method] || {};
     if (!selected.length) {
         type = PROPERTIES.NONE;
         // There should be one propertety in filter - in other case all properties are retreaved by WPS
@@ -12,16 +14,19 @@ export const getInitPropertiesSelections = (method, layer) => {
         if (isUserLayer(layer)) {
             selected = ['feature_id'];
         }
-    } else if (selected.length > LIMITS.properties) {
+    } else if (selected.length > LIMITS.properties || autoSelectNumbers) {
         type = PROPERTIES.SELECT;
-        // auto-select
-        if (method === 'aggregate') {
-            selected = selected.filter(prop => propTypes[prop] === 'number');
-        } else {
-            selected = selected.slice(0, LIMITS.properties);
-        }
+        selected = _autoSelectProperties(layer, autoSelectNumbers);
     }
     return { type, selected };
+};
+export const _autoSelectProperties = (layer, numberTypes) => {
+    let properties = getProperties(layer);
+    if (numberTypes) {
+        const propTypes = layer?.getPropertyTypes() || {};
+        properties =  properties.filter(prop => propTypes[prop] === 'number');
+    }
+    return properties.slice(0, LIMITS.properties);
 };
 
 export const getInitMethodParams = (method, layer, targetLayer) => {
@@ -29,42 +34,63 @@ export const getInitMethodParams = (method, layer, targetLayer) => {
         return { size: 0, unit: Object.keys(BUFFER)[0] };
     }
     if (method === 'aggregate') {
-        return { functions: [...AGGREGATE_OPTIONS] };
+        return { operators: [...AGGREGATE_OPTIONS] };
     }
     if (method === 'intersect') {
         return { operator: SPATIAL_OPTIONS[0] }
     }
-    if (method === 'intersect') {
-        return { operator: SPATIAL_OPTIONS[0] }
+    if (method === 'spatial_join') {
+        return {
+            properties: _autoSelectProperties(layer),
+            targetProperties: _autoSelectProperties(targetLayer),
+            mode: SPATIAL_JOIN_MODES[0]
+        };
     }
     // difference validates params on gatherSelections
     // others doesn't require selections
     return {};
 };
 
-export const gatherMethodParams = state => {
-    const { method, methodParams, targetLayer: layerId } = state;
-    const no_data = ''; //TODO:
+export const gatherMethodParams = (state, layer, targetLayer) => {
+    const { method, methodParams, targetId } = state;
+    const { noData } = layer.getWpsLayerParams();
+    const common = { no_data: noData };
+    if (method === 'union') {
+        return {};
+    }
     if (method === 'buffer') {
         const { size, unit } = methodParams;
         return {
-            distance: size * BUFFER[unit]
+            distance: size * BUFFER[unit],
+            ...common
         };
     }
     if (method === 'areas_and_sectors') {
-        const { size, unit, ...rest } = methodParams;
+        const { size, unit, areas, sectors } = methodParams;
         return {
             areaDistance: size * BUFFER[unit],
-            ...rest
+            area_count: areas,
+            sector_count: sectors,
+            ...common
+        };
+    }
+    if (method === 'aggregate') {
+        const { operators } = methodParams;
+        const loc = op => Oskari.getMsg(BUNDLE_KEY, `AnalyseView.aggregate.options.${op}`);
+        return {
+            functions: operators,
+            locales: operators.map(op => loc(op)),
+            ...common
         };
     }
     if (method === 'layer_union') {
         return {
-            layers: []
+            layers: [targetId],
+            ...common
         };
     }
-
-    const common = { no_data, layerId };
+    // add target layerId for rest
+    common.layerId = isTempLayer(targetLayer) ? '-1' : targetId;
     if (method === 'difference') {
         // difference validates params on gatherSelections
         const { property, targetProperty, joinKey } = methodParams;
@@ -77,31 +103,22 @@ export const gatherMethodParams = state => {
         };
     }
     if (method === 'spatial_join') {
+        const { properties, targetProperties, mode } = methodParams;
         return {
-            featuresA1: [],
-            featuresB1: [],
+            featuresA1: properties,
+            featuresB1: targetProperties,
             locale: Oskari.getMsg(BUNDLE_KEY, 'AnalyseView.spatial_join.backend_locale'),
-            ...methodParams,
+            operator: mode,
             ...common
         }
     }
-    if (method === 'aggregate') {
-        const { functions, ...rest } = methodParams;
-        const loc = func => Oskari.getMsg(BUNDLE_KEY, `${func}`);
-        return {
-            functions,
-            locales: functions.map(func => loc(func)),
-            ...rest,
-            ...common
-        };
-    }
     if (method === 'clip' || method === 'intersect') {
+        const { operator } = methodParams;
         return {
             features: [],
-            ...methodParams,
+            operator,
             ...common
         };
     }
-    // 'union'
-    return common;
+    return {};
 };

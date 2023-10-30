@@ -40,7 +40,6 @@ Oskari.clazz.define(
             }).then(response => {
                 this.sandbox.postRequestByName('ShowProgressSpinnerRequest', [false]);
                 if (!response.ok) {
-                    console.log(response);
                     throw new Error(response.statusText); //error
                 }
                 return response.json();
@@ -55,9 +54,9 @@ Oskari.clazz.define(
         },
         _handleSuccess: function (layerJson, showOptions) {
             const { id, mergeLayers = [] } = layerJson;
-            const { noDataCnt, featureData, noSave } = showOptions;
+            const { featureData, noSave } = showOptions;
             if (noSave) {
-                this.instance.showAggregateResultPopup(layerJson, noDataCnt);
+                this.instance.showAggregateResultPopup(layerJson);
                 return;
             }
             this._addLayerToService(layerJson);
@@ -85,8 +84,7 @@ Oskari.clazz.define(
                 return response.json();
             }).then(json => {
                 this._handleAnalysisLayersResponse(json.analysislayers);
-            }).catch((e) => {
-                console.log(e);
+            }).catch(() => {
                 Messaging.error(this.loc('AnalyseView.error.loadLayersFailed'));
             });
         },
