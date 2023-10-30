@@ -10,8 +10,9 @@ import { Clip } from './Clip';
 import { Intersect } from './Intersect';
 import { LayerUnion } from './LayerUnion';
 import { SpatialJoin } from './SpatialJoin';
-import { Union } from './Union';
 import { AreasAndSectors } from './AreasAndSectors';
+
+const NO_METHOD_PARAMS = ['union'];
 
 const Container = styled.div`
     margin-bottom: 10px;
@@ -24,17 +25,19 @@ export const MethodParams = ({
     layers
 }) => {
     const { method, methodParams } = state;
+    if (NO_METHOD_PARAMS.includes(method)) {
+        return null;
+    }
     return (
         <Container>
             {method === 'buffer' && <Buffer controller={controller} params={methodParams}/>}
             {method === 'aggregate' && <Aggregate controller={controller} params={methodParams}/>}
-            {method === 'union' && <Union controller={controller} params={methodParams}/>}
             {method === 'clip' && <Clip controller={controller} layer={layer} layers={layers} state={state}/>}
             {method === 'intersect' && <Intersect controller={controller} layer={layer} layers={layers} state={state}/>}
             {method === 'layer_union' && <LayerUnion controller={controller} layer={layer} layers={layers} state={state}/>}
             {method === 'areas_and_sectors' && <AreasAndSectors controller={controller} params={methodParams}/>}
             {method === 'difference' && <Difference controller={controller} layer={layer} layers={layers} state={state}/>}
-            {method === 'spatial_join' && <SpatialJoin controller={controller} params={methodParams}/>}
+            {method === 'spatial_join' && <SpatialJoin controller={controller} layer={layer} layers={layers} state={state} />}
         </Container>
     );
 };
