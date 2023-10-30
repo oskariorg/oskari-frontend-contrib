@@ -1,3 +1,5 @@
+import { getProperties, isAnalysisLayer } from "./service/AnalyseHelper";
+
 export const BUNDLE_KEY = 'Analyse';
 export const COOKIE_KEY = 'analyse_info_seen';
 // Both color arrays have to be equal length
@@ -48,3 +50,35 @@ export const AGGREGATE_OPTIONS = ['Count', 'Sum', 'Min', 'Max', 'Average', 'StdD
 export const SPATIAL_OPTIONS = ['intersect', 'contains'];
 
 export const SPATIAL_JOIN_MODES = ['normal', 'aggregate'];
+
+const _requireProperties = layer => getProperties(layer).length > 0;
+const _isAnalysisLayer = layer => isAnalysisLayer(layer);
+export const METHOD_OPTIONS = {
+    aggregate: {
+        autoSelectNumbers: true,
+        showFeatureData: true,
+        validateLayer: [_requireProperties]
+    },
+    intersect: {
+        showFeatureData: true
+    },
+    layer_union: {
+        showFeatureData: true,
+        validateLayer: [_isAnalysisLayer]
+    },
+    areas_and_sectors: {
+        showFeatureData: true
+    },
+    difference: {
+        showFeatureData: true,
+        minLayers: 2,
+        validateLayer: [_requireProperties]
+    },
+    spatial_join: {
+        showFeatureData: true,
+        minLayers: 2
+    },
+    union: {
+        noParams: true
+    }
+};
