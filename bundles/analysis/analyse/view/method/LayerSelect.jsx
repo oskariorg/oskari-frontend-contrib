@@ -5,7 +5,7 @@ import { Message } from 'oskari-ui';
 import { Content, RadioButton, RadioGroup, Label } from '../styled';
 import { InfoIcon } from 'oskari-ui/components/icons';
 
-const NO_LAYERS_LABEL = 'AnalysisView.content.noLayersAvailable';
+const NO_LAYERS_LABEL = 'AnalysisView.content.noLayersForMethod';
 
 export const LayerSelect = ({ 
     layers,

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Controller } from 'oskari-ui/util';
-import { Message, Select, Option } from 'oskari-ui';
+import { Message, Select } from 'oskari-ui';
 import { Content, Label } from '../styled';
 import { InfoIcon } from 'oskari-ui/components/icons';
 import { LayerSelect } from './LayerSelect';
@@ -18,14 +18,10 @@ const PropertiesSelect = ({ properties, labels = {}, value, onChange }) => {
             <Message messageKey='AnalyseView.content.noProperties'/>
         );
     }
+    const options = properties.map(value => ({ value, label: labels[value] || value }));
     return (
-        <Select value={value} onChange={onChange} >
-            {properties.map(prop => (
-                <Option value={prop} key={prop}>
-                    {labels[prop] || prop}
-                </Option>
-            ))}
-        </Select>
+        <Select value={value} onChange={onChange}
+            options={options} />
     );
 };
 
@@ -38,10 +34,10 @@ export const Difference = ({
     const filteredLayers = layers.filter(l => getProperties(l).length);
     if (filteredLayers.length < 2) {
         return (
-            <Message messageKey='AnalyseView.content.noLayersAvailable'/>
+            <Message messageKey='AnalyseView.content.noLayersForMethod'/>
         );
     }
-    const { targetId, methodParams: { property, targetProperty, joinKey }} = state
+    const { targetId, methodParams: { property, targetProperty, joinKey }} = state;
     const targetLayer = filteredLayers.find(l => l.getId() === targetId);
 
     const layerName = layer?.getName() || '';

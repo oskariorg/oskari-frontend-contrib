@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Controller } from 'oskari-ui/util';
+import { METHOD_OPTIONS } from '../../constants';
 
 import { Buffer } from './Buffer';
 import { Aggregate } from './Aggregate';
@@ -11,8 +12,6 @@ import { Intersect } from './Intersect';
 import { LayerUnion } from './LayerUnion';
 import { SpatialJoin } from './SpatialJoin';
 import { AreasAndSectors } from './AreasAndSectors';
-
-const NO_METHOD_PARAMS = ['union'];
 
 const Container = styled.div`
     margin-bottom: 10px;
@@ -25,7 +24,7 @@ export const MethodParams = ({
     layers
 }) => {
     const { method, methodParams } = state;
-    if (NO_METHOD_PARAMS.includes(method)) {
+    if (METHOD_OPTIONS[method]?.noParams) {
         return null;
     }
     return (

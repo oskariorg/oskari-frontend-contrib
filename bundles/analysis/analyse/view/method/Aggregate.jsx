@@ -10,10 +10,10 @@ export const Aggregate = ({
     controller,
     params
 }) => {
-    const { functions } = params;
-    const onPropertyChange = (isAdd, func) => {
-        const updated = isAdd ? [...functions, func] : functions.filter(p => p !== func);
-        controller.setMethodParam('functions', updated);
+    const { operators } = params;
+    const onPropertyChange = (isAdd, operator) => {
+        const updated = isAdd ? [...operators, operator] : operators.filter(op => op !== operator);
+        controller.setMethodParam('operators', updated);
     };
     return (
         <Content>
@@ -23,7 +23,7 @@ export const Aggregate = ({
             </Label>
             {AGGREGATE_OPTIONS.map((opt) => (
                 <InlineGroup key={opt}>
-                    <StyledSwitch size='small' checked={functions.includes(opt)} onChange={checked => onPropertyChange(checked, opt)}/>
+                    <StyledSwitch size='small' checked={operators.includes(opt)} onChange={checked => onPropertyChange(checked, opt)}/>
                     <Message messageKey={`AnalyseView.aggregate.options.${opt}`} />
                 </InlineGroup>
             ))}

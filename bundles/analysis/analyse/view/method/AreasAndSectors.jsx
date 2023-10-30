@@ -15,7 +15,7 @@ export const AreasAndSectors = ({
     params,
     controller
 }) => {
-    const { unit, size, area_count, sector_count } = params;
+    const { unit, size, areas, sectors } = params;
     return (
         <Content>
             <Label>
@@ -34,13 +34,13 @@ export const AreasAndSectors = ({
                 </Select>
             </InlineGroup>
             <Message messageKey='AnalyseView.areas_and_sectors.area_count' />
-            <TextInput value={ area_count }
+            <TextInput value={ areas }
                 placeholder={getPlaceholder('area_count')}
-                onChange={ event => controller.setMethodParam('area_count', event.target.value) } />
+                onChange={ event => controller.setMethodParam('areas', event.target.value) } />
             <Message messageKey='AnalyseView.areas_and_sectors.sector_count' />
-            <TextInput value={ sector_count }
+            <TextInput value={ sectors }
                 placeholder={getPlaceholder('sector_count')}
-                onChange={ event => controller.setMethodParam('sector_count', event.target.value) } />
+                onChange={ event => controller.setMethodParam('sectors', event.target.value) } />
         </Content>
     );
 };
