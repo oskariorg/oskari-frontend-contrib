@@ -1,37 +1,85 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
 import { Controller } from 'oskari-ui/util';
-import { Message } from 'oskari-ui';
+import { Message, Select } from 'oskari-ui';
 import { Content, RadioGroup, RadioButton, Label } from '../styled';
 import { InfoIcon } from 'oskari-ui/components/icons';
-import { SPATIAL_JOIN_MODES } from '../../constants';
+import { LayerSelect } from './LayerSelect';
+import { SPATIAL_JOIN_MODES, LIMITS } from '../../constants';
+import { getProperties } from '../../service/AnalyseHelper';
+
+const LABELS = {
+    title: 'AnalyseView.spatial_join.secondLayer',
+    tooltip: 'AnalyseView.spatial_join.secondLayerTooltip'
+};
+
+const PropertiesSelect = ({ properties, labels = {}, values, onChange, tooltip }) => {
+    const maxSelected = values.length >= LIMITS.properties;
+    const isDisabled = value => maxSelected && !values.includes(value);
+    const options = properties.map(value => ({ value, label: labels[value] || value, disabled: isDisabled(value) }));
+    return (
+        <Fragment>
+            <Label>
+                <Message messageKey='AnalyseView.params.label' />
+                <InfoIcon title={<Message messageKey={tooltip}/>} />
+            </Label>
+            <Select mode='multiple' value={values}
+                onChange={onChange} options={options}/>
+            { !properties.length && <Message messageKey='AnalyseView.content.noProperties'/> }
+        </Fragment>
+    );
+};
 
 export const SpatialJoin = ({ 
-    params,
-    layers
+    state,
+    layer,
+    layers,
+    controller
 }) => {
-    const targetLayer = layers.find(l => l.getId() === state.targetLayerId);
+    if (layers.length < 2) {
+        return (
+            <Message messageKey='AnalyseView.content.noLayersForMethod'/>
+        );
+    }
+    const { targetId, methodParams: { mode, properties, targetProperties }} = state;
+    const targetLayer = layers.find(l => l.getId() === targetId);
     return (
         <Content>
             <Label>
-                <Message messageKey={`AnalyseView.params.${locKey}`} />
-                <InfoIcon title={<Message messageKey={`AnalyseView.params.${locKey}Tooltip`} />} />
+                <Message messageKey='AnalyseView.spatial_join.mode' />
+                <InfoIcon title={<Message messageKey='AnalyseView.spatial_join.modeTooltip'/>} />
             </Label>
-            <RadioGroup value={state.method}
-                onChange={(e) => controller.setMethod(e.target.value)}>
-                {METHODS.map(method => (
-                    <RadioButton key={method} value={method} disabled={disabled.includes(method)}>
-                        <Message messageKey={`AnalyseView.method.options.${method}.label`}/>
-                        <InfoIcon title={<Message messageKey={`AnalyseView.method.options.${method}.tooltip`}/>} />
+            <RadioGroup value={mode}
+                onChange={(e) => controller.setMethodParam('mode', e.target.value)}>
+                {SPATIAL_JOIN_MODES.map(mode => (
+                    <RadioButton key={mode} value={mode}>
+                        <Message messageKey={`AnalyseView.spatial_join.${mode}Mode`}/>
                     </RadioButton>
                 ))}
             </RadioGroup>
+            <Label>
+                <Message messageKey='AnalyseView.difference.firstLayer' />
+                <InfoIcon title={<Message messageKey='AnalyseView.difference.firstLayerTooltip' />} />
+            </Label>
+            <span>{layer?.getName() || ''}</span>
+            <PropertiesSelect
+                values={properties}
+                properties={getProperties(layer)}
+                labels={layer?.getPropertyLabels()}
+                tooltip='AnalyseView.spatial_join.firstLayerFieldTooltip'
+                onChange={values => controller.setMethodParam('properties', values)}/>
+            <LayerSelect layers={layers} state={state} controller={controller} labels={LABELS}/>
+            <PropertiesSelect
+                values={targetProperties}
+                properties={getProperties(targetLayer)}
+                labels={targetLayer?.getPropertyLabels()}
+                tooltip='AnalyseView.spatial_join.secondLayerFieldTooltip'
+                onChange={values => controller.setMethodParam('targetProperties', values)}/>
         </Content>
     );
 };
 
 SpatialJoin.propTypes = {
-    params: PropTypes.object.isRequired,
+    state: PropTypes.object.isRequired,
     controller: PropTypes.instanceOf(Controller).isRequired
 };
