@@ -6,8 +6,10 @@ import { InfoIcon } from 'oskari-ui/components/icons';
 import { Content, Label, InlineGroup } from './styled';
 import { MethodParams } from './method/MethodParams';
 import { PropertySelection } from './PropertySelection';
+import { METHOD_OPTIONS } from '../constants';
 
 export const Params = ({ controller, state, layers, layer }) => {
+    const { allowNoSave = false } = METHOD_OPTIONS[state.method] || {};
     return (
         <Content>
             <MethodParams
@@ -21,19 +23,19 @@ export const Params = ({ controller, state, layers, layer }) => {
                 <InfoIcon title={<Message messageKey='AnalyseView.analyse_name.labelTooltip' />} />
             </Label>
             <TextInput type='text' value={state.name}
-                onChange={(e) => controller.setName(e.target.value)} />
+                onChange={(e) => controller.setValue('name', e.target.value)} />
             <InlineGroup>
                 <Switch size='small' checked={state.showFeatureData}
                     disabled={state.showDataWithoutSaving}
-                    onChange={checked => setValue('showFeatureData', checked)}/>
+                    onChange={checked => controller.setValue('showFeatureData', checked)}/>
                 <Message messageKey='AnalyseView.showFeatureData' />
             </InlineGroup>
-            { state.showDataWithoutSaving && (
+            { allowNoSave && (
                 <InlineGroup>
                     <Switch size='small'
-                    checked={state.showDataWithoutSaving}
-                    onChange={checked => setValue('showDataWithoutSaving', checked)}/>
-                    <Message messageKey='AnalyseView.showFeatureData' />
+                        checked={state.showDataWithoutSaving}
+                        onChange={controller.setShowDataWithoutSaving}/>
+                    <Message messageKey='AnalyseView.showValuesCheckbox' />
                 </InlineGroup>
             )}
         </Content>

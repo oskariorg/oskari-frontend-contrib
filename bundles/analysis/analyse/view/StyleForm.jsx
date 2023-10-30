@@ -15,7 +15,7 @@ const Content = styled.div`
 
 const getMessage = key => <Message messageKey={ `AnalyseView.output.${key}` } bundleKey={BUNDLE_KEY} />;
 
-const StyleForm = ({ style: initStyle, onSave, onCancel, getRandom }) => {
+const StyleForm = ({ style: initStyle, onSave, onCancel }) => {
     const [style, setStyle] = useState(initStyle);
     return (
         <Content>
