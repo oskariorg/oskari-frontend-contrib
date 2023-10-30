@@ -327,7 +327,7 @@ Oskari.registerLocalization(
             "infos": {
                 "title": "Attributer",
                 "layer": "Analyslager",
-                "over10": "har över 10 attribut. Välj högst 10 attribut för analys. Du hittar en lista av attribut i meny \"Parameter\" när du har valt en analysmetod.",
+                "over10": "har över {limit} attribut. Välj högst {limit} attribut för analys. Du hittar en lista av attribut i meny \"Parameter\" när du har valt en analysmetod.",
                 "userlayer": "De egna datamängdernas attributer kan inte användas i analysfunktionen. Objekternas geometrier (zon, union, snitt) kan dock användas."
             },
             "aggregatePopup": {

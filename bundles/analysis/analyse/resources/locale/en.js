@@ -271,8 +271,8 @@ Oskari.registerLocalization(
             "params": {
                 "label": "Attributes in the result",
                 "aggreLabel": "Attributes for descriptive statistic",
-                "aggreLabelTooltip": "Select at most ten attributes. Descriptive statistic are computed for these attributes.",
-                "labelTooltip": "Select at most ten attributes into the result.",
+                "aggreLabelTooltip": "Select at most {limit} attributes. Descriptive statistic are computed for these attributes.",
+                "labelTooltip": "Select at most {limit} attributes into the result.",
                 "tooltip": "Give analysis method appropriate parameters.",
                 "options": {
                     "all": "All",
@@ -329,7 +329,7 @@ Oskari.registerLocalization(
             "infos": {
                 "title": "Attributes",
                 "layer": "Features on the layer",
-                "over10": "have over ten attributes. Please select at most ten attributes into the analysis result. The attributes you can select in the parameters.",
+                "over10": "have over {limit} attributes. Please select at most {limit} attributes into the analysis result. The attributes you can select in the parameters.",
                 "userlayer": "The attribute data from own datasets cannot be used in analyses. Geometries can still be used (buffer, union, clip)."
             },
             "aggregatePopup": {
