@@ -7,9 +7,7 @@ import { Content, Label, InlineGroup } from './styled';
 import { MethodParams } from './method/MethodParams';
 import { PropertySelection } from './PropertySelection';
 
-export const Params = ({ controller, state, layers }) => {
-    const layer = layers.find(l => l.getId() === state.layerId);
-        
+export const Params = ({ controller, state, layers, layer }) => {
     return (
         <Content>
             <MethodParams
@@ -44,5 +42,7 @@ export const Params = ({ controller, state, layers }) => {
 
 Params.propTypes = {
     state: PropTypes.object.isRequired,
-    controller: PropTypes.instanceOf(Controller).isRequired
+    controller: PropTypes.instanceOf(Controller).isRequired,
+    layers: PropTypes.array.isRequired,
+    layer: PropTypes.object
 };

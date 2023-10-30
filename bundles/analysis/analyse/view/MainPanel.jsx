@@ -43,6 +43,7 @@ const PanelHeader = ({ headerMsg, infoMsg }) => {
 export const MainPanel = ({ controller, state, onClose, layers, featureIds }) => {
     const [openPanels, setOpenPanels] = useState(['layers', 'tools', 'methods', 'params']); // params or settings??, styles or output??
     const allLayers = [...layers, ...state.tempLayers ];
+    const layer = allLayers.find(l => l.getId() === state.layerId);
     return (
         <LocaleProvider value={{ bundleKey: BUNDLE_KEY }}>
             <ThemeProvider>
@@ -55,10 +56,10 @@ export const MainPanel = ({ controller, state, onClose, layers, featureIds }) =>
                             <Tools filter={state.filter} featureIds={featureIds} controller={controller} />
                         </CollapsePanel>
                         <CollapsePanel header={<PanelHeader headerMsg='AnalyseView.method.label' infoMsg='AnalyseView.method.tooltip'/>} key={'methods'}>
-                            <Methods state={state} controller={controller} />
+                            <Methods state={state} controller={controller} layersCount={allLayers.length} layer={layer}/>
                         </CollapsePanel>
                         <CollapsePanel header={<PanelHeader headerMsg='AnalyseView.settings.label' infoMsg='AnalyseView.settings.tooltip'/>} key={'params'}>
-                            <Params state={state} controller={controller} layers={allLayers} />
+                            <Params state={state} controller={controller} layers={allLayers} layer={layer} />
                         </CollapsePanel>
                         <CollapsePanel header={<PanelHeader headerMsg='AnalyseView.output.label' infoMsg='AnalyseView.output.tooltip'/>} key={'styles'}>
                             <Styles state={state} controller={controller} />

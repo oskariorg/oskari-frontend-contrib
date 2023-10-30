@@ -49,13 +49,12 @@ export const PropertySelection = ({ controller, state, layer }) => {
             </Select>
             { type === PROPERTIES.SELECT && properties.map(prop => {
                 const checked = selected.includes(prop);
-                const name = labels[prop] || prop;
                 return (
-                    <Label>
+                    <Label key={prop}>
                         <Switch size='small' checked={checked}
                             disabled={hasMaxSelected && !checked}
                             onChange={checked => onPropertyChange(checked, prop)} />
-                        <span>{name}</span>
+                        <span>{labels[prop] || prop}</span>
                     </Label>
                 )})
             }

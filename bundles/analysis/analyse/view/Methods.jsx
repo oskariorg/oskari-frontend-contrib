@@ -5,7 +5,8 @@ import { Controller } from 'oskari-ui/util';
 import { Message } from 'oskari-ui';
 import { Content, RadioGroup, RadioButton } from './styled';
 import { InfoIcon } from 'oskari-ui/components/icons';
-import { METHODS } from '../constants';
+import { METHODS, METHOD_OPTIONS } from '../constants';
+import { getProperties } from '../service/AnalyseHelper';
 
 // Radio.Choice
 const MethodContainer = styled('div')`
@@ -13,18 +14,29 @@ const MethodContainer = styled('div')`
     flex-direction: row;
 `;
 
-export const Methods = ({ controller, state }) => {
-    const disabled = state.isTemp ? ['', ''] : [];
+export const Methods = ({ controller, state, layersCount, layer }) => {
+    const disabledMethods = METHODS.filter(method => {
+        const { minLayers = 0, validateLayer = [] } = METHOD_OPTIONS[method] || {};
+        if (layersCount < minLayers) {
+            return false;
+        }
+        return !validateLayer.every(func => func(layer));
+    });
+
     return (
         <Content>
             <RadioGroup value={state.method}
                 onChange={(e) => controller.setMethod(e.target.value)}>
-                {METHODS.map(method => (
-                    <RadioButton key={method} value={method} disabled={disabled.includes(method)}>
-                        <Message messageKey={`AnalyseView.method.options.${method}.label`}/>
-                        <InfoIcon title={<Message messageKey={`AnalyseView.method.options.${method}.tooltip`}/>} />
-                    </RadioButton>
-                ))}
+                {METHODS.map(method => {
+                    const disabled = disabledMethods.includes(method)
+                    return (
+                        <RadioButton key={method} value={method} disabled={disabled}>
+                            <Message messageKey={`AnalyseView.method.options.${method}.label`}/>
+                            { disabled && <InfoIcon style={{color: '#FF0000'}} title={<Message messageKey='TODO'/>} />}
+                            <InfoIcon title={<Message messageKey={`AnalyseView.method.options.${method}.tooltip`}/>} />
+                        </RadioButton>
+                    );
+                })}
             </RadioGroup>
         </Content>
     );

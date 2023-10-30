@@ -49,10 +49,10 @@ export const Layers = ({ controller, state, layers }) => {
             </RadioGroup>
             {layers.length === 0 && <Message messageKey='AnalyseView.content.noLayersSelected' /> }
             <ButtonContainer>
-                <Button type='primary' onClick={() => controller.openSelectedLayerList()}>
+                <Button type='primary' onClick={() => controller.openFlyout('layerlist')}>
                     <Message messageKey='AnalyseView.buttons.data' />
                 </Button>
-                <Button type='primary' onClick={() => controller.openPlaceSearch()}>
+                <Button type='primary' onClick={() => controller.openFlyout('search')}>
                     <Message messageKey='AnalyseView.content.search.title' />
                 </Button>
             </ButtonContainer>
