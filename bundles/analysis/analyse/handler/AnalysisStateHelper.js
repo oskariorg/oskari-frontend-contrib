@@ -1,6 +1,20 @@
+import { Messaging } from 'oskari-ui/util';
 import { isUserLayer, getProperties, isTempLayer } from '../service/AnalyseHelper';
 import { LIMITS, PROPERTIES, BUFFER, BUNDLE_KEY, AGGREGATE_OPTIONS, SPATIAL_OPTIONS, SPATIAL_JOIN_MODES, METHOD_OPTIONS } from '../constants';
 
+export const showInfosForLayer = layer => {
+    const loc = (key, args={}) => Oskari.getMsg(BUNDLE_KEY, `AnalyseView.infos.${key}`, args);
+    if (!layer) {
+        return;
+    }
+    // TODO: hasPreProcessedProperties etc to get rid of userlayer
+    if (isUserLayer(layer)) {
+        Messaging.info(loc('userlayer'));
+    }
+    if (getProperties(layer).length > LIMITS.properties) {
+        Messaging.info(loc('layer') + ' ' + layer.getName() + ' ' + loc('over10', {limit: LIMITS.properties}));
+    }
+};
 
 export const getInitPropertiesSelections = (method, layer) => {
     let type = PROPERTIES.ALL;
@@ -20,7 +34,7 @@ export const getInitPropertiesSelections = (method, layer) => {
     }
     return { type, selected };
 };
-export const _autoSelectProperties = (layer, numberTypes) => {
+const _autoSelectProperties = (layer, numberTypes) => {
     let properties = getProperties(layer);
     if (numberTypes) {
         const propTypes = layer?.getPropertyTypes() || {};

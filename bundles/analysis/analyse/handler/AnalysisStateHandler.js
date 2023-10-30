@@ -1,8 +1,10 @@
 import { StateHandler, controllerMixin, Messaging } from 'oskari-ui/util';
 import { createTempLayer, createFeatureLayer, eligibleForAnalyse, isUnsupportedWFS, getRandomizedStyle, isTempLayer, getProperties } from '../service/AnalyseHelper';
-import { PROPERTIES, FILTER, METHODS } from '../constants';
+import { PROPERTIES, FILTER, METHODS, METHOD_OPTIONS } from '../constants';
 import { showStyleEditor } from '../view/StyleForm';
-import { getInitPropertiesSelections, getInitMethodParams, gatherMethodParams  } from './AnalysisStateHelper';
+import { showAggregateResults } from '../view/method/AggregateResults';
+import { getInitPropertiesSelections, getInitMethodParams, gatherMethodParams, showInfosForLayer  } from './AnalysisStateHelper';
+import { Validator } from '../view/AnalyseValidations';
 
 class Handler extends StateHandler {
     constructor (instance) {
@@ -10,6 +12,7 @@ class Handler extends StateHandler {
         this.instance = instance;
         this.sandbox = instance.getSandbox();
         this.loc = instance.loc;
+        this.validator = new Validator(instance);
         this.setState({
             enabled: false,
             tempLayers: [],
@@ -39,6 +42,7 @@ class Handler extends StateHandler {
     _getInitState () {
         const selections = this.instance.getLayerIdsWithSelections();
         const layer = selections[0] || this._getAnalysisLayers()[0];
+        showInfosForLayer(layer);
         const layerId = layer?.getId();
         // is temp layer suitable for target -> [...layer, ...tempLayers]
         const targetLayer = this._getAnalysisLayers().find(l => l.getId() !== layerId);
@@ -98,16 +102,17 @@ class Handler extends StateHandler {
         const state = enabled ? this._getInitState() : {};
         if(!enabled) {
             this._removeFeatureSource();
+            this._closePopup();
         }
         this.updateState({ ...state, enabled });
     }
 
     openFlyout (flyout) {
-        if ('layerlist') {
+        if (flyout === 'layerlist') {
             const filter = 'featuredata';
             this.sandbox.postRequestByName('ShowFilteredLayerListRequest', [filter, true])
         }
-        if ('search') {
+        if (flyout === 'search') {
             const extension = {
                 getName: () => 'Search'
             };
@@ -141,6 +146,10 @@ class Handler extends StateHandler {
 
     setValue (key, value) {
         this.updateState({ [key]: value });
+    }
+
+    setShowDataWithoutSaving (value) {
+        this.updateState({ showDataWithoutSaving: value, showFeatureData: !value });
     }
 
     addTempLayer (data) {
@@ -181,18 +190,27 @@ class Handler extends StateHandler {
 
     openStyleEditor () {
         if (this.popupControls) {
-            return;
+            this._closePopup();
         }
         const { style } = this.getState();
         const onSave = style => {
             this.updateState({ style });
-            this.closeStyleEditor();
+            this._closePopup();
         };
-        const onClose = () => this.closeStyleEditor();
-        this._popupControls = showStyleEditor(style, onSave, onClose)
+        const onClose = () => this._closePopup();
+        this._popupControls = showStyleEditor(style, onSave, onClose);
     }
 
-    closeStyleEditor () {
+    openAggregateResults (json) {
+        if (this.popupControls) {
+            this._closePopup();
+        }
+        const layer = this._findLayer(json.id);
+        const onClose = () => this._closePopup();
+        this._popupControls = showAggregateResults(layerJson, layer, onClose);
+    }
+
+    _closePopup () {
         if (this._popupControls) {
             this._popupControls.close();
         }
@@ -218,16 +236,17 @@ class Handler extends StateHandler {
         const state = this.getState();
         const layer = this._findLayer(state.layerId);
         if (!layer) {
-            return { error: 'noLayer' };
+            Messaging.error(this.loc('AnalyseView.error.noLayer'));
+            return;
         }
         const isTemp = isTempLayer(layer);
         const selections = {
             layerId: isTemp ? -1 : layer.getId(),
             name: state.name,
-            fields: _getPropertiesSelection(layer),
+            fields: this._getPropertiesSelection(layer),
             fieldTypes: layer.getPropertyTypes(),
             method: state.method,
-            layerType: layer.getType(),
+            layerType: layer.getLayerType(),
             style: state.style,
             bbox: this.instance.getSandbox().getMap().getBbox(),
             opacity: layer.getOpacity(),
@@ -237,29 +256,29 @@ class Handler extends StateHandler {
         if (isTemp) {
             selections.features = [layer.getFeatureAsGeoJSON()];
         }
+        if (!this.validator.validateSelections(selections)) {
+            return;
+        }
         // use intersect method for clip
         if (selections.method === 'clip') {
             selections.method = 'intersect';
         }
-        if (!validateSelections(selections)) {
-            return { error: 'selections' };
-        }
         const data = {
             analyse: JSON.stringify(selections),
-            filter1: JSON.stringify(_getFilterJSON(state.layerId))
+            filter1: JSON.stringify(this._getFilterJSON(state.layerId))
         };
 
         if (state.targetId) {
-            data.filter2 = JSON.stringify(_getFilterJSON(state.targetId))
+            data.filter2 = JSON.stringify(this._getFilterJSON(state.targetId))
         }
-        if (state.showDataWithoutSaving) {
+        if (state.showDataWithoutSaving && METHOD_OPTIONS[state.method]?.allowNoSave) {
             data.saveAnalyse = false;
         }
         const showOptions = {
             featureData: state.showFeatureData,
             noSave: state.showDataWithoutSaving
         };
-        this.instance.getService().sendAnalyseData(data, showOptions);
+        this.instance.getAnalyseService().sendAnalyseData(data, showOptions);
     }
 
     _getPropertiesSelection (layer) {
@@ -293,6 +312,7 @@ const wrapped = controllerMixin(Handler, [
     'setAnalysisLayerId',
     'setTargetLayerId',
     'setValue',
+    'setShowDataWithoutSaving',
     'setMethod',
     'setMethodParam',
     'setProperties',

@@ -20,7 +20,7 @@ export const FILL_COLORS = [
 
 export const LIMITS = {
     properties: 10,
-    areas: 12,
+    areas: 12, // and sectors
     decimals: 2
 };
 
@@ -57,6 +57,7 @@ export const METHOD_OPTIONS = {
     aggregate: {
         autoSelectNumbers: true,
         showFeatureData: true,
+        allowNoSave: true,
         validateLayer: [_requireProperties]
     },
     intersect: {

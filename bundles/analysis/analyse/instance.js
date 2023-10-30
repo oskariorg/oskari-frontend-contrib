@@ -48,8 +48,8 @@ Oskari.clazz.define(
         getSandbox: function () {
             return this.sandbox;
         },
-        getService: function () {
-            return this.service;
+        getAnalyseService: function () {
+            return this.analyseService;
         },
         getStateHandler: function () {
             return this.stateHandler;

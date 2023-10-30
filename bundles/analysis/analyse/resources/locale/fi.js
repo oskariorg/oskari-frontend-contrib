@@ -21,7 +21,7 @@ Oskari.registerLocalization(
                 "tooltip": "Valitse yksi aineisto analyysin pohjaksi. Lisää karttatasoja voit hakea \"Lisää karttatasoja\"-painikkeella aukeavalta listalta. Kohdista karttanäkymä haluamaasi paikkaan joko siirtämällä karttaa hiirellä tai klikkaamalla \"Hae paikkahaulla\" ja hakemalla haluamasi paikka.",
                 "selectionToolsTooltip": "Lisää väliaikainen kohde, leikkaa olemassa olevaa kohdetta tai valitse kohteita rajaamalla niitä piirtämilläsi kuvioilla.",
                 "noLayersSelected": "Ei valittuja karttatasoja",
-                "noLayersForMethod": "Valitulle metodille ei ole sopivia tasoja",
+                "noLayersForMethod": "Valitulle menetelmälle ei ole sopivia tasoja",
                 "noProperties": "Tasolla ei ole ominaisuustietoja",
                 "features": {
                     "title": "Lisäys",

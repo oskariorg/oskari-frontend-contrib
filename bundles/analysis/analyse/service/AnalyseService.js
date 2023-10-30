@@ -34,9 +34,11 @@ Oskari.clazz.define(
             fetch(Oskari.urls.getRoute('CreateAnalysisLayer'), {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                    'Accept': 'application/json'
                 },
-                body: JSON.stringify(data)
+                // TODO: backend assumes to receive string content -> refactor to use json
+                body: Object.keys(data).map(key => `${key}=${data[key]}`).join('&')
             }).then(response => {
                 this.sandbox.postRequestByName('ShowProgressSpinnerRequest', [false]);
                 if (!response.ok) {
@@ -44,22 +46,20 @@ Oskari.clazz.define(
                 }
                 return response.json();
             }).then(json => {
-                const layer = Oskari.getLocalized(json.name)
-                Messaging.success(this.loc('AnalyseView.success.layerAdded.message', { layer }));
                 this._handleSuccess(json, showOptions);
             }).catch(error => {
                 const locObj = this.loc('AnalyseView.error');
                 Messaging.error(locObj[error] || locObj.saveFailed);
             });
         },
-        _handleSuccess: function (layerJson, showOptions) {
-            const { id, mergeLayers = [] } = layerJson;
+        _handleSuccess: function (json, showOptions) {
             const { featureData, noSave } = showOptions;
             if (noSave) {
-                this.instance.showAggregateResultPopup(layerJson);
+                this.instance.getStateHandler().openAggregateResults(json);
                 return;
             }
-            this._addLayerToService(layerJson);
+            const { id, name, mergeLayers = [] } = json;
+            this._addLayerToService(json);
             // Add layer to the map
             this.sandbox.postRequestByName('AddMapLayerRequest', [id]);
             if (featureData) {
@@ -69,6 +69,9 @@ Oskari.clazz.define(
             // TODO: shouldn't maplayerservice send removelayer request by default on remove layer?
             // Remove old layers if any
             mergeLayers.forEach(layerId => this.sandbox.postRequestByName('RemoveMapLayerRequest', [layerId]));
+
+            const layer = Oskari.getLocalized(name)
+            Messaging.success(this.loc('AnalyseView.success.layerAdded.message', { layer }));
         },
 
         loadAnalyseLayers: function () {
