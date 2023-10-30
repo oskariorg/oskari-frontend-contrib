@@ -36,11 +36,6 @@ export const SpatialJoin = ({
     layers,
     controller
 }) => {
-    if (layers.length < 2) {
-        return (
-            <Message messageKey='AnalyseView.content.noLayersForMethod'/>
-        );
-    }
     const { targetId, methodParams: { mode, properties, targetProperties }} = state;
     const targetLayer = layers.find(l => l.getId() === targetId);
     return (

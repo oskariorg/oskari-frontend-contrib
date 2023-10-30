@@ -1,9 +1,11 @@
-import React, { Fragment } from 'react';
+import React, { useState, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Controller } from 'oskari-ui/util';
-import { Switch, Message, Select, Option } from 'oskari-ui';
+import { Switch, Message, Radio } from 'oskari-ui';
 import { InfoIcon } from 'oskari-ui/components/icons';
-import { Label } from './styled';
+import { IconButton } from 'oskari-ui/components/buttons';
+import { Label, RadioGroup, InlineGroup } from './styled';
+import { UpOutlined, DownOutlined } from '@ant-design/icons';
 import { PROPERTIES, LIMITS } from '../constants';
 import { getProperties } from '../service/AnalyseHelper';
 
@@ -12,16 +14,20 @@ const propOptions = Object.values(PROPERTIES);
 
 export const PropertySelection = ({ controller, state, layer }) => {
     const { method, properties: { type, selected }} = state;
+    const [showList, setShowList] = useState(type === PROPERTIES.SELECT);
     if (SKIP_SELECTION.includes(method)) {
         return null;
     }
     const properties = getProperties(layer);
     const labels = layer?.getPropertyLabels() || {};
-
     const onPropertyChange = (isAdd, prop) => {
-        const selected = isAdd ? [...selected, prop] : selected.filter(p => p !== prop);
-        controller.setProperties('selected', selected);
+        const updated = isAdd ? [...selected, prop] : selected.filter(p => p !== prop);
+        controller.setProperties('selected', updated);
     };
+    const onTypeChange = type => {
+        setShowList(type === PROPERTIES.SELECT);
+        controller.setProperties('type', type);
+    }
     const isDisabled = type => {
         if (properties.length === 0 && type !== PROPERTIES.NONE) {
             return true;
@@ -39,15 +45,22 @@ export const PropertySelection = ({ controller, state, layer }) => {
                 <Message messageKey={`AnalyseView.params.${locKey}`} />
                 <InfoIcon title={<Message messageKey={`AnalyseView.params.${locKey}Tooltip`} />} />
             </Label>
-            <Select value={type}
-                onChange={(val) => controller.setProperties('type', val)} >
+            <RadioGroup value={type}
+                onChange={e => onTypeChange(e.target.value)} >
                 {propOptions.map(opt => (
-                    <Option value={opt} key={opt} disabled={isDisabled(opt)}>
-                        <Message messageKey={`AnalyseView.params.options.${opt}`} />
-                    </Option>
+                    <InlineGroup>
+                        <Radio.Choice value={opt} key={opt} disabled={isDisabled(opt)}>
+                            <Message messageKey={`AnalyseView.params.options.${opt}`} />
+                        </Radio.Choice>
+                        { opt === PROPERTIES.SELECT &&
+                            <IconButton
+                                icon={showList? <UpOutlined/> : <DownOutlined/>}
+                                onClick={() => setShowList(!showList)}/>
+                        }
+                    </InlineGroup>
                 ))}
-            </Select>
-            { type === PROPERTIES.SELECT && properties.map(prop => {
+            </RadioGroup>
+            { showList && properties.map(prop => {
                 const checked = selected.includes(prop);
                 return (
                     <Label key={prop}>

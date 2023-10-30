@@ -4,6 +4,7 @@ import { Controller } from 'oskari-ui/util';
 import { Message } from 'oskari-ui';
 import { Content, RadioButton, RadioGroup, Label } from '../styled';
 import { InfoIcon } from 'oskari-ui/components/icons';
+import { METHOD_OPTIONS } from '../../constants';
 
 const NO_LAYERS_LABEL = 'AnalysisView.content.noLayersForMethod';
 
@@ -13,8 +14,10 @@ export const LayerSelect = ({
     labels,
     controller
 }) => {
-    const { layerId, targetId } = state;
+    const { layerId, targetId, method } = state;
+    const { validateLayer = [] } = METHOD_OPTIONS[method] || {};
     const filtered = layers.filter(l => l.getId() !== layerId);
+    const disabledIds = filtered.filter(l => validateLayer.every(func => func(l))).map(l => l.getId());
     return (
         <Content>
             <Label>
@@ -22,11 +25,15 @@ export const LayerSelect = ({
                 <InfoIcon title={<Message messageKey={labels.tooltip} />} />
             </Label>
             <RadioGroup value={targetId} onChange={(e) => controller.setTargetLayerId(e.target.value)}>
-                { filtered.map(layer => (
-                    <RadioButton key={layer.getId()} value={layer.getId()}>
-                        <span>{layer.getName()}</span>
-                    </RadioButton>
-                ))}
+                { filtered.map(layer => {
+                    const layerId = layer.getId();
+                    const disabled = disabledIds.includes(layerId);
+                    return (
+                        <RadioButton key={layerId} value={layerId} disabled={disabled}>
+                            <span>{layer.getName()}</span>
+                        </RadioButton>
+                    );
+                })}
             </RadioGroup>
             {!filtered.length && <Message messageKey={labels.noLayers || NO_LAYERS_LABEL}/>}
         </Content>

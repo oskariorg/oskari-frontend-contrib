@@ -7,7 +7,6 @@ import { MetadataIcon } from 'oskari-ui/components/icons';
 import { Content, RadioGroup } from './styled';
 import { ButtonContainer, IconButton } from 'oskari-ui/components/buttons'
 
-//div
 const LayerBox = styled(Radio.Choice)`
     border-radius: 5px;
     display: flex;

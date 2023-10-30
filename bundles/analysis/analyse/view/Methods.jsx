@@ -1,18 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
 import { Controller } from 'oskari-ui/util';
 import { Message } from 'oskari-ui';
 import { Content, RadioGroup, RadioButton } from './styled';
 import { InfoIcon } from 'oskari-ui/components/icons';
 import { METHODS, METHOD_OPTIONS } from '../constants';
-import { getProperties } from '../service/AnalyseHelper';
-
-// Radio.Choice
-const MethodContainer = styled('div')`
-    display: flex;
-    flex-direction: row;
-`;
 
 export const Methods = ({ controller, state, layersCount, layer }) => {
     const disabledMethods = METHODS.filter(method => {

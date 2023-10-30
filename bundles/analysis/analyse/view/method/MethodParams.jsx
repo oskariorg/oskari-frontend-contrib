@@ -24,8 +24,16 @@ export const MethodParams = ({
     layers
 }) => {
     const { method, methodParams } = state;
-    if (METHOD_OPTIONS[method]?.noParams) {
+    const { noParams, minLayers = 0 } = METHOD_OPTIONS[method] || {};
+    if (noParams) {
         return null;
+    }
+    if (layers.length < minLayers) {
+        return (
+            <Container>
+                <Message messageKey='AnalyseView.content.noLayersForMethod'/>
+            </Container>
+        );
     }
     return (
         <Container>

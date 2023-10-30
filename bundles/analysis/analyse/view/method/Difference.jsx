@@ -31,14 +31,8 @@ export const Difference = ({
     layers,
     controller
 }) => {
-    const filteredLayers = layers.filter(l => getProperties(l).length);
-    if (filteredLayers.length < 2) {
-        return (
-            <Message messageKey='AnalyseView.content.noLayersForMethod'/>
-        );
-    }
     const { targetId, methodParams: { property, targetProperty, joinKey }} = state;
-    const targetLayer = filteredLayers.find(l => l.getId() === targetId);
+    const targetLayer = layers.find(l => l.getId() === targetId);
 
     const layerName = layer?.getName() || '';
     const layerProps = getProperties(layer);
