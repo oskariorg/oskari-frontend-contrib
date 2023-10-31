@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Controller } from 'oskari-ui/util';
 import { Message } from 'oskari-ui';
-import { Content, Label } from '../styled';
+import { Content, Label, InlineGroup } from '../styled';
 import { InfoIcon } from 'oskari-ui/components/icons';
 import { LayerSelect } from './LayerSelect';
 
@@ -25,7 +25,9 @@ export const Clip = ({
                 <Message messageKey='AnalyseView.intersect.target' />
                 <InfoIcon title={<Message messageKey='AnalyseView.intersect.targetLabelTooltip'/>} />
             </Label>
-            <span>{name}</span>
+            <InlineGroup>
+                <span>{name}</span>
+            </InlineGroup>
             <LayerSelect layers={layers} state={state} controller={controller} labels={LABELS}/>
         </Content>
     );

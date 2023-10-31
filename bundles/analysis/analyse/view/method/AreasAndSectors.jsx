@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Controller } from 'oskari-ui/util';
 import { Message, TextInput, Select, Option } from 'oskari-ui';
-import { Content, Label, InlineGroup } from '../styled';
+import { Content, Label, InlineGroup, Group } from '../styled';
 import { InfoIcon } from 'oskari-ui/components/icons';
 import { BUNDLE_KEY, LIMITS, BUFFER } from '../../constants';
 
@@ -33,14 +33,18 @@ export const AreasAndSectors = ({
                     ))}
                 </Select>
             </InlineGroup>
-            <Message messageKey='AnalyseView.areas_and_sectors.area_count' />
-            <TextInput value={ areaCount }
-                placeholder={getPlaceholder('area_count')}
-                onChange={ event => controller.setMethodParam('areaCount', event.target.value) } />
-            <Message messageKey='AnalyseView.areas_and_sectors.sector_count' />
-            <TextInput value={ sectorCount }
-                placeholder={getPlaceholder('sector_count')}
-                onChange={ event => controller.setMethodParam('sectorCount', event.target.value) } />
+            <Group>
+                <Message messageKey='AnalyseView.areas_and_sectors.area_count' />
+                <TextInput value={ areaCount }
+                    placeholder={getPlaceholder('area_count')}
+                    onChange={ event => controller.setMethodParam('areaCount', event.target.value) } />
+            </Group>
+            <Group>
+                <Message messageKey='AnalyseView.areas_and_sectors.sector_count' />
+                <TextInput value={ sectorCount }
+                    placeholder={getPlaceholder('sector_count')}
+                    onChange={ event => controller.setMethodParam('sectorCount', event.target.value) } />
+            </Group>
         </Content>
     );
 };

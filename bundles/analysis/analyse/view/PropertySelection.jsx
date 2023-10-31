@@ -1,15 +1,44 @@
 import React, { useState, Fragment } from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 import { Controller } from 'oskari-ui/util';
-import { Switch, Message, Radio } from 'oskari-ui';
+import { Message, Radio } from 'oskari-ui';
 import { InfoIcon } from 'oskari-ui/components/icons';
 import { IconButton } from 'oskari-ui/components/buttons';
-import { Label, RadioGroup, InlineGroup } from './styled';
+import { Label, RadioGroup, InlineGroup, StyledSwitch, JustifiedGroup } from './styled';
 import { UpOutlined, DownOutlined } from '@ant-design/icons';
 import { PROPERTIES, LIMITS, METHOD_OPTIONS } from '../constants';
 import { getProperties } from '../service/AnalyseHelper';
 
 const propOptions = Object.values(PROPERTIES);
+
+const ListContainer = styled.div`
+    margin-left: 20px;
+`;
+
+const PropertiesList = ({properties, labels = {}, selected, onUpdate}) => {
+    const hasMaxSelected =  selected.length >=  LIMITS.properties;
+
+    const onPropertyChange = (isAdd, prop) => {
+        const updated = isAdd ? [...selected, prop] : selected.filter(p => p !== prop);
+        onUpdate(updated);
+    };
+    return (
+        <ListContainer>
+            { properties.map(prop => {
+                const checked = selected.includes(prop);
+                return (
+                    <InlineGroup key={prop}>
+                        <StyledSwitch size='small' checked={checked}
+                            disabled={hasMaxSelected && !checked}
+                            onChange={checked => onPropertyChange(checked, prop)} />
+                        <span>{labels[prop] || prop}</span>
+                    </InlineGroup>
+                );
+            })}
+        </ListContainer>
+    );
+};
 
 export const PropertySelection = ({ controller, state, layer }) => {
     const { method, properties: { type, selected }} = state;
@@ -18,11 +47,7 @@ export const PropertySelection = ({ controller, state, layer }) => {
         return null;
     }
     const properties = getProperties(layer);
-    const labels = layer?.getPropertyLabels() || {};
-    const onPropertyChange = (isAdd, prop) => {
-        const updated = isAdd ? [...selected, prop] : selected.filter(p => p !== prop);
-        controller.setProperties('selected', updated);
-    };
+
     const onTypeChange = type => {
         setShowList(type === PROPERTIES.SELECT);
         controller.setProperties('type', type);
@@ -37,7 +62,7 @@ export const PropertySelection = ({ controller, state, layer }) => {
         return false;
     };
     const locKey = method === 'aggregate' ? 'aggreLabel' : 'label';
-    const hasMaxSelected =  selected.length >=  LIMITS.properties;
+
     return (
         <Fragment>
             <Label>
@@ -47,7 +72,7 @@ export const PropertySelection = ({ controller, state, layer }) => {
             <RadioGroup value={type}
                 onChange={e => onTypeChange(e.target.value)} >
                 {propOptions.map(opt => (
-                    <InlineGroup key={opt}>
+                    <JustifiedGroup key={opt}>
                         <Radio.Choice value={opt} disabled={isDisabled(opt)}>
                             <Message messageKey={`AnalyseView.params.options.${opt}`} />
                         </Radio.Choice>
@@ -56,19 +81,12 @@ export const PropertySelection = ({ controller, state, layer }) => {
                                 icon={showList? <UpOutlined/> : <DownOutlined/>}
                                 onClick={() => setShowList(!showList)}/>
                         }
-                    </InlineGroup>
+                    </JustifiedGroup>
                 ))}
             </RadioGroup>
-            { showList && properties.map(prop => {
-                const checked = selected.includes(prop);
-                return (
-                    <Label key={prop}>
-                        <Switch size='small' checked={checked}
-                            disabled={hasMaxSelected && !checked}
-                            onChange={checked => onPropertyChange(checked, prop)} />
-                        <span>{labels[prop] || prop}</span>
-                    </Label>
-                )})
+            { showList && <PropertiesList properties={properties} selected={selected}
+                onUpdate = {updated => controller.setProperties('selected', updated)}
+                labels = {layer?.getPropertyLabels()}/>
             }
         </Fragment>
     );

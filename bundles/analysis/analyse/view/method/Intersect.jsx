@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Controller } from 'oskari-ui/util';
-import { Message } from 'oskari-ui';
-import { Content, RadioGroup, RadioButton, Label } from '../styled';
+import { Message, Radio } from 'oskari-ui';
+import { Content, RadioGroup, Label, Space, InlineGroup } from '../styled';
 import { InfoIcon } from 'oskari-ui/components/icons';
 import { LayerSelect } from './LayerSelect';
 import { SPATIAL_OPTIONS } from '../../constants';
@@ -25,8 +25,11 @@ export const Intersect = ({
                 <Message messageKey={'AnalyseView.spatial.target'} />
                 <InfoIcon title={<Message messageKey={'AnalyseView.spatial.targetTooltip'} />} />
             </Label>
-            <span>{name}</span>
+            <InlineGroup>
+                <span>{name}</span>
+            </InlineGroup>
             <LayerSelect layers={layers} state={state} controller={controller} labels={LABELS}/>
+            <Space/>
             <Label>
                 <Message messageKey={'AnalyseView.spatial.label'} />
                 <InfoIcon title={<Message messageKey={'AnalyseView.spatial.labelTooltipIntersect'} />} />
@@ -34,9 +37,9 @@ export const Intersect = ({
             <RadioGroup value={state.methodParams.operator}
                 onChange={(e) => controller.setMethodParam('operator', e.target.value)}>
                 {SPATIAL_OPTIONS.map(opt => (
-                    <RadioButton key={opt} value={opt}>
+                    <Radio.Choice key={opt} value={opt}>
                         <Message messageKey={`AnalyseView.spatial.options.${opt}`} />
-                    </RadioButton>
+                    </Radio.Choice>
                 ))}
             </RadioGroup>
         </Content>

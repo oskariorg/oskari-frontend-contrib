@@ -5,12 +5,12 @@ import { Controller } from 'oskari-ui/util';
 import { Message, Radio, Button } from 'oskari-ui';
 import { MetadataIcon } from 'oskari-ui/components/icons';
 import { Content, RadioGroup } from './styled';
-import { ButtonContainer, IconButton } from 'oskari-ui/components/buttons'
+import { IconButton, ButtonContainer } from 'oskari-ui/components/buttons'
 
-const LayerBox = styled(Radio.Choice)`
+const LayerBox = styled.div`
     border-radius: 5px;
     display: flex;
-    flex-direction: row;
+    flex-flow: row nowrap;
     justify-content: space-between;
     align-items: center;
     min-height: 32px;
@@ -18,6 +18,7 @@ const LayerBox = styled(Radio.Choice)`
     opacity: ${props => props.disabled ? '0.5' : '1'};
     padding: 3px 10px 3px 5px;
     margin-top: 5px;
+    margin-bottom: 5px;
     box-shadow: ${props => props.disabled ? 'none' : '1px 1px 2px rgb(0 0 0 / 60%)'};
 `;
 
@@ -25,10 +26,8 @@ const LayerTitle = styled('span')`
     margin-right: 5px;
 `;
 
-const LayerContainer = styled('div')`
-    display: flex;
-    flex-direction: column;
-    margin-top: 20px;
+const Actions = styled(ButtonContainer)`
+    justify-content: flex-start;
 `;
 
 export const Layers = ({ controller, state, layers }) => {
@@ -37,24 +36,29 @@ export const Layers = ({ controller, state, layers }) => {
         <Content>
             <RadioGroup value={state.layerId}
                 onChange={(e) => controller.setAnalysisLayerId(e.target.value)}>
-                {layers.map((layer) => (
-                    <LayerBox key={layer.getId()} value={layer.getId()}>
-                        <LayerTitle>{layer.getName()}</LayerTitle>
-                        <MetadataIcon metadataId={layer.getMetadataIdentifier()} />
-                        <IconButton type='delete'
-                            onClick={() => controller.removeLayer(layer.getId())} />
-                    </LayerBox>
-                ))}
+                {layers.map((layer) => {
+                    const layerId = layer.getId();
+                    return (
+                        <LayerBox key={layerId} >
+                            <Radio.Choice value={layerId}>
+                                <LayerTitle>{layer.getName()}</LayerTitle>
+                            </Radio.Choice>
+                            <MetadataIcon metadataId={layer.getMetadataIdentifier()} />
+                            <IconButton type='delete'
+                                onClick={() => controller.removeLayer(layer.getId())} />
+                        </LayerBox>
+                    );
+                })}
             </RadioGroup>
             {layers.length === 0 && <Message messageKey='AnalyseView.content.noLayersSelected' /> }
-            <ButtonContainer>
+            <Actions>
                 <Button type='primary' onClick={() => controller.openFlyout('layerlist')}>
                     <Message messageKey='AnalyseView.buttons.data' />
                 </Button>
                 <Button type='primary' onClick={() => controller.openFlyout('search')}>
                     <Message messageKey='AnalyseView.content.search.title' />
                 </Button>
-            </ButtonContainer>
+            </Actions>
         </Content>
     );
 };

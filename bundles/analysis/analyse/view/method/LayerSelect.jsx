@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Controller } from 'oskari-ui/util';
-import { Message } from 'oskari-ui';
-import { Content, RadioButton, RadioGroup, Label } from '../styled';
+import { Message, Radio } from 'oskari-ui';
+import { Content, RadioGroup, Label } from '../styled';
 import { InfoIcon } from 'oskari-ui/components/icons';
 import { METHOD_OPTIONS } from '../../constants';
 
-const NO_LAYERS_LABEL = 'AnalysisView.content.noLayersForMethod';
+const NO_LAYERS_LABEL = 'AnalyseView.content.noLayersForMethod';
 
 export const LayerSelect = ({ 
     layers,
@@ -29,9 +29,9 @@ export const LayerSelect = ({
                     const layerId = layer.getId();
                     const disabled = disabledIds.includes(layerId);
                     return (
-                        <RadioButton key={layerId} value={layerId} disabled={disabled}>
+                        <Radio.Choice key={layerId} value={layerId} disabled={disabled}>
                             <span>{layer.getName()}</span>
-                        </RadioButton>
+                        </Radio.Choice>
                     );
                 })}
             </RadioGroup>

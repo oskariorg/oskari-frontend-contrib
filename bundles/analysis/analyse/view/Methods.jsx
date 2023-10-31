@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Controller } from 'oskari-ui/util';
-import { Message } from 'oskari-ui';
-import { Content, RadioGroup, RadioButton } from './styled';
+import { Message, Radio } from 'oskari-ui';
+import { Content, RadioGroup, JustifiedGroup } from './styled';
 import { InfoIcon } from 'oskari-ui/components/icons';
 import { METHODS, METHOD_OPTIONS } from '../constants';
 
@@ -21,10 +21,12 @@ export const Methods = ({ controller, state, layersCount, layer }) => {
                 {METHODS.map(method => {
                     const disabled = disabledMethods.includes(method)
                     return (
-                        <RadioButton key={method} value={method} disabled={disabled}>
-                            <Message messageKey={`AnalyseView.method.options.${method}.label`}/>
+                        <JustifiedGroup key={method}>
+                            <Radio.Choice value={method} disabled={disabled} className={`t_${method}`}>
+                                <Message messageKey={`AnalyseView.method.options.${method}.label`}/>
+                            </Radio.Choice>
                             <InfoIcon title={<Message messageKey={`AnalyseView.method.options.${method}.tooltip`}/>} />
-                        </RadioButton>
+                        </JustifiedGroup>
                     );
                 })}
             </RadioGroup>

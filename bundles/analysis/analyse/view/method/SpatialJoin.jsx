@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Controller } from 'oskari-ui/util';
-import { Message, Select } from 'oskari-ui';
-import { Content, RadioGroup, RadioButton, Label } from '../styled';
+import { Message, Radio } from 'oskari-ui';
+import { Content, RadioGroup, Label, InlineGroup, StyledSelect, Space } from '../styled';
 import { InfoIcon } from 'oskari-ui/components/icons';
 import { LayerSelect } from './LayerSelect';
 import { SPATIAL_JOIN_MODES, LIMITS } from '../../constants';
@@ -17,15 +17,16 @@ const PropertiesSelect = ({ properties, labels = {}, values, onChange, tooltip }
     const maxSelected = values.length >= LIMITS.properties;
     const isDisabled = value => maxSelected && !values.includes(value);
     const options = properties.map(value => ({ value, label: labels[value] || value, disabled: isDisabled(value) }));
+    const hasProps = properties.length > 0;
     return (
         <Fragment>
             <Label>
                 <Message messageKey='AnalyseView.params.label' />
                 <InfoIcon title={<Message messageKey={tooltip}/>} />
             </Label>
-            <Select mode='multiple' value={values}
-                onChange={onChange} options={options}/>
-            { !properties.length && <Message messageKey='AnalyseView.content.noProperties'/> }
+            { hasProps && <StyledSelect mode='multiple' value={values}
+                onChange={onChange} options={options}/> }
+            { !hasProps && <Message messageKey='AnalyseView.content.noProperties'/> }
         </Fragment>
     );
 };
@@ -47,16 +48,19 @@ export const SpatialJoin = ({
             <RadioGroup value={mode}
                 onChange={(e) => controller.setMethodParam('mode', e.target.value)}>
                 {SPATIAL_JOIN_MODES.map(mode => (
-                    <RadioButton key={mode} value={mode}>
+                    <Radio.Choice key={mode} value={mode}>
                         <Message messageKey={`AnalyseView.spatial_join.${mode}Mode`}/>
-                    </RadioButton>
+                    </Radio.Choice>
                 ))}
             </RadioGroup>
+            <Space/>
             <Label>
-                <Message messageKey='AnalyseView.difference.firstLayer' />
-                <InfoIcon title={<Message messageKey='AnalyseView.difference.firstLayerTooltip' />} />
+                <Message messageKey='AnalyseView.spatial_join.firstLayer' />
+                <InfoIcon title={<Message messageKey='AnalyseView.spatial_join.firstLayerTooltip' />} />
             </Label>
-            <span>{layer?.getName() || ''}</span>
+            <InlineGroup>
+                <span>{layer?.getName() || ''}</span>
+            </InlineGroup>
             <PropertiesSelect
                 values={properties}
                 properties={getProperties(layer)}
@@ -64,6 +68,7 @@ export const SpatialJoin = ({
                 tooltip='AnalyseView.spatial_join.firstLayerFieldTooltip'
                 onChange={values => controller.setMethodParam('properties', values)}/>
             <LayerSelect layers={layers} state={state} controller={controller} labels={LABELS}/>
+            <Space/>
             <PropertiesSelect
                 values={targetProperties}
                 properties={getProperties(targetLayer)}

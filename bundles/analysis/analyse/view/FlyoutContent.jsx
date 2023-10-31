@@ -1,10 +1,10 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Button, Switch, Link, Message } from 'oskari-ui';
+import { Button, Link, Message } from 'oskari-ui';
 import { ButtonContainer, SecondaryButton } from 'oskari-ui/components/buttons';
 import { COOKIE_KEY } from '../constants';
-import { InlineGroup } from './styled';
+import { InlineGroup, StyledSwitch } from './styled';
 
 const Margin = styled.div`
     margin-bottom: 20px;
@@ -43,7 +43,7 @@ export const FlyoutContent = ({ setEnabled }) => {
             <Message messageKey='StartView.text'/>
             <Margin/>
             <Margin>
-                <Switch size='small' onChange={onChange} />
+                <StyledSwitch size='small' onChange={onChange} />
                 <Message messageKey='StartView.infoseen.label'/>
             </Margin>
             <ButtonContainer>

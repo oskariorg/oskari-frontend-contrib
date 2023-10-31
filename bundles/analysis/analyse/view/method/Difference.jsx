@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Controller } from 'oskari-ui/util';
-import { Message, Select } from 'oskari-ui';
-import { Content, Label } from '../styled';
+import { Message } from 'oskari-ui';
+import { Content, Label, InlineGroup, Space, StyledSelect } from '../styled';
 import { InfoIcon } from 'oskari-ui/components/icons';
 import { LayerSelect } from './LayerSelect';
 import { getProperties } from '../../service/AnalyseHelper';
@@ -15,12 +15,14 @@ const LABELS = {
 const PropertiesSelect = ({ properties, labels = {}, value, onChange }) => {
     if (!properties.length) {
         return (
-            <Message messageKey='AnalyseView.content.noProperties'/>
+            <Space>
+                <Message messageKey='AnalyseView.content.noProperties'/>
+            </Space>
         );
     }
     const options = properties.map(value => ({ value, label: labels[value] || value }));
     return (
-        <Select value={value} onChange={onChange}
+        <StyledSelect value={value} onChange={onChange}
             options={options} />
     );
 };
@@ -48,16 +50,23 @@ export const Difference = ({
                 <Message messageKey='AnalyseView.difference.firstLayer' />
                 <InfoIcon title={<Message messageKey='AnalyseView.difference.firstLayerTooltip' />} />
             </Label>
-            <span>{layerName}</span>
+            <InlineGroup>
+                <span>{layerName}</span>
+            </InlineGroup>
+            <Label>
+                <Message messageKey='AnalyseView.difference.field' />
+                <InfoIcon title={<Message messageKey='AnalyseView.difference.firstLayerFieldTooltip' />} />
+            </Label>
             <PropertiesSelect
                 value={property}
                 properties={layerProps}
                 labels={layerLabels}
                 onChange={prop => controller.setMethodParam('property', prop)}/>
             <LayerSelect layers={layers} state={state} controller={controller} labels={LABELS}/>
+            <Space/>
             <Label>
-                <Message messageKey='AnalyseView.difference.firstLayer' />
-                <InfoIcon title={<Message messageKey='AnalyseView.difference.firstLayerTooltip' />} />
+                <Message messageKey='AnalyseView.difference.field' />
+                <InfoIcon title={<Message messageKey='AnalyseView.difference.secondLayerFieldTooltip' />} />
             </Label>
             <PropertiesSelect
                 value={targetProperty}

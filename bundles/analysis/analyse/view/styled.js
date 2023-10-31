@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Radio, Switch } from 'oskari-ui';
+import { Radio, Switch, Select } from 'oskari-ui';
 
 export const Content = styled.div`
     display: flex;
@@ -9,11 +9,14 @@ export const Content = styled.div`
 export const RadioGroup = styled(Radio.Group)`
     display: flex;
     flex-direction: column;
-    margin-bottom: 10px;
 `;
-export const RadioButton = styled(Radio.Choice)`
-    display: flex;
-    flex-flow: row nowrap;
+
+export const StyledSwitch = styled(Switch)`
+    margin-right: 10px;
+`;
+
+export const StyledSelect = styled(Select)`
+    width: 80%;
     margin-bottom: 10px;
 `;
 
@@ -22,19 +25,21 @@ export const Group = styled.div`
     flex-direction: column;
     margin-bottom: 10px;
 `;
+
+export const Space = styled.div`
+    margin-bottom: 10px;
+`;
+
 export const InlineGroup = styled.div`
     display: flex;
     flex-flow: row nowrap;
     margin-bottom: 10px;
 `;
 
-export const Label = styled.div`
-    display: flex;
-    flex-flow: row nowrap;
+export const JustifiedGroup = styled(InlineGroup)`
     justify-content: space-between;
-    font-weight: bold;
-    margin-bottom: 10px;
 `;
-export const StyledSwitch = styled(Switch)`
-    margin-right: 5px;
+
+export const Label = styled(JustifiedGroup)`
+    font-weight: bold;
 `;

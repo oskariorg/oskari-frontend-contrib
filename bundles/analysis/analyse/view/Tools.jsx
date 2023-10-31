@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Controller } from 'oskari-ui/util';
 import { Message, Radio, Tooltip, Button } from 'oskari-ui';
-import { Content, RadioGroup, Label, InlineGroup } from './styled';
+import { Content, RadioGroup, Label, InlineGroup, Space } from './styled';
 import { InfoIcon } from 'oskari-ui/components/icons';
 import { FILTER } from '../constants';
 
@@ -12,14 +12,14 @@ const filterOptions = Object.values(FILTER);
 
 const DrawOption = styled('div')`
     cursor: pointer;
+    margin-right: 10px;
 `;
 
 export const Tools = ({ controller, filter, featureIds }) => {
     return (
         <Content>
             <Label>
-                <Message messageKey='AnalyseView.content.selectionToolsLabel' />
-                <InfoIcon title={<Message messageKey='AnalyseView.content.selectionToolsTooltip' />} />
+                <Message messageKey='AnalyseView.content.features.title' />
             </Label>
             <InlineGroup>
                 { DRAW_MODES.map(mode => (
@@ -40,6 +40,7 @@ export const Tools = ({ controller, filter, featureIds }) => {
                     </Radio.Choice>
                 ))}
             </RadioGroup>
+            <Space/>
             <Button onClick={() => controller.removeSelections()} disabled={!featureIds.length}>
                 <Message messageKey='AnalyseView.content.selectionTools.button.empty' />
             </Button>

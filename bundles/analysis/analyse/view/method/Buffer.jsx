@@ -4,9 +4,11 @@ import { Controller } from 'oskari-ui/util';
 import { Message, TextInput, Select, Option } from 'oskari-ui';
 import { Content, InlineGroup, Label } from '../styled';
 import { InfoIcon } from 'oskari-ui/components/icons';
-import { BUFFER } from '../../constants';
+import { BUFFER, BUNDLE_KEY } from '../../constants';
 
 const bufferOpts = Object.keys(BUFFER);
+
+const getTitle = unit => Oskari.getMsg(BUNDLE_KEY, `AnalyseView.buffer_units.${unit}`);
 
 export const Buffer = ({ 
     params,
@@ -25,7 +27,9 @@ export const Buffer = ({
                 <Select value={unit}
                     onChange={val => controller.setMethodParam('unit', val)} >
                     {bufferOpts.map(opt => (
-                        <Option value={opt} key={opt}>{opt}</Option>
+                        <Option value={opt} key={opt} title={getTitle(opt)}>
+                            {opt}
+                        </Option>
                     ))}
                 </Select>
             </InlineGroup>
