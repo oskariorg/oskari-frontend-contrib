@@ -46,6 +46,9 @@ Oskari.clazz.define(
                 }
                 return response.json();
             }).then(json => {
+                if (json.error) {
+                    throw new Error(json.error);
+                }
                 this._handleSuccess(json, showOptions);
             }).catch(error => {
                 const locObj = this.loc('AnalyseView.error');

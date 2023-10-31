@@ -44,6 +44,6 @@ export const showStyleEditor = (style, onSave, onClose) => {
         getMessage('label'),
         (<StyleForm style={style} onSave={onSave} onCancel={onClose}/>),
         onClose,
-        { id: BUNDLE_KEY }
+        { id: `${BUNDLE_KEY}StyleForm` }
     );
 };

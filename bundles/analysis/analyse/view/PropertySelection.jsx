@@ -48,8 +48,8 @@ export const PropertySelection = ({ controller, state, layer }) => {
             <RadioGroup value={type}
                 onChange={e => onTypeChange(e.target.value)} >
                 {propOptions.map(opt => (
-                    <InlineGroup>
-                        <Radio.Choice value={opt} key={opt} disabled={isDisabled(opt)}>
+                    <InlineGroup key={opt}>
+                        <Radio.Choice value={opt} disabled={isDisabled(opt)}>
                             <Message messageKey={`AnalyseView.params.options.${opt}`} />
                         </Radio.Choice>
                         { opt === PROPERTIES.SELECT &&

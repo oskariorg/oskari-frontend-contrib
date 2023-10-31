@@ -1,8 +1,9 @@
 import { StateHandler, controllerMixin, Messaging } from 'oskari-ui/util';
-import { createTempLayer, createFeatureLayer, eligibleForAnalyse, isUnsupportedWFS, getRandomizedStyle, isTempLayer, getProperties } from '../service/AnalyseHelper';
-import { PROPERTIES, FILTER, METHODS, METHOD_OPTIONS } from '../constants';
+import { createTempLayer, createFeatureLayer, eligibleForAnalyse, isUnsupportedWFS, getRandomizedStyle, isTempLayer, getProperties, getFeatureFromDrawing, getDrawRequestType } from '../service/AnalyseHelper';
+import { PROPERTIES, FILTER, METHODS, METHOD_OPTIONS, DRAW_ID, DRAW_OPTIONS } from '../constants';
 import { showStyleEditor } from '../view/StyleForm';
 import { showAggregateResults } from '../view/method/AggregateResults';
+import { showDrawHelper } from '../view/DrawHelper';
 import { getInitPropertiesSelections, getInitMethodParams, gatherMethodParams, showInfosForLayer  } from './AnalysisStateHelper';
 import { Validator } from '../view/AnalyseValidations';
 
@@ -33,6 +34,8 @@ class Handler extends StateHandler {
         this.eventHandlers = this.createEventHandlers();
         this.featureLayer = null;
         this.popupControls = null;
+        this.drawHelper = null;
+        this.storeDrawing = false;
     };
 
     getName () {
@@ -84,6 +87,15 @@ class Handler extends StateHandler {
                     // selected layers aren't stored to state, trigger change
                     this.notify();
                 }
+            },
+            DrawingEvent: (event) => {
+                // handle only finished drawings when helper is closed
+                if (event.getId() === DRAW_ID && event.getIsFinished() && this.storeDrawing) {
+                    const feature = getFeatureFromDrawing(event.getGeoJson());
+                    this.addTempLayer({feature});
+                    // feature is stored to temp layer remove from draw layer
+                    this._closeDrawHelper();
+                }
             }
         };
         Object.getOwnPropertyNames(handlers).forEach(p => sandbox.registerForEventByName(this, p));
@@ -118,6 +130,32 @@ class Handler extends StateHandler {
             };
             this.sandbox.postRequestByName('userinterface.UpdateExtensionRequest', [extension, 'attach']);
         }
+    }
+
+    showDrawHelpper (type) {
+        // remove old helper and drawings if exists
+        this._closeDrawHelper(true);
+        const drawType = getDrawRequestType(type);
+        this.sandbox.postRequestByName('DrawTools.StartDrawingRequest', [DRAW_ID, drawType, DRAW_OPTIONS]);
+        const onClose = (isCancel) => {
+            if (isCancel) {
+                this._closeDrawHelper(isCancel);
+            } else {
+                this.storeDrawing = true;
+                this.sandbox.postRequestByName('DrawTools.StopDrawingRequest', [DRAW_ID]);
+            }
+        };
+        this.drawHelper = showDrawHelper(type, onClose);
+    }
+
+    _closeDrawHelper () {
+        if (!this.drawHelper) {
+            return;
+        }
+        this.drawHelper.close();
+        this.drawHelper = null;
+        this.storeDrawing = false;
+        this.sandbox.postRequestByName('DrawTools.StopDrawingRequest', [DRAW_ID, true, true]);
     }
 
     setAnalysisLayerId (layerId) {
@@ -162,7 +200,6 @@ class Handler extends StateHandler {
         const tempLayers = [...this.getState().tempLayers, layer];
         const layerId = layer.getId();
         this.updateState({ tempLayers, layerId });
-        this.selectedUpdateListeners.forEach(consumer => consumer(this.getState()));
     }
 
     removeLayer (layerId) {
@@ -198,7 +235,7 @@ class Handler extends StateHandler {
             this._closePopup();
         };
         const onClose = () => this._closePopup();
-        this._popupControls = showStyleEditor(style, onSave, onClose);
+        this.popupControls = showStyleEditor(style, onSave, onClose);
     }
 
     openAggregateResults (json) {
@@ -207,14 +244,14 @@ class Handler extends StateHandler {
         }
         const layer = this._findLayer(json.id);
         const onClose = () => this._closePopup();
-        this._popupControls = showAggregateResults(layerJson, layer, onClose);
+        this.popupControls = showAggregateResults(layerJson, layer, onClose);
     }
 
     _closePopup () {
-        if (this._popupControls) {
-            this._popupControls.close();
+        if (this.popupControls) {
+            this.popupControls.close();
         }
-        this._popupControls = null;
+        this.popupControls = null;
     }
 
     _getFeatureSource () {
@@ -306,7 +343,7 @@ const wrapped = controllerMixin(Handler, [
     'setEnabled',
     'addTempLayer',
     'removeLayer',
-    'startDraw',
+    'showDrawHelpper',
     'openStyleEditor',
     'openAggregateResults',
     'openFlyout',

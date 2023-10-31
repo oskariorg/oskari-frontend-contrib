@@ -5,7 +5,7 @@ import { AnalysisStateHandler } from './handler/AnalysisStateHandler';
 import { AnalysisTab } from './view/AnalysisTab';
 import { showSidePanel } from 'oskari-ui/components/window';
 import { MainPanel } from './view/MainPanel';
-import { eligibleForAnalyse } from './service/AnalyseHelper';
+import { eligibleForAnalyse, createPointFeature } from './service/AnalyseHelper';
 
 
 /**
@@ -249,9 +249,38 @@ Oskari.clazz.define(
             } else {
                 this.closePanel();
             }
+            this._setSearchResultAction(blnEnabled);
             this.stateHandler.getController().setEnabled(blnEnabled);
             // hide flyout
             this.sandbox.postRequestByName('userinterface.UpdateExtensionRequest', [this, 'close']);
+        },
+        _setSearchResultAction: function (enabled) {
+            const sandbox = this.getSandbox();
+            const key = enabled ? 'Add' : 'Remove';
+            const requestName = `Search.${key}SearchResultActionRequest`;
+            if (!sandbox.hasHandler(requestName)) {
+                return;
+            }
+
+            /**
+            * function gets called in search bundle with
+            * the search result as an argument which in turn returns
+            * a function that gets called when the user clicks on the link
+            * in the search result popup.
+            **/
+            const resultAction = (result) => {
+                return () => {
+                    const { lon, lat, name } = result;
+                    const feature = createPointFeature({ lon, lat });
+                    this.getStateHandler().addTempLayer({ feature, name });
+                };
+            };
+            const link = this.loc('AnalyseView.content.search.resultLink');
+            const builder = Oskari.requestBuilder(requestName);
+            const request = enabled
+                ? builder(link, resultAction, this)
+                : builder(link);
+            sandbox.request(this, request);
         },
         getProps: function () {
             return {

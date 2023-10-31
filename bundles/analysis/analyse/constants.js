@@ -2,6 +2,7 @@ import { getProperties, isAnalysisLayer } from "./service/AnalyseHelper";
 
 export const BUNDLE_KEY = 'Analyse';
 export const COOKIE_KEY = 'analyse_info_seen';
+export const DRAW_ID = 'analysisDrawLayer';
 // Both color arrays have to be equal length
 export const COLORS = [
     '#e31a1c', '#2171b5', '#238b45', '#88419d',
@@ -82,4 +83,43 @@ export const METHOD_OPTIONS = {
     union: {
         noParams: true
     }
+};
+
+const DRAW_STYLE = {
+    draw: {
+        fill: {
+            color: 'rgba(35,216,194,0.3)'
+        },
+        stroke: {
+            color: 'rgba(35,216,194,1)',
+            width: 2
+        },
+        image: {
+            radius: 4,
+            fill: {
+                color: 'rgba(35,216,194,0.7)'
+            }
+        }
+    },
+    modify: {
+        fill: {
+            color: 'rgba(0,0,238,0.3)'
+        },
+        stroke: {
+            color: 'rgba(0,0,238,1)',
+            width: 2
+        },
+        image: {
+            radius: 4,
+            fill: {
+                color: 'rgba(0,0,0,1)'
+            }
+        }
+    }
+};
+
+export const DRAW_OPTIONS = {
+    allowMultipleDrawing: 'multiGeom',
+    showMeasureOnMap: true,
+    style: DRAW_STYLE
 };

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Button, Table, Message } from 'oskari-ui';
 import { ButtonContainer, PrimaryButton } from 'oskari-ui/components/buttons';
+import { showPopup } from 'oskari-ui/components/window';
 import { BUNDLE_KEY  } from '../../constants';
 
 const VECTOR_LAYER_ID = 'analysisAggregate';
@@ -89,6 +90,6 @@ export const showAggregateResults = (layer, results, onClose) => {
         <Message messageKey={ `AnalyseView.output.${key}` } bundleKey={BUNDLE_KEY} />,
         <StyleForm results={results} layer={layer} onClose={onClose}/>,
         onClose,
-        { id: BUNDLE_KEY }
+        { id: `${BUNDLE_KEY}AggregateResults` }
     );
 };

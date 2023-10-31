@@ -9,7 +9,7 @@ import { pointerMove as conditionPointerMove } from 'ol/events/condition';
 import olFeature from 'ol/Feature';
 import { Point as olGeomPoint } from 'ol/geom';
 import olFormatGeoJSON from 'ol/format/GeoJSON';
-import { COLORS, FILL_COLORS } from '../constants';
+import { COLORS, FILL_COLORS, DRAW_ID } from '../constants';
 
 const ANALYSIS_LAYER_TYPE = 'analysislayer';
 const USER_LAYER_TYPE = 'userlayer';
@@ -139,10 +139,15 @@ const createSelectInteraction = (layer) => {
 };
 
 export const createPointFeature = ({ lon, lat }) => {
-    return olFeature({
+    return new olFeature({
         geometry: new olGeomPoint([lon, lat])
     });
 };
+
+export const getFeatureFromDrawing = (json) => {
+    // 'multiGeom' -> gathers drawn shapes into a single feature
+    return new olFormatGeoJSON().readFeatures(json)[0];
+}
 
 export const getDrawRequestType = (internalGeometryType) => {
     if (internalGeometryType === 'line') {

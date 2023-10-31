@@ -24,7 +24,7 @@ export const Tools = ({ controller, filter, featureIds }) => {
             <InlineGroup>
                 { DRAW_MODES.map(mode => (
                     <Tooltip key={mode} title={<Message messageKey={`AnalyseView.content.features.tooltips.${mode}`} />}>
-                        <DrawOption className={`add-${mode} tool`} onClick={() => controller.startDraw(mode)}/>
+                        <DrawOption className={`add-${mode} tool`} onClick={() => controller.showDrawHelpper(mode)}/>
                     </Tooltip>
                 ))}
             </InlineGroup>
