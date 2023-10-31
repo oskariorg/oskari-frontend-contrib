@@ -14,7 +14,6 @@ export const Methods = ({ controller, state, layersCount, layer }) => {
         }
         return !validateLayer.every(func => func(layer));
     });
-
     return (
         <Content>
             <RadioGroup value={state.method}
@@ -24,7 +23,6 @@ export const Methods = ({ controller, state, layersCount, layer }) => {
                     return (
                         <RadioButton key={method} value={method} disabled={disabled}>
                             <Message messageKey={`AnalyseView.method.options.${method}.label`}/>
-                            { disabled && <InfoIcon style={{color: '#FF0000'}} title={<Message messageKey='TODO'/>} />}
                             <InfoIcon title={<Message messageKey={`AnalyseView.method.options.${method}.tooltip`}/>} />
                         </RadioButton>
                     );

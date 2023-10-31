@@ -48,18 +48,12 @@ class Handler extends StateHandler {
         const layer = selections[0] || this._getAnalysisLayers()[0];
         showInfosForLayer(layer);
         const layerId = layer?.getId();
-        // is temp layer suitable for target -> [...layer, ...tempLayers]
-        const targetLayer = this._getAnalysisLayers().find(l => l.getId() !== layerId);
+        const name = layer ? layer.getName().substring(0, 15) + '_' : '';
         const method = METHODS[0];
         const filter = selections[0] ? FILTER.FEATURES : FILTER.BBOX;
-        const methodParams = getInitMethodParams(method, layer, targetLayer);
-        const properties = getInitPropertiesSelections(method, layer, targetLayer);
-        const name = layer ? layer.getName().substring(0, 15) + '_' : '';
-        return { layerId, method, filter, methodParams, properties, name };
-    }
-
-    _initMethodParams () {
-        return {};
+        const methodParams = getInitMethodParams(method, layer);
+        const properties = getInitPropertiesSelections(method, layer);
+        return { layerId, targetId: null, method, filter, methodParams, properties, name };
     }
 
     _getAnalysisLayers () {
@@ -160,8 +154,12 @@ class Handler extends StateHandler {
     }
 
     setAnalysisLayerId (layerId) {
-        // TODO: auto selections and isTemp
-        this.updateState({layerId});
+        const layer = this._findLayer(layerId);
+        showInfosForLayer(layer);
+        const { method } = this.getState();
+        const properties = getInitPropertiesSelections(method, layer);
+        const name = layer ? layer.getName().substring(0, 15) + '_' : '';
+        this.updateState({layerId, properties, name});
     }
 
     setTargetLayerId (targetId) {
@@ -170,7 +168,10 @@ class Handler extends StateHandler {
 
     setMethod (method) {
         const methodParams = getInitMethodParams(method);
-        this.updateState({ method, methodParams });
+        const layer = this._findLayer(this.getState().layerId);
+        const properties = getInitPropertiesSelections(method, layer);
+        const { showFeatureData = false } = METHOD_OPTIONS[method] || {};
+        this.updateState({ method, methodParams, properties, showFeatureData, showDataWithoutSaving: false });
     }
 
     setMethodParam (key, value) {
