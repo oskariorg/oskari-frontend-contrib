@@ -2,6 +2,7 @@ import { getProperties, isAnalysisLayer } from "./service/AnalyseHelper";
 
 export const BUNDLE_KEY = 'Analyse';
 export const COOKIE_KEY = 'analyse_info_seen';
+export const COOKIE_SKIP_VALUE = '1';
 export const DRAW_ID = 'analysisDrawLayer';
 // Both color arrays have to be equal length
 export const COLORS = [

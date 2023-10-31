@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Button, Link, Message } from 'oskari-ui';
 import { ButtonContainer, SecondaryButton } from 'oskari-ui/components/buttons';
-import { COOKIE_KEY } from '../constants';
+import { COOKIE_KEY, COOKIE_SKIP_VALUE } from '../constants';
 import { InlineGroup, StyledSwitch } from './styled';
 
 const Margin = styled.div`
@@ -33,7 +33,7 @@ export const FlyoutContent = ({ setEnabled }) => {
     }
     const onChange = checked => {
         const expires = checked ? 365 : 1;
-        const value =  checked ? '1' : '0';
+        const value =  checked ? COOKIE_SKIP_VALUE : '0';
         jQuery.cookie(COOKIE_KEY, value, { expires });
     };
     return (

@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { FlyoutContent } from './view/FlyoutContent';
 import { LocaleProvider } from 'oskari-ui/util';
+import { COOKIE_KEY, COOKIE_SKIP_VALUE } from './constants';
 /**
  * @class Oskari.analysis.bundle.analyse.Flyout
  *
@@ -49,7 +50,6 @@ Oskari.clazz.define(
             this.container = el[0];
             this.container.classList.add('analyse');
             flyout.addClass('analyse');
-            this.render();
         },
         startPlugin: function () {},
 
@@ -62,7 +62,14 @@ Oskari.clazz.define(
         getTitle: function () {
             return this.instance.loc('flyouttitle');
         },
-
+        onOpen: function () {
+            // const cookie = new URLSearchParams(document.cookie.replaceAll('&', '%26').replaceAll('; ', '&')).get(COOKIE_KEY);
+            if (jQuery.cookie(COOKIE_KEY) === COOKIE_SKIP_VALUE) {
+                this.instance.setEnabled(true);
+            } else {
+                this.render();
+            }
+        },
         /**
          * @public @method getDescription
          *
