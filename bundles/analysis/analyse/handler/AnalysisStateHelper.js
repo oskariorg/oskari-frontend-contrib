@@ -124,7 +124,7 @@ export const gatherMethodParams = (state, layer, targetLayer) => {
     }
     if (method === 'clip' || method === 'intersect') {
         const { operator } = methodParams;
-        const features = targetIsTemp ? [tempLayer.getFeatureAsGeoJSON()] : [];
+        const features = targetIsTemp ? [targetLayer.getFeatureAsGeoJSON()] : [];
         return {
             features,
             operator,
