@@ -42,7 +42,8 @@ export const getInitMethodParams = (method, layer, targetLayer) => {
         return { size: 0, unit: Object.keys(BUFFER)[0] };
     }
     if (method === 'aggregate') {
-        return { operators: [...AGGREGATE_OPTIONS] };
+        const skipLast = AGGREGATE_OPTIONS.length - 1;
+        return { operators: AGGREGATE_OPTIONS.slice(0, skipLast) };
     }
     if (method === 'intersect') {
         return { operator: SPATIAL_OPTIONS[0] }

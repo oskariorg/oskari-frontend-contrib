@@ -249,13 +249,12 @@ class Handler extends StateHandler {
         this.popupControls = showStyleEditor(style, onSave, onClose);
     }
 
-    openAggregateResults (json) {
+    openAggregateResults (aggregate, opts) {
         if (this.popupControls) {
             this._closePopup();
         }
-        const layer = this._findLayer(json.id);
         const onClose = () => this._closePopup();
-        this.popupControls = showAggregateResults(layerJson, layer, onClose);
+        this.popupControls = showAggregateResults(aggregate, opts, onClose);
     }
 
     _closePopup () {
@@ -281,8 +280,8 @@ class Handler extends StateHandler {
     }
 
     commitAnalysis () {
-        const state = this.getState();
-        const layer = this._findLayer(state.layerId);
+        const { layerId, ...state } = this.getState();
+        const layer = this._findLayer(layerId);
         if (!layer) {
             Messaging.error(this.loc('AnalyseView.error.noLayer'));
             return;
@@ -290,7 +289,7 @@ class Handler extends StateHandler {
         const isTemp = isTempLayer(layer);
         const targetLayer = this._findLayer(state.targetId);
         const selections = {
-            layerId: isTemp ? -1 : layer.getId(),
+            layerId: isTemp ? -1 : layerId,
             name: state.name,
             fields: this._getPropertiesSelection(layer),
             fieldTypes: layer.getPropertyTypes(),
@@ -314,7 +313,7 @@ class Handler extends StateHandler {
         }
         const data = {
             analyse: JSON.stringify(selections),
-            filter1: JSON.stringify(this._getFilterJSON(state.layerId))
+            filter1: JSON.stringify(this._getFilterJSON(layerId))
         };
 
         if (state.targetId) {
@@ -323,9 +322,12 @@ class Handler extends StateHandler {
         if (state.showDataWithoutSaving && METHOD_OPTIONS[state.method]?.allowNoSave) {
             data.saveAnalyse = false;
         }
+        // Others than featureData are only for showing aggregate results popup
         const showOptions = {
             featureData: state.showFeatureData,
-            noSave: state.showDataWithoutSaving
+            noSave: state.showDataWithoutSaving,
+            noDataCnt: selections.methodParams.operators?.includes('NoDataCnt'),
+            labels: layer.getPropertyLabels()
         };
         this.instance.getAnalyseService().sendAnalyseData(data, showOptions);
     }
@@ -363,7 +365,6 @@ const wrapped = controllerMixin(Handler, [
     'removeLayer',
     'showDrawHelpper',
     'openStyleEditor',
-    'openAggregateResults',
     'openFlyout',
     'setAnalysisLayerId',
     'setTargetLayerId',

@@ -1,94 +1,68 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Button, Table, Message } from 'oskari-ui';
+import { Message } from 'oskari-ui';
+import { Table } from 'oskari-ui/components/Table';
 import { ButtonContainer, PrimaryButton } from 'oskari-ui/components/buttons';
 import { showPopup } from 'oskari-ui/components/window';
 import { BUNDLE_KEY  } from '../../constants';
 
-const VECTOR_LAYER_ID = 'analysisAggregate';
-
 const Content = styled.div`
     padding: 24px;
-    width: 500px;
+    min-width: 300px;
 `;
 
-const getColumnSettings = (prop, labels) => {
+const getColumnSettings = (prop) => {
     const title = prop === 'key'
-        ? <Message bundleKey={BUNDLE_KEY} messageKey='tabs.myviews.grid.default' />
-        : labels[prop] || prop;
+        ? Oskari.getMsg(BUNDLE_KEY,'AnalyseView.aggregatePopup.property')
+        : prop;
     return {
         align: 'left',
         title,
         dataIndex: prop,
-        width: 100
+        width: prop === 'key' ? 100 : 60
     };
 };
 
-const AggregateResults = ({ layer, results, onClose }) => {
-    const { aggregate, geojson } = results;
-    const labels = layer.getPropertyLabels();
-    const hasGeoJSON = typeof geojson !== 'undefined';
-    // TODO: does backend return geojson??
-    if (hasGeoJSON) {
-        const { features } = geojson;
-        Oskari.getSandbox().postRequestByName('MapModulePlugin.AddFeaturesToMapRequest', [features, {
-            layerId: VECTOR_LAYER_ID,
-            clearPrevious: true,
-            centerTo: false
-        }]);
-    }
-
+const AggregateResults = ({ options = {}, aggregate, onClose }) => {
+    const { labels = {}, noDataCnt } = options;
     const data = [];
     // Array Array is used for to keep order of rows and cols
     // WHY?? we can get row order from layer and cols from constant
     // TODO: backend [{ key/property, sum, avg..}] 
     aggregate.forEach(propertyObj => {
-        let [key, value] = Object.entries(propertyObj)[0];
+        let [prop, value] = Object.entries(propertyObj)[0];
         const row = value.reduce((data, agg) => {
                 data = { ...data, ...agg };
                 return data;
-            }, { key });
+            }, { key: labels[prop] || prop });
         data.push(row);
     });
-    const columns = Object.keys(data[0] || {}).map(prop => getColumnSettings(prop, labels));
-    const onCloseClick = () => {
-        Oskari.getSandbox().postRequestByName('MapModulePlugin.RemoveFeaturesFromMapRequest', [null, null, VECTOR_LAYER_ID]);
-        onClose();
-    };
-    const onStore = () => {
-        // const feature = new olFormatGeoJSON().readFeatures(geojson)[0];
-        // controller.addTempLayer({ feature });
-    };
+    const columns = Object.keys(data[0] || {}).map(prop => getColumnSettings(prop));
     return (
         <Content>
             <Table
-            columns={columns}
-            dataSource={data}
-            pagination={false}/>
+                columns={columns}
+                dataSource={data}
+                pagination={false}/>
             { noDataCnt &&  <Message bundleKey={BUNDLE_KEY} messageKey='AnalyseView.aggregate.footer' /> }
             <ButtonContainer>
-                { hasGeoJSON && (
-                    <Button onClick={onStore}>
-                        <Message bundleKey={BUNDLE_KEY} messageKey='AnalyseView.aggregate.footer' />
-                    </Button> 
-                )}
-                <PrimaryButton type='close' onClick={onCloseClick}/>
+                <PrimaryButton type='close' onClick={() => onClose()}/>
             </ButtonContainer>
         </Content>
     );
 };
 
 AggregateResults.propTypes = {
-    results: PropTypes.object.isRequired,
-    layer: PropTypes.object.isRequired,
+    aggregate: PropTypes.array.isRequired,
+    options: PropTypes.object,
     onClose: PropTypes.func.isRequired
 };
 
-export const showAggregateResults = (layer, results, onClose) => {
+export const showAggregateResults = (aggregate, options, onClose) => {
     return showPopup(
-        <Message messageKey={ `AnalyseView.output.${key}` } bundleKey={BUNDLE_KEY} />,
-        <StyleForm results={results} layer={layer} onClose={onClose}/>,
+        <Message bundleKey={BUNDLE_KEY} messageKey='AnalyseView.aggregatePopup.title'/>,
+        <AggregateResults aggregate={aggregate} options={options} onClose={onClose}/>,
         onClose,
         { id: `${BUNDLE_KEY}AggregateResults` }
     );

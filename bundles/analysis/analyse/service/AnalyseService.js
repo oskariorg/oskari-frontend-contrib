@@ -56,11 +56,12 @@ Oskari.clazz.define(
             });
         },
         _handleSuccess: function (json, showOptions) {
-            const { featureData, noSave } = showOptions;
+            const { featureData, noSave, ...aggregateOpts } = showOptions;
             if (noSave) {
-                this.instance.getStateHandler().openAggregateResults(json);
+                this.instance.getStateHandler().openAggregateResults(json.aggregate, aggregateOpts);
                 return;
             }
+            // TODO: backend { layer, mergeLayers }
             const { id, name, mergeLayers = [] } = json;
             this._addLayerToService(json);
             // Add layer to the map

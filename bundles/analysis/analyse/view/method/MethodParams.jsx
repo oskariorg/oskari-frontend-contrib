@@ -39,7 +39,7 @@ export const MethodParams = ({
     return (
         <Container>
             {method === 'buffer' && <Buffer controller={controller} params={methodParams}/>}
-            {method === 'aggregate' && <Aggregate controller={controller} params={methodParams}/>}
+            {method === 'aggregate' && <Aggregate controller={controller} layer={layer} params={methodParams}/>}
             {method === 'clip' && <Clip controller={controller} layer={layer} layers={layers} state={state}/>}
             {method === 'intersect' && <Intersect controller={controller} layer={layer} layers={layers} state={state}/>}
             {method === 'layer_union' && <LayerUnion controller={controller} layer={layer} layers={layers} state={state}/>}
