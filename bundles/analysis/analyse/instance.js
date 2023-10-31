@@ -102,9 +102,6 @@ Oskari.clazz.define(
 
             sandbox.register(this);
 
-            // requesthandler
-            this.analyseHandler = Oskari.clazz.create('Oskari.analysis.bundle.analyse.request.AnalyseRequestHandler', this);
-            sandbox.requestHandler('analyse.AnalyseRequest', this.analyseHandler);
             this.analyseService = Oskari.clazz.create('Oskari.analysis.bundle.analyse.service.AnalyseService', this);
             sandbox.registerService(this.analyseService);
 
@@ -167,8 +164,6 @@ Oskari.clazz.define(
          */
         stop: function () {
             const sandbox = this.getSandbox();
-            sandbox.removeRequestHandler('analyse.AnalyseRequest', this.analyseHandler);
-            this.analyseHandler = null;
 
             const request = Oskari.requestBuilder('userinterface.RemoveExtensionRequest')(this);
             sandbox.request(this, request);
