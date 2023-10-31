@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Controller } from 'oskari-ui/util';
+import { Message } from 'oskari-ui';
 import { METHOD_OPTIONS } from '../../constants';
 
 import { Buffer } from './Buffer';

@@ -17,7 +17,7 @@ export const LayerSelect = ({
     const { layerId, targetId, method } = state;
     const { validateLayer = [] } = METHOD_OPTIONS[method] || {};
     const filtered = layers.filter(l => l.getId() !== layerId);
-    const disabledIds = filtered.filter(l => validateLayer.every(func => func(l))).map(l => l.getId());
+    const disabledIds = filtered.filter(l => !validateLayer.every(func => func(l))).map(l => l.getId());
     return (
         <Content>
             <Label>

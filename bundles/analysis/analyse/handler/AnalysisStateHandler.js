@@ -1,5 +1,6 @@
 import { StateHandler, controllerMixin, Messaging } from 'oskari-ui/util';
-import { createTempLayer, createFeatureLayer, eligibleForAnalyse, isUnsupportedWFS, getRandomizedStyle, isTempLayer, getProperties, getFeatureFromDrawing, getDrawRequestType } from '../service/AnalyseHelper';
+import { createTempLayer, createFeatureLayer, eligibleForAnalyse, isUnsupportedWFS, isUserLayer,
+    getRandomizedStyle, isTempLayer, getProperties, getFeatureFromDrawing, getDrawRequestType } from '../service/AnalyseHelper';
 import { PROPERTIES, FILTER, METHODS, METHOD_OPTIONS, DRAW_ID, DRAW_OPTIONS } from '../constants';
 import { showStyleEditor } from '../view/StyleForm';
 import { showAggregateResults } from '../view/method/AggregateResults';
@@ -277,6 +278,7 @@ class Handler extends StateHandler {
             return;
         }
         const isTemp = isTempLayer(layer);
+        const targetLayer = this._findLayer(state.targetId);
         const selections = {
             layerId: isTemp ? -1 : layer.getId(),
             name: state.name,
@@ -287,7 +289,7 @@ class Handler extends StateHandler {
             style: state.style,
             bbox: this.instance.getSandbox().getMap().getBbox(),
             opacity: layer.getOpacity(),
-            methodParams: gatherMethodParams(state, layer)
+            methodParams: gatherMethodParams(state, layer, targetLayer)
         };
 
         if (isTemp) {
@@ -319,6 +321,12 @@ class Handler extends StateHandler {
     }
 
     _getPropertiesSelection (layer) {
+        // There should be one propertety in filter - in other case all properties are retreaved by WPS
+        // Add feature_id field for userlayer (can't use normal fields because them values are inside property_json)
+        // TODO: hasPreProcessedProperties etc to get rid of userlayer
+        if (isUserLayer(layer)) {
+            return ['feature_id'];
+        }
         const { type, selected } = this.getState().properties;
         if (type === PROPERTIES.NONE) {
             return [];

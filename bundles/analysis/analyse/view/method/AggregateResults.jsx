@@ -21,7 +21,7 @@ const getColumnSettings = (prop, labels) => {
         align: 'left',
         title,
         dataIndex: prop,
-        width: 60
+        width: 100
     };
 };
 

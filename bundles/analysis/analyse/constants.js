@@ -73,10 +73,12 @@ export const METHOD_OPTIONS = {
     },
     difference: {
         showFeatureData: true,
+        skipPropertySelection: true,
         minLayers: 2,
         validateLayer: [_requireProperties]
     },
     spatial_join: {
+        skipPropertySelection: true,
         showFeatureData: true,
         minLayers: 2
     },

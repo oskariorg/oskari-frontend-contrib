@@ -22,12 +22,6 @@ export const getInitPropertiesSelections = (method, layer) => {
     const {autoSelectNumbers} = METHOD_OPTIONS[method] || {};
     if (!selected.length) {
         type = PROPERTIES.NONE;
-        // There should be one propertety in filter - in other case all properties are retreaved by WPS
-        // Add feature_id field for userlayer (can't use normal fields because them values are inside property_json)
-        // TODO: hasPreProcessedProperties etc to get rid of userlayer
-        if (isUserLayer(layer)) {
-            selected = ['feature_id'];
-        }
     } else if (selected.length > LIMITS.properties || autoSelectNumbers) {
         type = PROPERTIES.SELECT;
         selected = _autoSelectProperties(layer, autoSelectNumbers);
@@ -67,11 +61,11 @@ export const getInitMethodParams = (method, layer, targetLayer) => {
 
 export const gatherMethodParams = (state, layer, targetLayer) => {
     const { method, methodParams, targetId } = state;
-    const { noData } = layer.getWpsLayerParams();
-    const common = { no_data: noData };
     if (method === 'union') {
         return {};
     }
+    const { noData } = layer.getWpsLayerParams();
+    const common = { no_data: noData };
     if (method === 'buffer') {
         const { size, unit } = methodParams;
         return {
@@ -80,17 +74,18 @@ export const gatherMethodParams = (state, layer, targetLayer) => {
         };
     }
     if (method === 'areas_and_sectors') {
-        const { size, unit, areas, sectors } = methodParams;
+        const { size, unit, areaCount, sectorCount } = methodParams;
         return {
             areaDistance: size * BUFFER[unit],
-            area_count: areas,
-            sector_count: sectors,
+            areaCount,
+            sectorCount,
             ...common
         };
     }
     if (method === 'aggregate') {
         const { operators } = methodParams;
         const loc = op => Oskari.getMsg(BUNDLE_KEY, `AnalyseView.aggregate.options.${op}`);
+        // TODO: is attribute needed?
         return {
             functions: operators,
             locales: operators.map(op => loc(op)),
@@ -104,7 +99,8 @@ export const gatherMethodParams = (state, layer, targetLayer) => {
         };
     }
     // add target layerId for rest
-    common.layerId = isTempLayer(targetLayer) ? '-1' : targetId;
+    const targetIsTemp = isTempLayer(targetLayer);
+    common.layerId = targetIsTemp ? '-1' : targetId;
     if (method === 'difference') {
         // difference validates params on gatherSelections
         const { property, targetProperty, joinKey } = methodParams;
@@ -128,8 +124,9 @@ export const gatherMethodParams = (state, layer, targetLayer) => {
     }
     if (method === 'clip' || method === 'intersect') {
         const { operator } = methodParams;
+        const features = targetIsTemp ? [tempLayer.getFeatureAsGeoJSON()] : [];
         return {
-            features: [],
+            features,
             operator,
             ...common
         };

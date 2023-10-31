@@ -51,6 +51,7 @@ export const isTempLayer = (layer) => {
 
 export const getProperties = (layer) => {
     // userlayer can't use normal properties because them values are inside property_json)
+        // TODO: hasPreProcessedProperties etc to get rid of userlayer
     if (!layer || isUserLayer(layer)) {
         return [];
     }

@@ -6,16 +6,15 @@ import { InfoIcon } from 'oskari-ui/components/icons';
 import { IconButton } from 'oskari-ui/components/buttons';
 import { Label, RadioGroup, InlineGroup } from './styled';
 import { UpOutlined, DownOutlined } from '@ant-design/icons';
-import { PROPERTIES, LIMITS } from '../constants';
+import { PROPERTIES, LIMITS, METHOD_OPTIONS } from '../constants';
 import { getProperties } from '../service/AnalyseHelper';
 
-const SKIP_SELECTION = ['difference', 'spatial_join'];
 const propOptions = Object.values(PROPERTIES);
 
 export const PropertySelection = ({ controller, state, layer }) => {
     const { method, properties: { type, selected }} = state;
     const [showList, setShowList] = useState(type === PROPERTIES.SELECT);
-    if (SKIP_SELECTION.includes(method)) {
+    if (METHOD_OPTIONS[method]?.skipPropertySelection) {
         return null;
     }
     const properties = getProperties(layer);
@@ -27,13 +26,13 @@ export const PropertySelection = ({ controller, state, layer }) => {
     const onTypeChange = type => {
         setShowList(type === PROPERTIES.SELECT);
         controller.setProperties('type', type);
-    }
+    };
     const isDisabled = type => {
         if (properties.length === 0 && type !== PROPERTIES.NONE) {
             return true;
         }
         if (type === PROPERTIES.ALL) {
-            return properties.length <= LIMITS.properties;
+            return properties.length > LIMITS.properties;
         }
         return false;
     };
