@@ -41,7 +41,7 @@ export const Tools = ({ controller, filter, featureIds }) => {
                 ))}
             </RadioGroup>
             <Space/>
-            <Button onClick={() => controller.removeSelections()} disabled={!featureIds.length}>
+            <Button type='primary' onClick={() => controller.removeSelections()} disabled={!featureIds.length}>
                 <Message messageKey='AnalyseView.content.selectionTools.button.empty' />
             </Button>
         </Content>

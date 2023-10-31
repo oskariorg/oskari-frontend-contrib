@@ -91,6 +91,12 @@ class Handler extends StateHandler {
                     // feature is stored to temp layer remove from draw layer
                     this._closeDrawHelper();
                 }
+            },
+            WFSFeaturesSelectedEvent: (event) => {
+                const layerId = event.getMapLayer().getId();
+                if (this.getState().layerId === layerId) {
+                    this.notify();
+                }
             }
         };
         Object.getOwnPropertyNames(handlers).forEach(p => sandbox.registerForEventByName(this, p));
@@ -125,6 +131,10 @@ class Handler extends StateHandler {
             };
             this.sandbox.postRequestByName('userinterface.UpdateExtensionRequest', [extension, 'attach']);
         }
+    }
+
+    clearSelections () {
+        this.instance.emptySelections(this.getState().layerId);
     }
 
     showDrawHelpper (type) {
@@ -363,6 +373,7 @@ const wrapped = controllerMixin(Handler, [
     'setEnabled',
     'addTempLayer',
     'removeLayer',
+    'clearSelections',
     'showDrawHelpper',
     'openStyleEditor',
     'openFlyout',
