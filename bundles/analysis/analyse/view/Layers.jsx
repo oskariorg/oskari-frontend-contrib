@@ -45,7 +45,7 @@ export const Layers = ({ controller, state, layers }) => {
                             </Radio.Choice>
                             <MetadataIcon metadataId={layer.getMetadataIdentifier()} />
                             <IconButton type='delete'
-                                onClick={() => controller.removeLayer(layer.getId())} />
+                                onClick={() => controller.removeLayer(layerId)} />
                         </LayerBox>
                     );
                 })}

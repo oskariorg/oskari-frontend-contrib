@@ -77,7 +77,7 @@ class Handler extends StateHandler {
             AfterMapLayerRemoveEvent: (event) => {
                 const layerId = event.getMapLayer().getId();
                 if (this.getState().layerId === layerId) {
-                    this.setAnalysisLayerId();
+                    this._onSelectedRemove(layerId)
                 } else {
                     // selected layers aren't stored to state, trigger change
                     this.notify();
@@ -153,6 +153,12 @@ class Handler extends StateHandler {
         this.sandbox.postRequestByName('DrawTools.StopDrawingRequest', [DRAW_ID, true, true]);
     }
 
+    _onSelectedRemove (removedId) {
+        const allLayers = [ ...this._getAnalysisLayers(), ...this.getState().tempLayers ];
+        const layerId = allLayers.find(l => l.getId() !== removedId)?.getId();
+        this.setAnalysisLayerId(layerId);
+    }
+
     setAnalysisLayerId (layerId) {
         const layer = this._findLayer(layerId);
         showInfosForLayer(layer);
@@ -204,19 +210,22 @@ class Handler extends StateHandler {
         this.updateState({ tempLayers, layerId });
     }
 
-    removeLayer (layerId) {
-        if (this.sandbox.isLayerAlreadySelected()) {
-            this.sandbox.postRequestByName('RemoveMapLayerRequest', [layerId]);
+    removeLayer (removedId) {
+        if (this.sandbox.isLayerAlreadySelected(removedId)) {
+            this.sandbox.postRequestByName('RemoveMapLayerRequest', [removedId]);
             // listens remove event
             return;
         }
-        const { tempLayers } = this.getState();
-        const layer = tempLayers.find(l => l.getId() === layerId);
+        const { tempLayers, layerId } = this.getState();
+        const layer = tempLayers.find(l => l.getId() === removedId);
         if (!layer) {
             return;
         }
         this._getFeatureSource().removeFeature(layer.getFeature());
         this.updateState({ tempLayers: tempLayers.filter(l => l.getId() !== layerId) });
+        if (removedId === layerId) {
+            this._onSelectedRemove(removedId);
+        }
     }
 
     _findLayer (layerId) {
