@@ -6,7 +6,6 @@ Oskari.registerLocalization(
         "title": "Analys",
         "flyouttitle": "Analys",
         "desc": "",
-        "btnTooltip": "Analys",
         "NotLoggedView": {
             "discountedNotice": "(!) Analysfunktionen fungerar i nuvarande läge bristfälligt. Vi kan tyvärr inte ge stöd i dess användning.",
             "text": "Med häjlp av Analys funktion man kan göra enkla geografiska analys. Analyser kan göras för data produkter. Endast inloggade användare kan göra analys. Logga in <a href=\"/web/sv/login\">här</a>.",
@@ -25,10 +24,6 @@ Oskari.registerLocalization(
                 "noProperties": "Kartlager har inga egenskaper",
                 "features": {
                     "title": "Tillägg objekt",
-                    "buttons": {
-                        "cancel": "Avbryt",
-                        "finish": "Färdig"
-                    },
                     "tooltips": {
                         "point": "Tilllägg en tillfällig punkt för en grund av analys.",
                         "line": "Tilllägg en tillfällig linje för en grund av analys.",
@@ -52,35 +47,6 @@ Oskari.registerLocalization(
                     "area": {
                         "title": "Tilllägg tillfällig region",
                         "add": "Rita en linje (eller linjer). Klicka hörnpunkter (bl.a. startpunkt) på kartan. Du kan också göra ett hål till området genom att hålla nere ALT-tangenten. Till slut dubbelklicka en slutpunkt och tryck \"Färdig\". Linjen visas på \"Kartlager\" listan med namn \"Tillfällig linje x\". X är linjens ordningstal. Ta linj(er) bort genom att klicka \"Avbryt\"."
-                    }
-                },
-                "drawFilter": {
-                    "title": "Klippning",
-                    "buttons": {
-                        "cancel": "Avbryt",
-                        "finish": "Färdig"
-                    },
-                    "tooltip": {
-                        "point": "Klippa utvalda linjen med en punkt",
-                        "line": "Klippa utvalda regionen med en linje",
-                        "edit": "Klippa utvalda regionen med en annan region",
-                        "remove": "Ta bort klippning"
-                    },
-                    "dialog": {
-                        "modes": {
-                            "point": {
-                                "title": "Klippa linjen med en punkt",
-                                "message": "Klippa en del av linjen. Klippningspunkter är antecknade med röda snedrutor. Om linjen agerar en cirkel, punkter är på varandra. Flytta punkter genom att dra dem med en datormus. Resultaten har antecknats med en röd linje. Till slut klicka \"Färdig\"."
-                            },
-                            "line": {
-                                "title": "Klippa regionen med en linje",
-                                "message": "Rita en linje över regionen. Klicka brytpunkter av kantlinjen och slutligen dubbelklicka slutpunkten. Flytta brytpunkter genom att dra dem med en datormus. Resultaten har antecknats med en blå region. Om du vill byta resultatsregionen, klicka en region du vill. Till slut klicka \"Färdig\"."
-                            },
-                            "edit": {
-                                "title": "Klicka regionen med en annan region",
-                                "message": "Rita en region ovanpå en klippandes region. Klicka hörnpunkter och till slut dubbelklicka en sista hörnpunkt. Flytta hörnpunkter genom att dra dem med datormus. Resultaten har antecknats med en blå region. Om du vill byta resultatsregionen, klicka en region du vill. Till slut klicka \"Färdig\"."
-                            }
-                        }
                     }
                 },
                 "selectionTools": {
@@ -271,7 +237,6 @@ Oskari.registerLocalization(
                 "aggreLabel": "Attribut data för statistiska mått",
                 "aggreLabelTooltip": "Välj högst {limit} attributer. Statistiska mått beräknas till dem.",
                 "labelTooltip": "Välj högst {limit} attributer som tas med i resultaten.",
-                "tooltip": "",
                 "options": {
                     "all": "Alla",
                     "none": "Inga",
@@ -286,16 +251,11 @@ Oskari.registerLocalization(
                 "defaultStyle": "Förvalt utseende"
             },
             "buttons": {
-                "save": "Lagra och sluta",
                 "analyse": "Gör analys",
                 "data": "Mera kartlager"
             },
-            "help": "Anvisning",
             "success": {
-                "layerAdded": {
-                    "title": "Analys lyckades.",
-                    "message": "Analys är färdig. Ett nyt analyslager {layer} har tilllagt. Du kan hitta sen på \"Egen data\" menu."
-                }
+                "layerAdded": "Analys är färdig. Ett nyt analyslager {layer} har tilllagt. Du kan hitta sen på \"Egen data\" menu."
             },
             "error": {
                 "title": "Fel på analys",
@@ -332,22 +292,17 @@ Oskari.registerLocalization(
             },
             "aggregatePopup": {
                 "title": "Analys resultat",
-                "property": "Egenskap",
-                "store": "Lagra",
-                "store_tooltip": "Lagra geometri som tillfällig lager",
-                "close": "Stäng"
+                "property": "Egenskap"
             }
         },
         "StartView": {
             "discountedNotice": "(!) Analysfunktionen fungerar i nuvarande läge bristfälligt. Vi kan tyvärr inte ge stöd i dess användning.",
             "text": "Med hjälp av Analys funktionen du kan göra enkla analys för kartlager som innehåller objekt data. Färdiga analys du kan hitta på \"Egna data\".",
-            "layersWithFeatures": "Du kan göra välja objekt endast från ett kartlager. Välj ett kartlager. Märk att andra valen tas bort.",
             "infoseen": {
                 "label": "Visa inte det här meddelande igen."
             },
             "buttons": {
-                "continue": "Börja analys",
-                "cancel": "Avbryt"
+                "continue": "Börja analys"
             }
         },
         "personalDataTab": {

@@ -6,7 +6,6 @@ Oskari.registerLocalization(
         "title": "Analyysi",
         "flyouttitle": "Analyysi",
         "desc": "",
-        "btnTooltip": "Analyysi",
         "NotLoggedView": {
             "discountedNotice": "(!) Nykyinen analyysityökalu ei valitettavasti toimi enää täydellisesti. Emme pysty tarjoamaan sen käyttöön tukea.",
             "text": "Analyysi-toiminnon avulla voit tehdä yksinkertaisia paikkatietoanalyyseja kohdetietoja sisältäville karttatasoille. Toiminto edellyttää kirjautumista.",
@@ -25,10 +24,6 @@ Oskari.registerLocalization(
                 "noProperties": "Tasolla ei ole ominaisuustietoja",
                 "features": {
                     "title": "Lisäys",
-                    "buttons": {
-                        "cancel": "Peruuta",
-                        "finish": "Valmis"
-                    },
                     "tooltips": {
                         "point": "Lisää väliaikainen piste käytettäväksi analyysin pohjana.",
                         "line": "Lisää väliaikainen viiva käytettäväksi analyysin pohjana.",
@@ -52,35 +47,6 @@ Oskari.registerLocalization(
                     "area": {
                         "title": "Lisää väliaikainen alue",
                         "add": "Piirrä alue (tai alueita). Klikkaa kulmapisteitä. Lopuksi kaksoisklikkaa päätepistettä. Voit tehdä alueeseen reiällä pitämällä pohjassa ALT-näppäintä. Paina Valmis-painiketta. Tämän jälkeen alue näkyy Karttatasot-listalla nimellä Väliaikainen alue x, jossa x on alueen järjestysnumero. Poista alueet painamalla Peruuta -painiketta."
-                    }
-                },
-                "drawFilter": {
-                    "title": "Leikkaus",
-                    "buttons": {
-                        "cancel": "Peruuta",
-                        "finish": "Valmis"
-                    },
-                    "tooltip": {
-                        "point": "Leikkaa valittua viivaa pisteellä.",
-                        "line": "Leikkaa valittua aluetta viivalla.",
-                        "edit": "Leikkaa valittua aluetta toisella alueella.",
-                        "remove": "Poista leikkaus"
-                    },
-                    "dialog": {
-                        "modes": {
-                            "point": {
-                                "title": "Leikkaa viivaa pisteellä",
-                                "message": "Leikkaa osa viivasta. Leikkauspisteet on merkitty punaisilla vinoneliöillä. Jos viiva muodostaa ympyrän, pisteet ovat päällekkäin. Siirrä pisteitä raahaamalla niitä hiirellä.  Leikkauksen lopputulos on merkitty punaisella. Lopuksi paina Valmis-painiketta."
-                            },
-                            "line": {
-                                "title": "Leikkaa aluetta viivalla",
-                                "message": "Piirrä viiva leikattavan alueen yli. Klikkaa viivan taitepisteitä (mukaan lukien alkupiste) ja lopuksi kaksoisklikkaa päätepistettä. Siirrä taitepisteitä raahaamalla niitä hiirellä. Leikkauksen lopputulos on merkitty sinisellä. Jos haluat vaihtaa toiseen alueeseen, klikkaa sitä. Lopuksi paina Valmis-painiketta."
-                            },
-                            "edit": {
-                                "title": "Leikkaa aluetta toisella alueella",
-                                "message": "Piirrä alue leikattavan alueen päälle. Klikkaa alueen kulmapisteitä ja lopuksi kaksoisklikkaamalla viimeistä kulmapistettä. Siirrä kulmapisteitä raahaamalla niitä hiirellä. Leikkauksen lopputulos on merkitty sinisellä. Jos haluat vaihtaa toiseen alueeseen, klikkaa sitä. Lopuksi paina Valmis-painiketta."
-                            }
-                        }
                     }
                 },
                 "selectionTools": {
@@ -271,7 +237,6 @@ Oskari.registerLocalization(
                 "aggreLabel": "Ominaisuustiedot joille tunnusluvut lasketaan",
                 "aggreLabelTooltip": "Valitse enintään {limit} ominaisuustietoa, joille lasketaan tunnusluvut.",
                 "labelTooltip": "Valitse enintään {limit} ominaisuustietoa, jotka otetaan mukaan lopputulokseen.",
-                "tooltip": "",
                 "options": {
                     "all": "Kaikki",
                     "none": "Ei mitään",
@@ -286,16 +251,11 @@ Oskari.registerLocalization(
                 "defaultStyle": "Oletustyyli"
             },
             "buttons": {
-                "save": "Tallenna ja lopeta",
                 "analyse": "Tee analyysi",
                 "data": "Lisää karttatasoja"
             },
-            "help": "Ohje",
             "success": {
-                "layerAdded": {
-                    "title": "Analyysi onnistui",
-                    "message": "Analyysi on tehty. Karttatasoihin on lisätty uusi taso: {layer}. Myöhemmin löydät analyysin Omat tiedot -valikon Analyysit-välilehdeltä."
-                }
+                "layerAdded": "Analyysi on tehty. Karttatasoihin on lisätty uusi taso: {layer}. Myöhemmin löydät analyysin Omat tiedot -valikon Analyysit-välilehdeltä."
             },
             "error": {
                 "title": "Virhe",
@@ -332,22 +292,17 @@ Oskari.registerLocalization(
             },
             "aggregatePopup": {
                 "title": "Analyysin tulokset",
-                "property": "Ominaisuus",
-                "store": "Tallenna",
-                "store_tooltip": "Säilytä analyysin tulosgeometria väliaikaisena kohteena",
-                "close": "Sulje"
+                "property": "Ominaisuus"
             }
         },
         "StartView": {
             "discountedNotice": "(!) Nykyinen analyysityökalu ei valitettavasti toimi enää täydellisesti. Emme pysty tarjoamaan sen käyttöön tukea.",
             "text": "Analyysi-toiminnon avulla voit tehdä yksinkertaisia paikkatietoanalyyseja kohdetietoja sisältäville karttatasoille. Valmiit analyysit löytyvät Omat tiedot -valikon Analyysit-välilehdeltä.",
-            "layersWithFeatures": "Analyysi-toiminnossa voit tehdä valintoja vain yhdelle valitsemallesi karttatasolle. Valitse, miltä tasolta haluat tehdä valinnat. Muiden tasojen valinnat poistetaan.",
             "infoseen": {
                 "label": "Älä näytä tätä viestiä uudelleen."
             },
             "buttons": {
-                "continue": "Siirry analyysiin",
-                "cancel": "Poistu"
+                "continue": "Siirry analyysiin"
             }
         },
         "personalDataTab": {

@@ -67,7 +67,7 @@ export const PropertySelection = ({ controller, state, layer }) => {
         <Fragment>
             <Label>
                 <Message messageKey={`AnalyseView.params.${locKey}`} />
-                <InfoIcon title={<Message messageKey={`AnalyseView.params.${locKey}Tooltip`} />} />
+                <InfoIcon title={<Message messageKey={`AnalyseView.params.${locKey}Tooltip`} messageArgs={{ limit: LIMITS.properties }}/>} />
             </Label>
             <RadioGroup value={type}
                 onChange={e => onTypeChange(e.target.value)} >

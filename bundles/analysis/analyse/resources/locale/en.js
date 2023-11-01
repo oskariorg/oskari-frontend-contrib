@@ -6,7 +6,6 @@ Oskari.registerLocalization(
         "title": "Analysis",
         "flyouttitle": "Analysis",
         "desc": "",
-        "btnTooltip": "Analysis",
         "NotLoggedView": {
             "discountedNotice": "(!) Current Analysis tool is unfortunately not working properly. We are not able to provide user support for it.",
             "text": "With Analysis function you can make simple spatial analysis for map layers including feature data. The function is available only for logged-in users.",
@@ -25,10 +24,6 @@ Oskari.registerLocalization(
                 "noProperties": "Layer doesn't have properties",
                 "features": {
                     "title": "Add Feature",
-                    "buttons": {
-                        "cancel": "Cancel",
-                        "finish": "Done"
-                    },
                     "tooltips": {
                         "point": "Add a temporary point to be used in the analysis.",
                         "line": "Add a temporary line to be used in the analysis.",
@@ -52,35 +47,6 @@ Oskari.registerLocalization(
                     "area": {
                         "title": "Add Area",
                         "add": "Draw one or more areas. Click corner points. Finally double-click an ending point. You can make a hole to the area by pressing alt-key in the keyboard. Press the \"Done\" button. The area(s) will be added to the Map Layer list at the analysis function. The area's name is \"Temporary line X\", where X is an order number. You can remove area(s) by pressing the \"Cancel\" button."
-                    }
-                },
-                "drawFilter": {
-                    "title": "Clipping",
-                    "buttons": {
-                        "cancel": "Cancel",
-                        "finish": "Done"
-                    },
-                    "tooltip": {
-                        "point": "Draw an intersection point to clip the selected line.",
-                        "line": "Draw an intersection line to clip the selected area.",
-                        "edit": "Draw an intersection area to clip the selected area.",
-                        "remove": "Remove all intersections without saving them."
-                    },
-                    "dialog": {
-                        "modes": {
-                            "point": {
-                                "title": "Intersection Point for Line",
-                                "message": "Clip the line to two lines with intersection points. Intersection points are marked with red diamonds. If the line is circular, intersection points are on top of one another. Move the intersection points by dragging them with a mouse. The result is highlighted with red. Finally press the \"Done\" button."
-                            },
-                            "line": {
-                                "title": "Intersection Line for Area",
-                                "message": "Clip the area to two areas with an intersection line. Draw a line over the area. Click breaking points (including a starting point). Finally double-click an ending point. You can move breaking points by dragging them with a mouse. The result area is highlighted with blue. You can change a highlighted area by clicking another area. Finally press the \"Done\" button."
-                            },
-                            "edit": {
-                                "title": "Intersection Area for Area",
-                                "message": "Clip the area to two areas with an intersection line. Draw an area over the area. Click corner points (including a starting point). Finally double-click an ending point. You can move breaking points by dragging them with a mouse. The result area is highlighted with blue. You can change a highlighted area by clicking another area. Finally press the \"Done\" button."
-                            }
-                        }
                     }
                 },
                 "selectionTools": {
@@ -110,9 +76,7 @@ Oskari.registerLocalization(
                         "tooltip": "Add buffer around the selected features. You can use buffers in other analysis."
                     },
                     "aggregate": {
-                        "id": "oskari_analyse_aggregate",
                         "label": "Descriptive statistic",
-                        "classForPreview": "aggregate",
                         "tooltip": "Compute descriptive statistic for the selected features. Authorised features are not included in the analysis."
                     },
                     "union": {
@@ -273,7 +237,6 @@ Oskari.registerLocalization(
                 "aggreLabel": "Attributes for descriptive statistic",
                 "aggreLabelTooltip": "Select at most {limit} attributes. Descriptive statistic are computed for these attributes.",
                 "labelTooltip": "Select at most {limit} attributes into the result.",
-                "tooltip": "Give analysis method appropriate parameters.",
                 "options": {
                     "all": "All",
                     "none": "None",
@@ -288,16 +251,11 @@ Oskari.registerLocalization(
                 "defaultStyle": "Default style"
             },
             "buttons": {
-                "save": "Save and finish",
                 "analyse": "Make analysis",
                 "data": "More map layers"
             },
-            "help": "Help",
             "success": {
-                "layerAdded": {
-                    "title": "Analysis succeeded.",
-                    "message": "Analysis has been done. The result is at the map layer {layer}. Later you can find your analysis in the My data menu."
-                }
+                "layerAdded": "Analysis has been done. The result is at the map layer {layer}. Later you can find your analysis in the My data menu."
             },
             "error": {
                 "title": "Error",
@@ -334,22 +292,17 @@ Oskari.registerLocalization(
             },
             "aggregatePopup": {
                 "title": "Analysis results",
-                "property": "Property",
-                "store": "Save",
-                "store_tooltip": "Save result geometry as temporary layer",
-                "close": "Close"
+                "property": "Property"
             }
         },
         "StartView": {
             "discountedNotice": "(!) Current Analysis tool is unfortunately not working properly. We are not able to provide user support for it.",
             "text": "With this function you can make simple spatial analysis for map layers including feature data. The finished analysis you can find at the tab Analysis in the menu Own data.",
-            "layersWithFeatures": "You can make analysis only for one map layer. Select the map layer. Other selections are removed.",
             "infoseen": {
                 "label": "Do not show this message again."
             },
             "buttons": {
-                "continue": "Start analysis",
-                "cancel": "Cancel"
+                "continue": "Start analysis"
             }
         },
         "personalDataTab": {

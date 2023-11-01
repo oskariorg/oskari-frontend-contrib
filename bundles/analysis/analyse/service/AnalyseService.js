@@ -75,7 +75,7 @@ Oskari.clazz.define(
             mergeLayers.forEach(layerId => this.sandbox.postRequestByName('RemoveMapLayerRequest', [layerId]));
 
             const layer = Oskari.getLocalized(name)
-            Messaging.success(this.loc('AnalyseView.success.layerAdded.message', { layer }));
+            Messaging.success(this.loc('AnalyseView.success.layerAdded', { layer }));
         },
 
         loadAnalyseLayers: function () {
