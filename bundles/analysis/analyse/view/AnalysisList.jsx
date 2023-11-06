@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Message } from 'oskari-ui';
 import { Table, getSorterFor, ToolsContainer } from 'oskari-ui/components/Table';
-import { BUNDLE_KEY } from './constants';
+import { BUNDLE_KEY } from '../constants';
 import { DeleteButton } from 'oskari-ui/components/buttons';
 
 export const AnalysisList = ({ data = [], controller, loading }) => {

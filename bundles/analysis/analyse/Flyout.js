@@ -1,3 +1,8 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { FlyoutContent } from './view/FlyoutContent';
+import { LocaleProvider } from 'oskari-ui/util';
+import { COOKIE_KEY, COOKIE_SKIP_VALUE } from './constants';
 /**
  * @class Oskari.analysis.bundle.analyse.Flyout
  *
@@ -18,9 +23,6 @@ Oskari.clazz.define(
     function (instance) {
         this.instance = instance;
         this.container = null;
-        this.state = null;
-        this.template = null;
-        this.view = null;
     }, {
         /**
          * @public @method getName
@@ -45,30 +47,11 @@ Oskari.clazz.define(
          *
          */
         setEl: function (el, flyout) {
-            this.container = jQuery(el[0]);
-            this.flyout = flyout;
-            this.container.addClass('analyse');
-            this.flyout.addClass('analyse');
+            this.container = el[0];
+            this.container.classList.add('analyse');
+            flyout.addClass('analyse');
         },
-
-        /**
-         * @public @method startPlugin
-         * Interface method implementation, assigns the HTML templates
-         * that will be used to create the UI
-         *
-         *
-         */
-        startPlugin: function () {
-            this.template = jQuery('<div></div>');
-        },
-
-        /**
-         * @public @method stopPlugin
-         * Interface method implementation, does nothing atm
-         *
-         *
-         */
-        stopPlugin: function () {},
+        startPlugin: function () {},
 
         /**
          * @public @method getTitle
@@ -77,9 +60,16 @@ Oskari.clazz.define(
          * @return {String} localized text for the title of the flyout
          */
         getTitle: function () {
-            return this.instance.getLocalization('flyouttitle');
+            return this.instance.loc('flyouttitle');
         },
-
+        onOpen: function () {
+            // const cookie = new URLSearchParams(document.cookie.replaceAll('&', '%26').replaceAll('; ', '&')).get(COOKIE_KEY);
+            if (jQuery.cookie(COOKIE_KEY) === COOKIE_SKIP_VALUE) {
+                this.instance.setEnabled(true);
+            } else {
+                this.render();
+            }
+        },
         /**
          * @public @method getDescription
          *
@@ -88,42 +78,7 @@ Oskari.clazz.define(
          * flyout
          */
         getDescription: function () {
-            return this.instance.getLocalization('desc');
-        },
-
-        /**
-         * @public @method getOptions
-         * Interface method implementation, does nothing atm
-         *
-         *
-         */
-        getOptions: function () {},
-
-        /**
-         * @public @method setState
-         * Interface method implementation, does nothing atm
-         *
-         * @param {Object} state
-         * State that this component should use
-         *
-         */
-        setState: function (state) {
-            this.state = state;
-        },
-
-        /**
-         * @public @method createUi
-         * Creates the UI for a fresh start.
-         * Selects the view to show based on user (guest/loggedin)
-         *
-         *
-         */
-        createUi: function () {
-            this.view = Oskari.clazz.create(
-                'Oskari.analysis.bundle.analyse.view.StartView',
-                this.instance,
-                this.instance.getLocalization('StartView')
-            );
+            return this.instance.loc('desc');
         },
 
         /**
@@ -131,22 +86,16 @@ Oskari.clazz.define(
          *
          *
          */
-        refresh: function () {
-            const flyout = this.container;
-            const layersWithSelections = this.instance.getLayerIdsWithSelections();
-            flyout.empty();
-
-            if (!Oskari.user().isLoggedIn()) {
-                this.view = Oskari.clazz.create('Oskari.analysis.bundle.analyse.view.NotLoggedIn',
-                    this.instance,
-                    this.instance.getLocalization('NotLoggedView'));
-                this.view.render(flyout);
-            } else if (jQuery.cookie('analyse_info_seen') !== '1' || layersWithSelections.length > 1) {
-                this.view.render(flyout);
-                flyout.parent().parent().css('display', '');
-            } else {
-                this.instance.enableAnalyseMode();
+        render: function () {
+            if (!this.container) {
+                return;
             }
+            const content = (
+                <LocaleProvider value={{ bundleKey: this.instance.getName() }}>
+                    <FlyoutContent setEnabled={enabled => this.instance.setEnabled(enabled)} />
+                </LocaleProvider>
+            );
+            ReactDOM.render(content, this.container);
         }
     }, {
         /**

@@ -6,7 +6,6 @@ Oskari.registerLocalization(
         "title": "Analysis",
         "flyouttitle": "Analysis",
         "desc": "",
-        "btnTooltip": "Analysis",
         "NotLoggedView": {
             "discountedNotice": "(!) Current Analysis tool is unfortunately not working properly. We are not able to provide user support for it.",
             "text": "With Analysis function you can make simple spatial analysis for map layers including feature data. The function is available only for logged-in users.",
@@ -17,15 +16,14 @@ Oskari.registerLocalization(
             "title": "Analysis",
             "content": {
                 "label": "Map Layers",
-                "drawToolsLabel": "Feature Tools",
+                "selectionToolsLabel": "Feature Tools",
                 "tooltip": "Select one map layer for analysis. You can search more map layers by clicking \"Add map layer\" and selecting a map layer from the list. You can focus your map view to the place you  want by dragging the map with a mouse or by clicking \"Search places\" and searching the place you want.",
-                "drawToolsTooltip": "Add a temporary feature, clip an existing feature or select features with a geometry you draw.",
+                "selectionToolsTooltip": "Add a temporary feature, clip an existing feature or select features with a geometry you draw.",
+                "noLayersSelected": "No map layers selected",
+                "noLayersForMethod": "No suitable map layers for method",
+                "noProperties": "Layer doesn't have properties",
                 "features": {
                     "title": "Add Feature",
-                    "buttons": {
-                        "cancel": "Cancel",
-                        "finish": "Done"
-                    },
                     "tooltips": {
                         "point": "Add a temporary point to be used in the analysis.",
                         "line": "Add a temporary line to be used in the analysis.",
@@ -51,38 +49,15 @@ Oskari.registerLocalization(
                         "add": "Draw one or more areas. Click corner points. Finally double-click an ending point. You can make a hole to the area by pressing alt-key in the keyboard. Press the \"Done\" button. The area(s) will be added to the Map Layer list at the analysis function. The area's name is \"Temporary line X\", where X is an order number. You can remove area(s) by pressing the \"Cancel\" button."
                     }
                 },
-                "drawFilter": {
-                    "title": "Clipping",
-                    "buttons": {
-                        "cancel": "Cancel",
-                        "finish": "Done"
-                    },
-                    "tooltip": {
-                        "point": "Draw an intersection point to clip the selected line.",
-                        "line": "Draw an intersection line to clip the selected area.",
-                        "edit": "Draw an intersection area to clip the selected area.",
-                        "remove": "Remove all intersections without saving them."
-                    },
-                    "dialog": {
-                        "modes": {
-                            "point": {
-                                "title": "Intersection Point for Line",
-                                "message": "Clip the line to two lines with intersection points. Intersection points are marked with red diamonds. If the line is circular, intersection points are on top of one another. Move the intersection points by dragging them with a mouse. The result is highlighted with red. Finally press the \"Done\" button."
-                            },
-                            "line": {
-                                "title": "Intersection Line for Area",
-                                "message": "Clip the area to two areas with an intersection line. Draw a line over the area. Click breaking points (including a starting point). Finally double-click an ending point. You can move breaking points by dragging them with a mouse. The result area is highlighted with blue. You can change a highlighted area by clicking another area. Finally press the \"Done\" button."
-                            },
-                            "edit": {
-                                "title": "Intersection Area for Area",
-                                "message": "Clip the area to two areas with an intersection line. Draw an area over the area. Click corner points (including a starting point). Finally double-click an ending point. You can move breaking points by dragging them with a mouse. The result area is highlighted with blue. You can change a highlighted area by clicking another area. Finally press the \"Done\" button."
-                            }
-                        }
-                    }
-                },
                 "selectionTools": {
-                    "title": "Select Feature",
+                    "title": "Select features",
                     "description": "Select features geometrically. Define the features to be selected by drawing a geometry. The selection applies only to the selected map layer.",
+                    "filter": {
+                        "all": "All features",
+                        "bbox": "Features visible on the map",
+                        "features": "Features selected on the layer",
+                        "featuresTooltip": "Selected features are highlighted on the map and feature data table."
+                    },
                     "button": {
                         "empty": "Remove Selection"
                     }
@@ -95,102 +70,58 @@ Oskari.registerLocalization(
             "method": {
                 "label": "Method",
                 "tooltip": "Select a method to be used in the analysis. You can read guidance for one method by clicking the i-icon next to its name.",
-                "options": [
-                    {
-                        "id": "oskari_analyse_buffer",
+                "options": {
+                    "buffer": {
                         "label": "Buffer",
-                        "classForMethod": "buffer",
-                        "selected": true,
                         "tooltip": "Add buffer around the selected features. You can use buffers in other analysis."
                     },
-                    {
-                        "id": "oskari_analyse_aggregate",
+                    "aggregate": {
                         "label": "Descriptive statistic",
-                        "classForPreview": "aggregate",
                         "tooltip": "Compute descriptive statistic for the selected features. Authorised features are not included in the analysis."
                     },
-                    {
-                        "id": "oskari_analyse_union",
+                    "union": {
                         "label": "Union",
-                        "classForPreview": "union",
                         "tooltip": "Join the selected features in one new feature."
                     },
-                    {
-                        "id": "oskari_analyse_clip",
+                    "clip": {
                         "label": "Clipping",
-                        "classForPreview": "clip",
                         "tooltip": "Clip the selected features with features on the clipping layer. Only the features inside the features on the clipping layer are included in the result."
                     },
-                    {
-                        "id": "oskari_analyse_intersect",
+                    "intersect": {
                         "label": "Geometric filter",
-                        "classForPreview": "intersect",
                         "tooltip": "Select features from the layer to be intersected. The features partially or totally inside the features on the intersecting layer are selected."
                     },
-                    {
-                        "id": "oskari_analyse_layer_union",
+                    "layer_union": {
                         "label": "Analysis Layer Union",
-                        "classForPreview": "layer_union",
                         "tooltip": "Combine the selected map layers. You can combine them only if they have same attributes."
                     },
-                    {
-                        "id": "oskari_analyse_areas_and_sectors",
+                    "areas_and_sectors": {
                         "label": "Buffers and sectors",
-                        "classForPreview": "areas_and_sectors",
                         "tooltip": "Add buffers and sectors around the selected features."
                     },
-                    {
-                        "id": "oskari_analyse_difference",
+                    "difference": {
                         "label": "Difference Computation",
-                        "classForPreview": "difference",
                         "tooltip": "Compute a difference between two map layers. Map layers present the same location at two different times."
                     },
-                    {
-                        "id": "oskari_analyse_spatial_join",
+                    "spatial_join": {
                         "label": "Spatial join",
-                        "classForPreview": "spatial_join",
                         "tooltip": "Join attribute data of two different layers. Feature attributes are joined based on location."
                     }
-                ]
+                }
             },
             "aggregate": {
                 "label": "Descriptive statistic",
                 "labelTooltip": "Select descriptive statistic to be computed based on feature attributes.",
-                "options": [
-                    {
-                        "id": "oskari_analyse_Count",
-                        "label": "Feature count",
-                        "selected": true
-                    },
-                    {
-                        "id": "oskari_analyse_Sum",
-                        "label": "Sum"
-                    },
-                    {
-                        "id": "oskari_analyse_Min",
-                        "label": "Minimum"
-                    },
-                    {
-                        "id": "oskari_analyse_Max",
-                        "label": "Maximum"
-                    },
-                    {
-                        "id": "oskari_analyse_Average",
-                        "label": "Average"
-                    },
-                    {
-                        "id": "oskari_analyse_StdDev",
-                        "label": "Standard deviation"
-                    },
-                    {
-                        "id": "oskari_analyse_Median",
-                        "label": "Median"
-                    },
-                    {
-                        "id": "oskari_analyse_NoDataCnt",
-                        "label": "Count of authorised features"
-                    }
-                ],
+                "options": {
+                    "Count" : "Feature count",
+                    "Sum": "Sum",
+                    "Min": "Minimum",
+                    "Max": "Maximum",
+                    "Average": "Average",
+                    "StdDev": "Standard deviation",
+                    "Median": "Median",
+                    "NoDataCnt": "Count of authorised features"
+                },
                 "attribute": "Select attribute",
                 "footer": "Authorised features are not included in the analysis.",
                 "aggregateAdditionalInfo": "Note! You have selected one or more attributes containing textual data. Only the feature count can be calculated for them. If the feature count is not selected, textual attribute data are not included in the analysis result."
@@ -234,11 +165,11 @@ Oskari.registerLocalization(
                 "label": "Buffers and sectors",
                 "labelTooltip": "Define a size and a number of buffers and a number of sectors.",
                 "area_count": "Buffer count",
-                "area_count_tooltip": "Count between 0-12",
+                "area_count_tooltip": "Count between 0-{max}",
                 "area_size": "Buffer size",
                 "area_size_tooltip": "Size",
                 "sector_count": "Sector count",
-                "sector_count_tooltip": "Count between 0-12"
+                "sector_count_tooltip": "Count between 0-{max}"
             },
             "difference": {
                 "firstLayer": "Older map layer",
@@ -258,17 +189,10 @@ Oskari.registerLocalization(
                 "intersectingLayer": "Intersecting layer",
                 "intersectingLayerTooltip": "Select an intersecting layer. The features will be selected based on the features on this layer.",
                 "labelTooltipIntersect": "Select which features are included into the result. Intersecting features are at least partially inside the features on the intersecting layer, containing features totally inside. This method is designed for point features. Please use the operator \"Containing features\" for areas. Otherwise the result may have errors.",
-                "options": [
-                    {
-                        "id": "oskari_analyse_intersect",
-                        "label": "Intersecting features",
-                        "selected": true
-                    },
-                    {
-                        "id": "oskari_analyse_contains",
-                        "label": "Containing features"
-                    }
-                ]
+                "options": {
+                    "intersect": "Intersecting features",
+                    "contains": "Containing features"
+                }
             },
             "spatial_join": {
                 "firstLayer": "Feature Layer",
@@ -311,24 +235,13 @@ Oskari.registerLocalization(
             "params": {
                 "label": "Attributes in the result",
                 "aggreLabel": "Attributes for descriptive statistic",
-                "aggreLabelTooltip": "Select at most ten attributes. Descriptive statistic are computed for these attributes.",
-                "labelTooltip": "Select at most ten attributes into the result.",
-                "tooltip": "Give analysis method appropriate parameters.",
-                "options": [
-                    {
-                        "id": "oskari_analyse_all",
-                        "selected": true,
-                        "label": "All"
-                    },
-                    {
-                        "id": "oskari_analyse_none",
-                        "label": "None"
-                    },
-                    {
-                        "id": "oskari_analyse_select",
-                        "label": "Select from list"
-                    }
-                ]
+                "aggreLabelTooltip": "Select at most {limit} attributes. Descriptive statistic are computed for these attributes.",
+                "labelTooltip": "Select at most {limit} attributes into the result.",
+                "options": {
+                    "all": "All",
+                    "none": "None",
+                    "select": "Select from list"
+                }
             },
             "output": {
                 "label": "Feature style",
@@ -338,16 +251,11 @@ Oskari.registerLocalization(
                 "defaultStyle": "Default style"
             },
             "buttons": {
-                "save": "Save and finish",
                 "analyse": "Make analysis",
                 "data": "More map layers"
             },
-            "help": "Help",
             "success": {
-                "layerAdded": {
-                    "title": "Analysis succeeded.",
-                    "message": "Analysis has been done. The result is at the map layer {layer}. Later you can find your analysis in the My data menu."
-                }
+                "layerAdded": "Analysis has been done. The result is at the map layer {layer}. Later you can find your analysis in the My data menu."
             },
             "error": {
                 "title": "Error",
@@ -379,57 +287,22 @@ Oskari.registerLocalization(
             "infos": {
                 "title": "Attributes",
                 "layer": "Features on the layer",
-                "over10": "have over ten attributes. Please select at most ten attributes into the analysis result. The attributes you can select in the parameters.",
+                "over10": "have over {limit} attributes. Please select at most {limit} attributes into the analysis result. The attributes you can select in the parameters.",
                 "userlayer": "The attribute data from own datasets cannot be used in analyses. Geometries can still be used (buffer, union, clip)."
             },
             "aggregatePopup": {
                 "title": "Analysis results",
-                "property": "Property",
-                "store": "Save",
-                "store_tooltip": "Save result geometry as temporary layer",
-                "close": "Close"
+                "property": "Property"
             }
         },
         "StartView": {
             "discountedNotice": "(!) Current Analysis tool is unfortunately not working properly. We are not able to provide user support for it.",
             "text": "With this function you can make simple spatial analysis for map layers including feature data. The finished analysis you can find at the tab Analysis in the menu Own data.",
-            "layersWithFeatures": "You can make analysis only for one map layer. Select the map layer. Other selections are removed.",
             "infoseen": {
                 "label": "Do not show this message again."
             },
             "buttons": {
-                "continue": "Start analysis",
-                "cancel": "Cancel"
-            }
-        },
-        "categoryform": {
-            "name": {
-                "label": "Name",
-                "placeholder": "Type a map layer name."
-            },
-            "drawing": {
-                "label": "",
-                "point": {
-                    "label": "Point",
-                    "color": "Colour",
-                    "size": "Size"
-                },
-                "line": {
-                    "label": "Line",
-                    "color": "Colour",
-                    "size": "Width"
-                },
-                "area": {
-                    "label": "Area",
-                    "fillcolor": "Fill-in colour",
-                    "linecolor": "Line colour",
-                    "size": "Line width"
-                }
-            },
-            "edit": {
-                "title": "Edit map layer",
-                "save": "Save",
-                "cancel": "Cancel"
+                "continue": "Start analysis"
             }
         },
         "personalDataTab": {

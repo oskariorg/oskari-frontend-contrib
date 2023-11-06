@@ -71,14 +71,14 @@ Oskari.clazz.define('Oskari.analysis.bundle.analyse.Tile',
          * @return {String} localized text for the title of the tile
          */
         getTitle: function () {
-            return this.instance.getLocalization('title');
+            return this.instance.loc('title');
         },
         /**
          * @method getDescription
          * @return {String} localized text for the description of the tile
          */
         getDescription: function () {
-            return this.instance.getLocalization('desc');
+            return this.instance.loc('desc');
         },
         /**
          * @method getOptions

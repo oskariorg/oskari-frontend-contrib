@@ -29,43 +29,10 @@ Oskari.clazz.define("Oskari.analysis.bundle.analyse.AnalyseBundle", function() {
             "src" : "../../../../bundles/analysis/analyse/Flyout.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/analysis/analyse/AggregateAnalyseFilter.js"
-        }, {
-            "type" : "text/javascript",
             "src" : "../../../../bundles/analysis/analyse/Tile.js"
         }, {
             "type" : "text/javascript",
-            "src" : "../../../../bundles/analysis/analyse/view/StartView.js"
-        }, {
-            "type" : "text/javascript",
-            "src" : "../../../../bundles/analysis/analyse/view/NotLoggedIn.js"
-        }, {
-            "type" : "text/javascript",
-            "src" : "../../../../bundles/analysis/analyse/view/StartAnalyse.ol.js"
-        }, {
-            "type" : "text/javascript",
-            "src" : "../../../../bundles/analysis/analyse/view/AnalyseValidations.js"
-        },  {
-            "type" : "text/javascript",
-            "src" : "../../../../bundles/analysis/analyse/view/ContentPanel.ol.js"
-        }, {
-            "type" : "text/javascript",
-            "src" : "../../../../bundles/analysis/analyse/view/DrawControls.js"
-        }, {
-            "type" : "text/javascript",
-            "src" : "../../../../bundles/analysis/analyse/request/AnalyseRequest.js"
-        }, {
-            "type" : "text/javascript",
-            "src" : "../../../../bundles/analysis/analyse/request/AnalyseRequestHandler.js"
-        }, {
-            "type" : "text/javascript",
             "src" : "../../../../bundles/analysis/analyse/service/AnalyseService.js"
-        }, {
-            "type" : "text/javascript",
-            "src" : "../../../../bundles/analysis/analyse/service/AnalyseHelper.js"
-        },{
-            "type" : "text/css",
-            "src" : "../../../../bundles/analysis/analyse/resources/scss/style.scss"
         }],
 
         "locales" : [{
@@ -76,10 +43,6 @@ Oskari.clazz.define("Oskari.analysis.bundle.analyse.AnalyseBundle", function() {
             "lang" : "sv",
             "type" : "text/javascript",
             "src" : "../../../../bundles/analysis/analyse/resources/locale/sv.js"
-        }, {
-            "lang" : "it",
-            "type" : "text/javascript",
-            "src" : "../../../../bundles/analysis/analyse/resources/locale/it.js"
         }, {
             "lang" : "en",
             "type" : "text/javascript",
