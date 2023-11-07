@@ -62,19 +62,20 @@ Oskari.clazz.define(
                 return;
             }
             // TODO: backend { layer, mergeLayers }
-            const { id, name, mergeLayers = [] } = json;
+            const { id, locale, mergeLayers = [] } = json;
             this._addLayerToService(json);
             // Add layer to the map
             this.sandbox.postRequestByName('AddMapLayerRequest', [id]);
             if (featureData) {
                 this.sandbox.postRequestByName('ShowFeatureDataRequest', [id]);
             }
-            // TODO: is this used anymore??
-            // TODO: shouldn't maplayerservice send removelayer request by default on remove layer?
-            // Remove old layers if any
-            mergeLayers.forEach(layerId => this.sandbox.postRequestByName('RemoveMapLayerRequest', [layerId]));
+            // Remove old layers from map and map layer service
+            mergeLayers.forEach(layerId => {
+                this.mapLayerService.removeLayer(layerId);
+                this.sandbox.postRequestByName('RemoveMapLayerRequest', [layerId]);
+            });
 
-            const layer = Oskari.getLocalized(name)
+            const layer = Oskari.getLocalized(locale)?.name || '';
             Messaging.success(this.loc('AnalyseView.success.layerAdded', { layer }));
         },
 
@@ -103,7 +104,7 @@ Oskari.clazz.define(
             if (!skipEvent) {
                 // notify components of added layer if not suppressed
                 var evt = Oskari.eventBuilder('MapLayerEvent')(null, 'add');
-                sandbox.notifyAll(evt); // add the analysis layers programmatically since normal link processing
+                this.sandbox.notifyAll(evt); // add the analysis layers programmatically since normal link processing
             }
         },
         _handleAnalysisLayersResponse: function (layers = []) {
