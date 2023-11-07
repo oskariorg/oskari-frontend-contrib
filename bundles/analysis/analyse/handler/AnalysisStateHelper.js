@@ -61,7 +61,7 @@ export const getInitMethodParams = (method, layer, targetLayer) => {
 };
 
 export const gatherMethodParams = (state, layer, targetLayer) => {
-    const { method, methodParams, targetId } = state;
+    const { method, methodParams, targetId, layerId } = state;
     if (method === 'union') {
         return {};
     }
@@ -95,7 +95,7 @@ export const gatherMethodParams = (state, layer, targetLayer) => {
     }
     if (method === 'layer_union') {
         return {
-            layers: [targetId],
+            layers: [layerId, targetId],
             ...common
         };
     }
