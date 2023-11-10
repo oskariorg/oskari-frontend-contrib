@@ -44,13 +44,14 @@ class Handler extends StateHandler {
     }
 
     _getInitState () {
-        const selections = this.instance.getLayerIdsWithSelections();
-        const layer = selections[0] || this._getAnalysisLayers()[0];
+        const selectionIds = this.instance.getLayerIdsWithSelections();
+        const hasSelections = selectionIds.length > 0;
+        const layer = hasSelections ? this._findLayer(selectionIds[0]) : this._getAnalysisLayers()[0];
         showInfosForLayer(layer);
         const layerId = layer?.getId();
         const name = layer ? layer.getName().substring(0, 15) + '_' : '';
         const method = METHODS[0];
-        const filter = selections[0] ? FILTER.FEATURES : FILTER.BBOX;
+        const filter = hasSelections ? FILTER.FEATURES : FILTER.BBOX;
         const methodParams = getInitMethodParams(method, layer);
         const properties = getInitPropertiesSelections(method, layer);
         return { layerId, targetId: null, method, filter, methodParams, properties, name };
