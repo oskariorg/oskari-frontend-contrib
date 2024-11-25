@@ -8,7 +8,7 @@ export const confirmEdit = (getMessage, onConfirm) => {
         type="primary"
         onClick={() => {
             onConfirm(true);
-            notification.close(key);
+            notification.destroy(key);
         }}>
         {getMessage('ContentEditorView.buttons.yes')}
     </Button>);
