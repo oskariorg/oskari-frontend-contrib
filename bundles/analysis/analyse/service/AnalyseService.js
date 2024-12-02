@@ -96,16 +96,11 @@ Oskari.clazz.define(
                 Messaging.error(this.loc('AnalyseView.error.loadLayersFailed'));
             });
         },
-        _addLayerToService: function (layerJson, skipEvent) {
+        _addLayerToService: function (layerJson, suppressEvent) {
             // Create the layer model
             const layer = this.mapLayerService.createMapLayer(layerJson);
             // Add the layer to the map layer service
-            this.mapLayerService.addLayer(layer);
-            if (!skipEvent) {
-                // notify components of added layer if not suppressed
-                var evt = Oskari.eventBuilder('MapLayerEvent')(null, 'add');
-                this.sandbox.notifyAll(evt); // add the analysis layers programmatically since normal link processing
-            }
+            this.mapLayerService.addLayer(layer, suppressEvent);
         },
         _handleAnalysisLayersResponse: function (layers = []) {
             layers.forEach(layer => this._addLayerToService(layer, true));

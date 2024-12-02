@@ -1,21 +1,21 @@
 {
   "name": "oskari-frontend-contrib",
-  "version": "2.13.0",
+  "version": "2.14.0",
   "description": "These are unofficial bundles for Oskari created by the Oskari community. Many of them add value to your Oskari install, but they come with no official support from the core Oskari team.",
   "keywords": [
     "Oskari"
   ],
   "peerDependencies": {
-    "oskari-frontend": "git+https://git@github.com/oskariorg/oskari-frontend.git#2.13.0"
+    "oskari-frontend": "git+https://git@github.com/oskariorg/oskari-frontend.git#2.14.0"
   },
   "engines": {
-    "node": "^12.22.0 || ^14.17.0 || >=16.0.0",
+    "node": ">=16.20.0",
     "npm": ">=6.0.0"
   },
   "scripts": {},
   "homepage": "https://oskari.org",
   "bugs": {
-    "url": "https://github.com/oskariorg/oskari-docs/issues"
+    "url": "https://github.com/oskariorg/oskari-documentation/issues"
   },
   "repository": {
     "type": "git",
