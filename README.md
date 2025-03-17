@@ -1,4 +1,4 @@
-![alt text](../oskari-frontend/resources/oskari_logo_rgb_horizontal.svg "Oskari logo")
+![alt text](oskari_logo_rgb_horizontal.svg "Oskari logo")
 
 # Oskari frontend contrib
 
