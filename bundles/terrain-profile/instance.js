@@ -1,5 +1,7 @@
 import { showTerrainPopup } from './view/TerrainPopup';
 import { Messaging } from 'oskari-ui/util';
+import './MarkerHandler.js';
+import './resources/css/terrainprofile.css';
 
 Oskari.clazz.define('Oskari.mapframework.bundle.terrain-profile.TerrainProfileBundleInstance',
     function () {
