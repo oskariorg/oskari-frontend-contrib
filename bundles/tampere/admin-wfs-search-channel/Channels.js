@@ -232,7 +232,7 @@ Oskari.clazz.define(
         getWFSLayerColumns: function (layer_id, el) {
             var me = this;
             if (layer_id != '' && layer_id != null) {
-                var url = Oskari.urls.getRoute('GetWFSDescribeFeature') + '&layer_id=' + layer_id;
+                var url = Oskari.urls.getRoute('DescribeLayer') + '&id=' + layer_id;
                 jQuery.ajax({
                     type: 'GET',
                     dataType: 'json',
@@ -240,7 +240,7 @@ Oskari.clazz.define(
                     success: function (data) {
                         jQuery(el).find('select[name=choose-param-for-search]').empty();
 
-                        if (data.propertyTypes == null) {
+                        if (data.properties == null) {
                             me._openPopup(
                                 me._getLocalization('columns_failed'),
                                 me._getLocalization('no_columns_for_layer')
@@ -248,11 +248,11 @@ Oskari.clazz.define(
                             return false;
                         }
 
-                        jQuery.each(data.propertyTypes, function (name, type) {
+                        jQuery.each(data.properties, function (idx, val) {
                             jQuery(el).find('select[name=choose-param-for-search]').append(jQuery('<option>', {
-                                type: type,
-                                value: name,
-                                text: name
+                                type: val.type,
+                                value: val.name,
+                                text: val.name
                             }));
                         });
                     },
