@@ -60,8 +60,8 @@ Oskari.clazz.define('Oskari.mapframework.bundle.downloadBasket.Flyout',
             if (this.tabsContainer) {
                 return;
             }
-            var me = this;
-            var tabsContainer = Oskari.clazz.create('Oskari.userinterface.component.TabContainer');
+            const me = this;
+            const tabsContainer = Oskari.clazz.create('Oskari.userinterface.component.TabContainer');
             tabsContainer.addTabChangeListener(me.tabChanged);
             me.tabsContainer = tabsContainer;
 

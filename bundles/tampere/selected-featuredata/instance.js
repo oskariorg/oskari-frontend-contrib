@@ -71,11 +71,11 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.SelectedFea
                 return;
             }
 
-            var me = this,
+            const me = this,
                 conf = me.conf,
                 sandboxName = conf ? conf.sandbox : 'sandbox',
-                sandbox = Oskari.getSandbox(sandboxName),
-                p;
+                sandbox = Oskari.getSandbox(sandboxName);
+            let p;
 
             me.started = true;
             me.sandbox = sandbox;
@@ -89,10 +89,10 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.SelectedFea
                 }
             }
 
-            var request = Oskari.requestBuilder('userinterface.AddExtensionRequest')(me);
+            const request = Oskari.requestBuilder('userinterface.AddExtensionRequest')(me);
             sandbox.request(me, request);
 
-            var reqGetInfoResultHandler = Oskari.requestBuilder('GetInfoPlugin.ResultHandlerRequest')(function (content, data, formatters, params) {
+            const reqGetInfoResultHandler = Oskari.requestBuilder('GetInfoPlugin.ResultHandlerRequest')(function (content, data, formatters, params) {
                 me.resultHandler(content, data, formatters, params);
             });
             sandbox.request(me, reqGetInfoResultHandler);
@@ -106,11 +106,11 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.SelectedFea
          */
         resultHandler: function (content, data, formatters, params) {
             // show infobox
-            var me = this;
+            const me = this;
 
-            var flyout = me.plugins['Oskari.userinterface.Flyout'];
+            const flyout = me.plugins['Oskari.userinterface.Flyout'];
 
-            var options = {
+            const options = {
                 hidePrevious: false,
                 colourScheme: params.colourScheme,
                 font: params.font
@@ -119,8 +119,8 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.SelectedFea
             if (flyout.isFlyoutVisible() && content.length > 0) {
                 flyout.createUI(content, data);
             } else {
-                var reqBuilder = Oskari.requestBuilder('InfoBox.ShowInfoBoxRequest'),
-                    request;
+                const reqBuilder = Oskari.requestBuilder('InfoBox.ShowInfoBoxRequest');
+                let request;
 
                 if (reqBuilder) {
                     request = reqBuilder(
@@ -131,7 +131,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.SelectedFea
                         options
                     );
 
-                    var def = {
+                    const def = {
                         name: 'selected-featuredata-btn',
                         iconCls: 'icon-selected-featuredata',
                         tooltip: '',
@@ -173,7 +173,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.SelectedFea
          * Event is handled forwarded to correct #eventHandlers if found or discarded if not.
          */
         onEvent: function (event) {
-            var handler = this.eventHandlers[event.getName()];
+            const handler = this.eventHandlers[event.getName()];
             if (!handler) {
                 return;
             }
@@ -190,9 +190,9 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.SelectedFea
              * Fetch when flyout is opened
              */
             'userinterface.ExtensionUpdatedEvent': function (event) {
-                var me = this,
-                    doOpen = event.getViewState() !== 'close',
-                    p;
+                const me = this,
+                    doOpen = event.getViewState() !== 'close';
+                let p;
                 if (event.getExtension().getName() !== me.getName()) {
                     // not me -> do nothing
                     return;
@@ -217,13 +217,13 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.SelectedFea
             },
             'AfterMapLayerRemoveEvent': function (event) {
                 // get layer that was removed from layers
-                var layer = event.getMapLayer(),
+                const layer = event.getMapLayer(),
                     layerId = layer.getId();
                 this.plugins['Oskari.userinterface.Flyout'].layerRemovedOrAddedFromMapMergeTabs(layerId, true);
             },
             'AfterMapLayerAddEvent': function (event) {
                 // get layer that was added to layers
-                var layer = event.getMapLayer(),
+                const layer = event.getMapLayer(),
                     layerId = layer.getId();
                 this.plugins['Oskari.userinterface.Flyout'].layerRemovedOrAddedFromMapMergeTabs(layerId, false);
             }
@@ -234,8 +234,8 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.SelectedFea
          * implements BundleInstance protocol stop method
          */
         stop: function () {
-            var sandbox = this.sandbox,
-                p,
+            const sandbox = this.sandbox;
+            let p,
                 request;
             for (p in this.eventHandlers) {
                 if (this.eventHandlers.hasOwnProperty(p)) {
