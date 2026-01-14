@@ -23,8 +23,7 @@ const detectGeometryType= (type) => GEOM_TYPE_MAPPING[type] || GEOM_TYPE_MAPPING
 
 const describeLayer = (id) => {
     // TODO: change to use DescribeLayer on 2.11+
-    // return fetch(Oskari.urls.getRoute('DescribeLayer', { id: id }), {
-    return fetch(Oskari.urls.getRoute('GetWFSLayerFields', { layer_id: id }), {
+    return fetch(Oskari.urls.getRoute('DescribeLayer', { id: id }), {
         method: 'GET',
         headers: {
             'Accept': 'application/json'
@@ -35,21 +34,36 @@ const describeLayer = (id) => {
         }
         throw new Error('Error getting layer details');
     }).then(json => {
-        /* 
-        {
-            "geometryName":"geom",
-            "types":{
-                "nimi":"string",
-                "numero":"number",
-                "id":"number",
-                "teksti":"string"
-            },
-            "geometryType":"MultiPointPropertyType"
-        }
-
-        NOTE! decimal number fields are only just "number". This might cause a problem
-        */
-        const { types, geometryType } = json;
+        /*
+         * {
+         *  ... 
+         *  "properties": [
+         *     {
+         *       "name": "C_RAKEAINE",
+         *       "type": "string",
+         *       "rawType": "string",
+         *       "hidden": false
+         *     },
+         *     {
+         *       "name": "GEOLOC",
+         *       "type": "geometry",
+         *       "rawType": "PointPropertyType",
+         *       "hidden": false
+         *     }
+         *  ]
+         * }
+          */
+        
+        
+        let geometryType = "";
+        const types = json.properties.reduce((acc, prop) => {
+            if(prop.type === 'geometry'){
+                geometryType = prop.rawType;
+            }
+            acc[prop.name] = prop.type;
+            return acc;
+        }, {});
+      
         return {
             types,
             geometryType: detectGeometryType(geometryType)
