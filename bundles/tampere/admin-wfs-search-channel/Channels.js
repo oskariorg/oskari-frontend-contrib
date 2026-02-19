@@ -23,8 +23,8 @@ Oskari.clazz.define(
          *
          */
         _initTemplates: function () {
-            var me = this,
-                btn;
+            const me = this;
+            let btn;
 
             me.templates.main = jQuery('<div class="admin-channels"></div>');
             me.templates.search = jQuery(
@@ -117,7 +117,7 @@ Oskari.clazz.define(
             });
 
             me.templates.form.find('input,select').each(function (index) {
-                var el = jQuery(this);
+                const el = jQuery(this);
                 el.prev('span').html(me._getLocalization(el.attr('name')));
                 if (el.attr('language') != null) {
                     el.attr('placeholder', me._getLocalization(el.attr('language')));
@@ -126,7 +126,7 @@ Oskari.clazz.define(
 
             me.templates.form.find('h4').text(me._getLocalization('channel-details-header'));
 
-            var firstFieldset = me.templates.form.find(
+            const firstFieldset = me.templates.form.find(
                 'fieldset:nth-of-type(1)'
             );
             btn = Oskari.clazz.create(
@@ -144,14 +144,14 @@ Oskari.clazz.define(
                         return false;
                     }
 
-                    var newParams = jQuery(this).prev('label').clone(true);
+                    const newParams = jQuery(this).prev('label').clone(true);
                     newParams.find('.remove--param').removeClass('hidden');
                     jQuery(this).before(newParams);
                 }
             );
             btn.insertTo(firstFieldset);
 
-            var buttonFieldset = me.templates.form.find(
+            const buttonFieldset = me.templates.form.find(
                 'fieldset:nth-of-type(2)'
             );
             btn = Oskari.clazz.create(
@@ -207,12 +207,12 @@ Oskari.clazz.define(
          * @return {[type]}
          */
         createWfsLayerSelect: function () {
-            var me = this;
+            const me = this;
 
-            var mapLayerService = me.sandbox.getService('Oskari.mapframework.service.MapLayerService');
-            var allLayers = mapLayerService.getAllLayers();
+            const mapLayerService = me.sandbox.getService('Oskari.mapframework.service.MapLayerService');
+            const allLayers = mapLayerService.getAllLayers();
 
-            var wfsLayers = allLayers.filter(function (layer) {
+            const wfsLayers = allLayers.filter(function (layer) {
                 return layer.getLayerType() === 'wfs';
             });
 
@@ -230,9 +230,9 @@ Oskari.clazz.define(
          * @return {[type]}
          */
         getWFSLayerColumns: function (layer_id, el) {
-            var me = this;
+            const me = this;
             if (layer_id != '' && layer_id != null) {
-                var url = Oskari.urls.getRoute('DescribeLayer') + '&id=' + layer_id;
+                const url = Oskari.urls.getRoute('DescribeLayer') + '&id=' + layer_id;
                 jQuery.ajax({
                     type: 'GET',
                     dataType: 'json',
@@ -257,7 +257,7 @@ Oskari.clazz.define(
                         });
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
-                        var error = me._getErrorText(jqXHR, textStatus, errorThrown);
+                        const error = me._getErrorText(jqXHR, textStatus, errorThrown);
 
                         me._openPopup(
                             me._getLocalization('columns_failed'),
@@ -277,7 +277,7 @@ Oskari.clazz.define(
             // Remove old list from container
             container.find('ul').remove();
             // get channels with ajax
-            var me = this;
+            const me = this;
 
             jQuery.ajax({
                 type: 'GET',
@@ -290,7 +290,7 @@ Oskari.clazz.define(
                     me._createList(me, data.channels, me.state.filter);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-                    var error = me._getErrorText(jqXHR, textStatus, errorThrown);
+                    const error = me._getErrorText(jqXHR, textStatus, errorThrown);
 
                     me._openPopup(
                         me._getLocalization('fetch_failed'),
@@ -304,11 +304,11 @@ Oskari.clazz.define(
          * @method _createList
          */
         _createList: function (me, channels, filter) {
-            var list = me.templates.list.clone(),
-                i,
-                channel,
-                hasFilter = filter !== null && filter !== undefined && filter.length > 0,
-                matches;
+            const list = me.templates.list.clone();
+            let i,
+                channel;
+            const hasFilter = filter !== null && filter !== undefined && filter.length > 0;
+            let matches;
 
             me.channels = channels;
             if (channels) {
@@ -340,7 +340,7 @@ Oskari.clazz.define(
          * @method _filterList
          */
         _filterList: function (event, me) {
-            var filter = jQuery(event.target).parent().find('input[type=search]').val();
+            const filter = jQuery(event.target).parent().find('input[type=search]').val();
             me.state.filter = filter;
             me.fetchChannels(me.container);
         },
@@ -353,9 +353,9 @@ Oskari.clazz.define(
         },
 
         _getErrorText: function (jqXHR, textStatus, errorThrown) {
-            var error = errorThrown.message || errorThrown;
+            let error = errorThrown.message || errorThrown;
             try {
-                var err = JSON.parse(jqXHR.responseText).error;
+                const err = JSON.parse(jqXHR.responseText).error;
                 if (err !== null && err !== undefined) {
                     error = err;
                 }
@@ -370,7 +370,7 @@ Oskari.clazz.define(
          * Gets channel id based on event target and deletes it
          */
         _deleteChannel: function (event, me) {
-            var item = jQuery(event.target).parents('li'),
+            const item = jQuery(event.target).parents('li'),
                 uid = parseInt(item.attr('data-id')),
                 channel = me._getChannel(uid);
 
@@ -382,7 +382,7 @@ Oskari.clazz.define(
             this.__tryRestMethods('DELETE', {
                 url: Oskari.urls.getRoute('SearchWFSChannel') + '&id=' + uid,
                 error: function (jqXHR, textStatus, errorThrown) {
-                    var error = me._getErrorText(jqXHR, textStatus, errorThrown);
+                    const error = me._getErrorText(jqXHR, textStatus, errorThrown);
                     me._openPopup(
                         me._getLocalization('delete_failed'),
                         error
@@ -413,7 +413,7 @@ Oskari.clazz.define(
          * Gets channel by id
          */
         _getChannel: function (uid) {
-            var i;
+            let i;
             for (i = 0; i < this.channels.length; i += 1) {
                 if (this.channels[i].id === uid) {
                     return this.channels[i];
@@ -428,7 +428,7 @@ Oskari.clazz.define(
          */
         _openForm: function (event, instance) {
             // Semi deep clone
-            var me = instance,
+            const me = instance,
                 form = me.templates.form.clone(true),
                 target = jQuery(event.target),
                 item = target.parents('li'),
@@ -467,7 +467,7 @@ Oskari.clazz.define(
          * that password field values match.
          */
         _formIsValid: function (form, me) {
-            var errors = [];
+            const errors = [];
             // check that required fields have values
             form.find('input[required]').each(function (index) {
                 if (!this.value.length) {
@@ -501,13 +501,13 @@ Oskari.clazz.define(
          */
         _submitForm: function (event, me) {
             event.preventDefault(); // We don't want the form to submit
-            var frm = jQuery(event.target);
+            const frm = jQuery(event.target);
 
             if (!me._formIsValid(frm, me)) {
                 return false;
             }
 
-            var dataObject = {
+            const dataObject = {
                 'id': frm.find('[name=id]').val(),
                 'wfsLayerId': frm.find('[name=choose-wfs-layer]').val(),
                 'locale': {},
@@ -544,7 +544,7 @@ Oskari.clazz.define(
                     me.fetchChannels(me.container);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-                    var error = me._getErrorText(
+                    const error = me._getErrorText(
                         jqXHR,
                         textStatus,
                         errorThrown
@@ -565,14 +565,14 @@ Oskari.clazz.define(
          * @param  {Object} config for jQuery.ajax() - method will be overridden with value of method param
          */
         __tryRestMethods: function (method, config) {
-            var me = this;
+            const me = this;
             config.type = method;
-            var errorHandler = function (jqXHR, textStatus, errorThrown) {
-                var origType = config.type;
+            const errorHandler = function (jqXHR, textStatus, errorThrown) {
+                const origType = config.type;
                 if (errorThrown === 'Method Not Allowed' &&
                     (origType === 'PUT' || origType === 'DELETE')) {
                     // PUT/DELETE not allowed -> try POST instead
-                    var origBefore = config.beforeSend;
+                    const origBefore = config.beforeSend;
                     config.beforeSend = function (req) {
                         req.setRequestHeader('X-HTTP-Method-Override', origType);
                         if (origBefore) {
@@ -596,7 +596,7 @@ Oskari.clazz.define(
          * Populates given form with given channel's data.
          */
         _populateForm: function (fragment, channel) {
-            var me = this;
+            const me = this;
 
             if (channel) {
                 this._progressSpinner = Oskari.clazz.create('Oskari.userinterface.component.ProgressSpinner');
@@ -638,7 +638,7 @@ Oskari.clazz.define(
          * opens a modal popup, no buttons or anything.
          */
         _openPopup: function (title, content) {
-            var dialog = Oskari.clazz.create(
+            const dialog = Oskari.clazz.create(
                     'Oskari.userinterface.component.Popup'
                 ),
                 okBtn = Oskari.clazz.create(
@@ -658,7 +658,7 @@ Oskari.clazz.define(
          * Creates the UI for a fresh start
          */
         createUi: function () {
-            var me = this,
+            const me = this,
                 btn = Oskari.clazz.create(
                     'Oskari.userinterface.component.buttons.AddButton'
                 );

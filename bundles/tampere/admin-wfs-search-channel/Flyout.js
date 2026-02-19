@@ -65,12 +65,12 @@ Oskari.clazz.define('Oskari.tampere.bundle.tampere.AdminWfsSearchChannel.Flyout'
             if (this.tabsContainer) {
                 return;
             }
-            var me = this,
+            const me = this,
                 tabsContainer = Oskari.clazz.create('Oskari.userinterface.component.TabContainer');
             this.tabsContainer = tabsContainer;
 
             this.tabs.forEach(function (tabDef) {
-                var tab = Oskari.clazz.create(tabDef.clazz, me._getLocalization(tabDef.id), me.instance);
+                const tab = Oskari.clazz.create(tabDef.clazz, me._getLocalization(tabDef.id), me.instance);
                 tab.setId(tabDef.id);
                 tabsContainer.addPanel(tab);
                 tabDef.instance = tab;

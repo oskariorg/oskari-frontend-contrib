@@ -7,8 +7,8 @@ Oskari.clazz.define('Oskari.mapframework.bundle.downloadBasket.Bundle', function
 
 }, {
     'create': function () {
-        var me = this;
-        var inst = Oskari.clazz.create('Oskari.mapframework.bundle.downloadBasket.BundleInstance');
+        const me = this;
+        const inst = Oskari.clazz.create('Oskari.mapframework.bundle.downloadBasket.BundleInstance');
 
         return inst;
     },

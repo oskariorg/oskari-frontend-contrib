@@ -72,7 +72,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
          * [clearFlyout removes all elements from container]
          */
         clearFlyout: function () {
-            var me = this;
+            const me = this;
             jQuery(me.container).empty();
             this._accordions = [];
             this._panels = [];
@@ -86,7 +86,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
          * [clearFlyout removes tab elements from container]
          */
         clearTabsLayout: function () {
-            var me = this;
+            const me = this;
             jQuery(me.container).find('.oskariTabs').empty();
             this._accordions = [];
             this._panels = [];
@@ -104,7 +104,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
         *
         */
         startPlugin: function () {
-            var me = this;
+            const me = this;
             // Set class to flyout parent
             me.elParent = jQuery(me.container).parents('.oskari-flyout');
             jQuery(me.elParent).addClass('selected-featuredata-flyout');
@@ -122,12 +122,12 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
          * @param  {[Object]} mapobject [mapobject]
          */
         createUI: function (params, mapobject) {
-            var me = this,
+            const me = this,
                 data = params[0],
                 layer = me.sandbox.findMapLayerFromAllAvailable(data.layerId),
-                tabName = layer.getName(),
-                tabContent = jQuery('<div></div>'),
-                howManyShowLink = jQuery(me.container).find('.selected_featuredata_howmany_show');
+                tabName = layer.getName();
+            let tabContent = jQuery('<div></div>');
+            const howManyShowLink = jQuery(me.container).find('.selected_featuredata_howmany_show');
 
             // Show many or one link created only once
             if (howManyShowLink.length === 0) {
@@ -151,11 +151,11 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
                 me.addAccordion(data.html, tabContent, layer.getId(), mapobject);
             } else {
                 tabContent = jQuery('.selected_featuredata_tabcontent_' + layer.getId());
-                var compare = me.compareAccodionPanelHtml(data.html, tabContent);
+                const compare = me.compareAccodionPanelHtml(data.html, tabContent);
                 if (compare.add) {
                     me.addAccordion(data.html, tabContent, layer.getId(), mapobject);
                 } else {
-                    for (var i in me._panels) {
+                    for (let i in me._panels) {
                         if (i.indexOf(layer.getId()) >= 0) {
                             me._panels[i].close();
                         }
@@ -172,7 +172,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
          * @param {[Integer]} layerId    [layerId]
          */
         addTab: function (data, tabContent, tabName, layerId) {
-            var me = this,
+            const me = this,
                 tabId = 'selected_featuredata_tab_' + layerId,
                 flyout = jQuery(me.container);
 
@@ -181,7 +181,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
                 me.tabsContainer.insertTo(flyout);
             }
 
-            var panel = Oskari.clazz.create(
+            const panel = Oskari.clazz.create(
                 'Oskari.userinterface.component.TabPanel'
             );
             me._tabs[layerId] = panel;
@@ -199,11 +199,11 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
          * @param {[Object]} mapobject [description]
          */
         addAccordion: function (accPanelData, tabContent, layerId, mapobject) {
-            var me = this,
-                panel = Oskari.clazz.create('Oskari.userinterface.component.AccordionPanel'),
-                number = 1,
-                panelId = 'selected_featuredata_accpanel_',
-                fullHtml = accPanelData,
+            const me = this,
+                panel = Oskari.clazz.create('Oskari.userinterface.component.AccordionPanel');
+            let number = 1,
+                panelId = 'selected_featuredata_accpanel_';
+            const fullHtml = accPanelData,
                 features = mapobject.features[0];
 
             // initialize panel component
@@ -212,7 +212,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
 
             if (!me._accordions[layerId]) {
                 // create new accordions
-                var accordion = Oskari.clazz.create('Oskari.userinterface.component.Accordion');
+                const accordion = Oskari.clazz.create('Oskari.userinterface.component.Accordion');
                 me._accordions[layerId] = accordion;
                 panel.setTitle(me._getLocalization('accordion-title') + ' ' + number);
                 panelId = panelId + layerId + '_' + number;
@@ -232,7 +232,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
                 panelId = panelId + layerId + '_' + number;
                 panel.setId(panelId);
 
-                for (var i in me._panels) {
+                for (let i in me._panels) {
                     if (i.indexOf(layerId) >= 0) {
                         me._panels[i].close();
                     }
@@ -244,7 +244,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
             }
 
             // Add needed data for panelWrapper like links and datas
-            var panelWrapper = panel.getContainer().parents('.accordion_panel').find('.header');
+            const panelWrapper = panel.getContainer().parents('.accordion_panel').find('.header');
             panelWrapper.append(me.createCloseIconForAcc(panel, layerId, tabContent));
             panelWrapper.append(me.createLinkShowOnMap(mapobject));
 
@@ -266,13 +266,13 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
          * @return {[Boolean]} [true/false]
          */
         compareAccodionPanelHtml: function (newHtml, tabContent) {
-            var output = {
+            const output = {
                 add: true,
                 id: null
             };
 
             tabContent.find('.accordion_panel>.content>div').each(function () {
-                var oldHtml = jQuery(this);
+                const oldHtml = jQuery(this);
                 if (oldHtml.html() === newHtml.html()) {
                     output.id = oldHtml.parents('.accordion_panel').find('.header').attr('id');
                     output.add = false;
@@ -288,7 +288,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
          * @param  {[tabContent]} tabContent [tabContent]
          */
         createCloseIconForAcc: function (panel, layerId, tabContent) {
-            var me = this;
+            const me = this;
             return jQuery('<div />', {
                 'class': 'icon-close selected_featuredata_accpanel_close',
                 click: function (e) {
@@ -303,7 +303,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
          * @param  {[tabContent]} tabContent [tabContent]
          */
         removeAcc: function (panel, layerId, tabContent) {
-            var me = this,
+            const me = this,
                 tabsItem = jQuery(tabContent).parents('.selected-featuredata').find('.tabsItem');
 
             panel.destroy();
@@ -335,7 +335,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
          * @return  {[a link]}
          */
         createShowManyOrOneLink: function () {
-            var me = this;
+            const me = this;
             return jQuery('<a />', {
                 'href': '#',
                 'onclick': 'return false;',
@@ -343,7 +343,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
                 'class': 'selected_featuredata_howmany_show',
                 'text': me._getLocalization('tabs_pick_one'),
                 click: function (e) {
-                    var mea = jQuery(this);
+                    const mea = jQuery(this);
 
                     if (mea.attr('data-many') === 'many') {
                         mea.attr('data-many', 'one');
@@ -362,14 +362,14 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
          * @param  {[object]} mapobject [description]
          */
         createLinkShowOnMap: function (mapobject) {
-            var me = this;
+            const me = this;
             return jQuery('<a />', {
                 'href': '#',
                 'onclick': 'return false;',
                 'class': 'selected_featuredata_accpanel_showonmap',
                 'text': me._getLocalization('accordion-show-onmap'),
                 click: function (e) {
-                    var features = mapobject.features[0];
+                    const features = mapobject.features[0];
                     me.removeAllMarkersAndHighlights();
                     me.moveMapRequest(mapobject.lonlat.lon, mapobject.lonlat.lat);
 
@@ -390,7 +390,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
          * @return {[jQuery object]}            [a link]
          */
         createLinkShowTabOnMap: function (tabContent, layerId) {
-            var me = this;
+            const me = this;
             return jQuery('<a />', {
                 'href': '#',
                 'onclick': 'return false;',
@@ -399,18 +399,18 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
                 click: function () {
                     me.removeAllMarkersAndHighlights();
 
-                    var wfs = false,
-                        featureIds = [],
+                    let wfs = false;
+                    const featureIds = [],
                         mapModule = me.sandbox.findRegisteredModuleInstance('MainMapModule'),
                         _map = mapModule.getMap();
 
-                    var x = [];
-                    var y = [];
+                    const x = [];
+                    const y = [];
 
                     // loop accordion headers
-                    var header = tabContent.find('.accordion_panel .header');
+                    const header = tabContent.find('.accordion_panel .header');
                     jQuery(header).each(function () {
-                        var el = jQuery(this);
+                        const el = jQuery(this);
                         if (el.data('type') === 'WFS') {
                             wfs = true;
                             featureIds.push(el.data('featureid'));
@@ -444,7 +444,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
          * @return {[boolean]}         [boolean]
          */
         createLinkAddLayerToMap: function (tabContent, layerId) {
-            var me = this;
+            const me = this;
             return jQuery('<a />', {
                 'href': '#',
                 'onclick': 'return false;',
@@ -465,7 +465,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
          * @param {[Integer]} layerId [layerId]
          */
         addLayerToMapById: function (layerId) {
-            var me = this,
+            const me = this,
                 request = Oskari.requestBuilder('AddMapLayerRequest')(layerId, true);
             me.sandbox.request(me.instance, request);
         },
@@ -475,11 +475,11 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
          * @param  {[Boolean]} removed [true if removed, false if added]
          */
         layerRemovedOrAddedFromMapMergeTabs: function (layerId, removed) {
-            var me = this;
+            const me = this;
 
-            for (var i in me._tabs) {
+            for (let i in me._tabs) {
                 if (i.indexOf(layerId) >= 0) {
-                    var tabContent = me._tabs[i].getContainer();
+                    const tabContent = me._tabs[i].getContainer();
                     if (removed) {
                         me.removeAllMarkersAndHighlights();
                         tabContent.find('.selected_featuredata_show_all_on_map').addClass('hidden');
@@ -503,7 +503,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
          * @param  {[Object]} dataextent [extent]
          */
         zoomMapToCertainExtent: function (dataextent) {
-            var me = this,
+            const me = this,
                 mapModule = me.sandbox.findRegisteredModuleInstance('MainMapModule');
             mapModule.zoomToExtent(dataextent);
         },
@@ -513,10 +513,10 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
          * @param  {[array]} featureId [FID from feature]
          */
         highlightWFSFeature: function (layerId, featureId) {
-            var me = this,
+            const me = this,
                 builder = Oskari.eventBuilder('WFSFeaturesSelectedEvent');
 
-            var featureIdList = [];
+            let featureIdList = [];
             // check if the param is already an array
             if (Object.prototype.toString.call(featureId) === '[object Array]') {
                 featureIdList = featureId;
@@ -524,15 +524,15 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
                 featureIdList.push(featureId);
             }
 
-            var mapLayerService = me.sandbox.getService('Oskari.mapframework.service.MapLayerService');
+            const mapLayerService = me.sandbox.getService('Oskari.mapframework.service.MapLayerService');
             if (!mapLayerService || featureIdList.length === 0) {
                 return;
             }
 
-            var layer = mapLayerService.findMapLayer(layerId);
+            const layer = mapLayerService.findMapLayer(layerId);
             me.wfsMapIdList = [];
             me.wfsMapIdList.push(layerId);
-            var event = builder(featureIdList, layer, true);
+            const event = builder(featureIdList, layer, true);
             me.sandbox.notifyAll(event);
         },
         /**
@@ -541,8 +541,8 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
          * @param  {[number]} y [lat]
          */
         moveMapRequest: function (x, y) {
-            var me = this;
-            var mapmoveRequest = Oskari.requestBuilder('MapMoveRequest')(x, y);
+            const me = this;
+            const mapmoveRequest = Oskari.requestBuilder('MapMoveRequest')(x, y);
             me.sandbox.request(me.instance, mapmoveRequest);
         },
         /**
@@ -551,10 +551,10 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
          * @param  {[String]} y [lat]
          */
         showWmsMarker: function (x, y) {
-            var sb = Oskari.getSandbox();
-            var reqBuilder = Oskari.requestBuilder('MapModulePlugin.AddMarkerRequest');
+            const sb = Oskari.getSandbox();
+            const reqBuilder = Oskari.requestBuilder('MapModulePlugin.AddMarkerRequest');
             if (reqBuilder) {
-                var data = {
+                const data = {
                     x: x,
                     y: y,
                     color: 'ffd400',
@@ -562,7 +562,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
                     shape: 2,
                     size: 5
                 };
-                var request = reqBuilder(data);
+                const request = reqBuilder(data);
                 sb.request('MainMapModule', request);
             }
         },
@@ -570,20 +570,20 @@ Oskari.clazz.define('Oskari.mapframework.bundle.selected-featuredata.Flyout',
          * [removeAllMarkersAndHighlights deletes markers and highlights from map]
          */
         removeAllMarkersAndHighlights: function () {
-            var me = this,
+            const me = this,
                 sb = Oskari.getSandbox();
 
             // WMS marker
-            var reqBuilder = Oskari.requestBuilder('MapModulePlugin.RemoveMarkersRequest');
+            const reqBuilder = Oskari.requestBuilder('MapModulePlugin.RemoveMarkersRequest');
             if (reqBuilder) {
                 sb.request('MainMapModule', reqBuilder());
             }
 
             // WFS highlight
             if (me.wfsMapIdList.length > 0) {
-                var mapLayerService = me.sandbox.getService('Oskari.mapframework.service.MapLayerService');
-                var layer = mapLayerService.findMapLayer(me.wfsMapIdList[0]);
-                var event = Oskari.eventBuilder('WFSFeaturesSelectedEvent')([], layer, false);
+                const mapLayerService = me.sandbox.getService('Oskari.mapframework.service.MapLayerService');
+                const layer = mapLayerService.findMapLayer(me.wfsMapIdList[0]);
+                const event = Oskari.eventBuilder('WFSFeaturesSelectedEvent')([], layer, false);
                 me.sandbox.notifyAll(event);
             }
         },

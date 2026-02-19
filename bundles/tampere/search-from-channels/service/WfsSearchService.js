@@ -47,7 +47,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.searchfromchannels.service.WfsSearchS
      *            onComplete callback method for search completion
      */
         doSearch: function (searchString, channelIds, onSuccess, onError) {
-            var lang = Oskari.getLang(),
+            const lang = Oskari.getLang(),
                 epsg = Oskari.getSandbox().getMap().getSrsName();
             jQuery.ajax({
                 dataType: 'json',

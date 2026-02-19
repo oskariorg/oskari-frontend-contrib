@@ -8,11 +8,16 @@
   "peerDependencies": {
     "oskari-frontend": "git+https://git@github.com/oskariorg/oskari-frontend.git#develop"
   },
+  "devDependencies": {
+    "eslint": "9.37.0"
+  },
   "engines": {
     "node": ">=16.20.0",
     "npm": ">=6.0.0"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "eslint --config ./node_modules/oskari-frontend/eslint.config.js bundles"
+  },
   "homepage": "https://oskari.org",
   "bugs": {
     "url": "https://github.com/oskariorg/oskari-documentation/issues"

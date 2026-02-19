@@ -70,11 +70,11 @@ Oskari.clazz.define('Oskari.tampere.bundle.tampere.AdminWfsSearchChannelBundleIn
                 return;
             }
 
-            var me = this,
+            const me = this,
                 conf = me.conf,
                 sandboxName = conf ? conf.sandbox : 'sandbox',
-                sandbox = Oskari.getSandbox(sandboxName),
-                p;
+                sandbox = Oskari.getSandbox(sandboxName);
+            let p;
 
             me.started = true;
             me.sandbox = sandbox;
@@ -88,7 +88,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.tampere.AdminWfsSearchChannelBundleIn
                 }
             }
 
-            var request = Oskari.requestBuilder('userinterface.AddExtensionRequest')(me);
+            const request = Oskari.requestBuilder('userinterface.AddExtensionRequest')(me);
             sandbox.request(me, request);
         },
         /**
@@ -111,7 +111,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.tampere.AdminWfsSearchChannelBundleIn
          * Event is handled forwarded to correct #eventHandlers if found or discarded if not.
          */
         onEvent: function (event) {
-            var handler = this.eventHandlers[event.getName()];
+            const handler = this.eventHandlers[event.getName()];
             if (!handler) {
                 return;
             }
@@ -128,7 +128,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.tampere.AdminWfsSearchChannelBundleIn
              * Fetch channel when flyout is opened
              */
             'userinterface.ExtensionUpdatedEvent': function (event) {
-                var me = this,
+                const me = this,
                     doOpen = event.getViewState() !== 'close';
                 if (event.getExtension().getName() !== me.getName() || !this.plugins['Oskari.userinterface.Flyout']) {
                     // not me -> do nothing
@@ -145,8 +145,8 @@ Oskari.clazz.define('Oskari.tampere.bundle.tampere.AdminWfsSearchChannelBundleIn
          * implements BundleInstance protocol stop method
          */
         stop: function () {
-            var sandbox = this.sandbox,
-                p,
+            const sandbox = this.sandbox;
+            let p,
                 request;
             for (p in this.eventHandlers) {
                 if (this.eventHandlers.hasOwnProperty(p)) {

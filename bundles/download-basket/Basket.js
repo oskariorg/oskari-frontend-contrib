@@ -46,24 +46,24 @@ Oskari.clazz.define(
          * @public
          */
         createUi: function () {
-            var me = this;
+            const me = this;
 
-            var main = me._templates.main.clone();
-            var container = me.getContainer();
+            const main = me._templates.main.clone();
+            const container = me.getContainer();
 
             // Wrapper
-            var wrapper = me._templates.basketWrapper.clone();
+            const wrapper = me._templates.basketWrapper.clone();
             wrapper.find('.empty-basket').text(me._getLocalization('basket-is-empty'));
             main.append(wrapper);
 
             // Basket user info
-            var basketUserInfo = me._templates.basketUserInfo.clone();
-            var basketForm = me._templates.basketForm.clone();
+            const basketUserInfo = me._templates.basketUserInfo.clone();
+            const basketForm = me._templates.basketForm.clone();
             basketUserInfo.find('div.basket-form').append(basketForm);
             basketUserInfo.find('p.email-info').text(me._getLocalization('insert-email-for-download'));
 
             // check privacy policy url
-            var privacyPolicyUrl = me._sandbox.getLocalizedProperty(me.instance.conf.privacyPolicyUrl) || me.instance.conf.privacyPolicyUrl;
+            const privacyPolicyUrl = me._sandbox.getLocalizedProperty(me.instance.conf.privacyPolicyUrl) || me.instance.conf.privacyPolicyUrl;
             if (privacyPolicyUrl) {
                 basketUserInfo.find('a').text(me._getLocalization('privacy-policy')).attr('href', privacyPolicyUrl);
             } else {
@@ -74,12 +74,12 @@ Oskari.clazz.define(
             basketUserInfo.hide();
 
             basketUserInfo.find('input,select').each(function () {
-                var curEl = jQuery(this);
+                const curEl = jQuery(this);
                 curEl.prev('span').html(me._getLocalization(curEl.attr('name')));
             });
 
             // Basket wizard buttons
-            var basketButtons = me._templates.basketButtons.clone();
+            const basketButtons = me._templates.basketButtons.clone();
 
             me.emptyBtn = Oskari.clazz.create('Oskari.userinterface.component.Button');
             me.prevBtn = Oskari.clazz.create('Oskari.userinterface.component.Button');
@@ -164,7 +164,7 @@ Oskari.clazz.define(
          * @private
          */
         _buttonsVisible: function (visibilities) {
-            var me = this;
+            const me = this;
 
             if (visibilities.empty) {
                 me.emptyBtn.setVisible(true);
@@ -197,13 +197,13 @@ Oskari.clazz.define(
          * @return {Object}              download details
          */
         gatherDownloadDetails: function () {
-            var details = [];
+            const details = [];
 
-            var container = this.getContainer();
+            const container = this.getContainer();
 
             container.find('.download-basket__component').each(function () {
-                var basketComponent = jQuery(this);
-                var detail = {
+                const basketComponent = jQuery(this);
+                const detail = {
                     croppingMode: basketComponent.attr('data-cropping-mode'),
                     layer: basketComponent.attr('data-layer-name'),
                     bbox: {
@@ -227,13 +227,13 @@ Oskari.clazz.define(
          * @public
          */
         loadBasketItem: function () {
-            var me = this;
-            var downloadDetails = me.gatherDownloadDetails();
+            const me = this;
+            const downloadDetails = me.gatherDownloadDetails();
 
-            var userDetails = {
+            const userDetails = {
                 email: this.getContainer().find('.oskari__download-basket-user-info').find('input.email').val()
             };
-            var strUserDetails = JSON.stringify(userDetails);
+            const strUserDetails = JSON.stringify(userDetails);
             me.sendBtn.setEnabled(false);
 
             jQuery.ajax({
@@ -244,9 +244,9 @@ Oskari.clazz.define(
                 },
                 success: function (resp) {
                     if (resp.success) {
-                        var dialog = Oskari.clazz.create('Oskari.userinterface.component.Popup');
-                        var btn = dialog.createCloseButton('OK');
-                        var container = me.getContainer();
+                        const dialog = Oskari.clazz.create('Oskari.userinterface.component.Popup');
+                        const btn = dialog.createCloseButton('OK');
+                        const container = me.getContainer();
                         btn.setHandler(function () {
                             container.find('.oskari__download-basket-wrapper').show();
                             container.find('.oskari__download-basket-user-info').hide();
@@ -277,7 +277,7 @@ Oskari.clazz.define(
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-                    var error = me._getErrorText(jqXHR, textStatus, errorThrown);
+                    const error = me._getErrorText(jqXHR, textStatus, errorThrown);
 
                     me._openPopup(
                         me._getLocalization('error-in-downloading'),
@@ -303,7 +303,7 @@ Oskari.clazz.define(
          * @private
          */
         _openPopup: function (title, message) {
-            var me = this;
+            const me = this;
             if (me._popup) {
                 me._popup.close(true);
             } else {
@@ -334,9 +334,9 @@ Oskari.clazz.define(
          * @private
          */
         _getErrorText: function (jqXHR, textStatus, errorThrown) {
-            var error = errorThrown.message || errorThrown;
+            let error = errorThrown.message || errorThrown;
             try {
-                var err = JSON.parse(jqXHR.responseText).error;
+                const err = JSON.parse(jqXHR.responseText).error;
                 if (err !== null && err !== undefined) {
                     error = err;
                 }
@@ -354,17 +354,17 @@ Oskari.clazz.define(
          * @return {Boolean}                has error
          */
         validateUserInputs: function (form) {
-            var me = this;
+            const me = this;
             if (!me._errorPopup) {
                 me._errorPopup = Oskari.clazz.create('Oskari.userinterface.component.Popup');
             } else {
                 me._errorPopup.close(true);
             }
-            var errorText = me._getLocalization('check-form-error');
-            var error = false;
+            const errorText = me._getLocalization('check-form-error');
+            let error = false;
 
             form.find('input').each(function () {
-                var el = jQuery(this);
+                const el = jQuery(this);
                 if (el.hasClass('email')) {
                     if (!me.validateEmail(el.val())) {
                         error = true;
@@ -372,7 +372,7 @@ Oskari.clazz.define(
                     }
                 }
                 if (el.hasClass('email-re')) {
-                    var first = form.find('.email').val();
+                    const first = form.find('.email').val();
                     if (el.val() !== first) {
                         error = true;
                         return false;
@@ -410,7 +410,7 @@ Oskari.clazz.define(
          * @return {Boolean}     is email valid
          */
         validateEmail: function (email) {
-            var re = /\S+@\S+\.\S+/;
+            const re = /\S+@\S+\.\S+/;
             return re.test(email);
         },
 
@@ -420,8 +420,8 @@ Oskari.clazz.define(
          * @public
          */
         createBasket: function () {
-            var me = this;
-            var template = jQuery(
+            const me = this;
+            const template = jQuery(
                 '<div class="download-basket__component">' +
                     '<div class="download-basket__component-title">' +
                         '<div class="download-basket__component-layer-name"></div>' +
@@ -435,7 +435,7 @@ Oskari.clazz.define(
                 '</div>');
 
             if (me._selected.length > 0) {
-                var el = jQuery(me.container);
+                const el = jQuery(me.container);
 
                 // Change basket to visible
                 el.find('.oskari__download-basket-wrapper').find('.empty-basket').hide();
@@ -454,13 +454,13 @@ Oskari.clazz.define(
                 el.find('.oskari__download-basket-wrapper').show();
 
                 me._selected.forEach(function (basketItem, index) {
-                    var feature = basketItem.feature;
+                    const feature = basketItem.feature;
 
-                    var basketEl = template.clone();
+                    const basketEl = template.clone();
                     basketEl.attr('data-layer-name', basketItem.layerName);
                     basketEl.attr('data-layer-id', basketItem.layerId);
-                    var parsed = geoJsonReader.read(feature);
-                    var bbox = parsed.geometry.getEnvelope().getCoordinates();
+                    const parsed = geoJsonReader.read(feature);
+                    const bbox = parsed.geometry.getEnvelope().getCoordinates();
 
                     basketEl.attr('data-bbox-left', bbox[0].x);
                     basketEl.attr('data-bbox-bottom', bbox[0].y);
@@ -471,8 +471,8 @@ Oskari.clazz.define(
                     basketEl.attr('data-cropping-layer-id', feature.properties.layerId);
                     basketEl.attr('data-cropping-mode', feature.properties.croppingMode);
                     basketEl.attr('data-index', index);
-                    var identifiers = [];
-                    var identifier = {
+                    const identifiers = [];
+                    const identifier = {
                         layerName: feature.properties.layerName,
                         uniqueColumn: feature.properties.uniqueKey,
                         geometryColumn: feature.properties.geometryColumn,
@@ -488,10 +488,10 @@ Oskari.clazz.define(
                     basketEl.find('.basket__content-cropping>span').text(feature.properties.layerNameLang);
 
                     // License link handling
-                    var licenseTitle = basketEl.find('.basket__content-license>strong');
-                    var licenseLink = basketEl.find('.basket__content-license>a');
+                    const licenseTitle = basketEl.find('.basket__content-license>strong');
+                    const licenseLink = basketEl.find('.basket__content-license>a');
 
-                    var layerId = basketItem.layerId;
+                    const layerId = basketItem.layerId;
 
                     if (me.instance.conf.licenseByLayers && me.instance.conf.licenseByLayers[layerId]) {
                         licenseTitle.text(me._getLocalization('basket-license-title'));
@@ -513,7 +513,7 @@ Oskari.clazz.define(
                     }
 
                     basketEl.find('.icon-close-dark').on('click', function (event) {
-                        var basketEl = jQuery(this).parents('.download-basket__component');
+                        const basketEl = jQuery(this).parents('.download-basket__component');
                         basketEl.remove();
 
                         if (el.find('.download-basket__component').length === 0) {
@@ -522,7 +522,7 @@ Oskari.clazz.define(
                             el.find('.oskari__download-basket-buttons').find('input.empty').hide();
                             me._selected = [];
                         }
-                        var index = basketEl.attr('data-index');
+                        const index = basketEl.attr('data-index');
                         me._selected.splice(index, 1);
                         event.preventDefault();
                         me.instance.addBasketNotify();
@@ -547,7 +547,7 @@ Oskari.clazz.define(
          * }
          */
         addToBasket: function (item) {
-            var me = this;
+            const me = this;
             me._selected.push(item);
         }
 

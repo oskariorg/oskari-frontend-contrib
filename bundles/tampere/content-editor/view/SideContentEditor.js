@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { getReactRoot } from 'oskari-ui/components/window';
 import { LocaleProvider } from 'oskari-ui/util';
 import { Helper } from './Helper';
 import { SidePanel } from './SidePanel';
@@ -83,7 +83,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
             if (!el) {
                 return;
             }
-            ReactDOM.render(
+            getReactRoot(el).render(
                 <LocaleProvider value={{ bundleKey: 'ContentEditor' }}>
                     <SidePanel
                         loading={this.loading}
@@ -95,7 +95,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.view.SideContentEditor
                         onCancel={() => this._stopEditing()}
                         startNewFeature={() => this._startNewFeature()}
                     />
-                </LocaleProvider>, el);
+                </LocaleProvider>);
         },
         _setCurrentLayer: function (layerId) {
             const mapLayer = this.mapLayerService.findMapLayer(layerId);

@@ -103,7 +103,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
          * @param {Oskari.mapframework.event.Event} event a Oskari event object
          */
         onEvent: function (event) {
-            var handler = this.eventHandlers[event.getName()];
+            const handler = this.eventHandlers[event.getName()];
             if (!handler) {
                 return;
             }
@@ -159,7 +159,7 @@ Oskari.clazz.define('Oskari.tampere.bundle.content-editor.ContentEditorBundleIns
             const layers = service.getAllLayers();
             layers.forEach((layer) => this.__addTool(layer, true));
             // update all layers at once since we suppressed individual events
-            var event = Oskari.eventBuilder('MapLayerEvent')(null, 'tool');
+            const event = Oskari.eventBuilder('MapLayerEvent')(null, 'tool');
             this.getSandbox().notifyAll(event);
         },
 
@@ -293,7 +293,7 @@ mapDiv.width(mapWidth);
         },
         showContentEditor: function (layerId) {
             // trigger an event letting other bundles know we require the whole UI
-            var eventBuilder = Oskari.eventBuilder('UIChangeEvent');
+            const eventBuilder = Oskari.eventBuilder('UIChangeEvent');
             this.sandbox.notifyAll(eventBuilder(this.mediator.bundleId));
             this.setEditorMode(true, layerId);
         }

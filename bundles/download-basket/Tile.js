@@ -101,8 +101,8 @@ Oskari.clazz.define('Oskari.mapframework.bundle.downloadBasket.Tile',
      * @public
      */
         refresh: function () {
-            var me = this;
-            var basketItems = me.instance.basket._selected.length;
+            const me = this;
+            const basketItems = me.instance.basket._selected.length;
             jQuery('.download-basket-tile .oskari-tile-status').html(basketItems);
             me.notifyUser();
         },
@@ -111,7 +111,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.downloadBasket.Tile',
      * @method clear
      */
         clear: function () {
-            var me = this;
+            const me = this;
             me.refresh();
         },
         /**
@@ -119,7 +119,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.downloadBasket.Tile',
      * @method notifyUser
      */
         notifyUser: function () {
-            var status = this.container.children('.oskari-tile-status');
+            const status = this.container.children('.oskari-tile-status');
 
             // stop current animation
             status.stop();
@@ -134,7 +134,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.downloadBasket.Tile',
      * @private
      */
         _blink: function (element, count) {
-            var me = this;
+            const me = this;
             if (!element) {
                 return;
             }

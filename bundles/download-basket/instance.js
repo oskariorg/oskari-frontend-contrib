@@ -80,11 +80,11 @@ Oskari.clazz.define('Oskari.mapframework.bundle.downloadBasket.BundleInstance',
                 return;
             }
 
-            var me = this,
+            const me = this,
                 conf = me.conf,
                 sandboxName = conf ? conf.sandbox : 'sandbox',
-                sandbox = Oskari.getSandbox(sandboxName),
-                p;
+                sandbox = Oskari.getSandbox(sandboxName);
+            let p;
 
             me.started = true;
             me.sandbox = sandbox;
@@ -107,7 +107,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.downloadBasket.BundleInstance',
 
             me.cropping.setBasket(me.basket);
 
-            var request = Oskari.requestBuilder('userinterface.AddExtensionRequest')(me);
+            const request = Oskari.requestBuilder('userinterface.AddExtensionRequest')(me);
             sandbox.request(me, request);
 
             this.mapModule = sandbox.findRegisteredModuleInstance('MainMapModule');
@@ -137,7 +137,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.downloadBasket.BundleInstance',
         onEvent: function (event) {
             this.plugins['Oskari.userinterface.Flyout'].onEvent(event);
 
-            var handler = this.eventHandlers[event.getName()];
+            const handler = this.eventHandlers[event.getName()];
             if (!handler) {
                 return;
             }
@@ -154,9 +154,9 @@ Oskari.clazz.define('Oskari.mapframework.bundle.downloadBasket.BundleInstance',
              * Fetch channel when flyout is opened
              */
             'userinterface.ExtensionUpdatedEvent': function (event) {
-                var me = this,
-                    doOpen = event.getViewState() !== 'close',
-                    p;
+                const me = this,
+                    doOpen = event.getViewState() !== 'close';
+                let p;
                 if (event.getExtension().getName() !== me.getName()) {
                     // not me -> do nothing
                     return;
@@ -180,7 +180,7 @@ Oskari.clazz.define('Oskari.mapframework.bundle.downloadBasket.BundleInstance',
                 }
             },
             'MapClickedEvent': function (evt) {
-                var me = this,
+                const me = this,
                     x = evt.getMouseX(),
                     y = evt.getMouseY();
                 me.cropping.croppingLayersHighlight(x, y);
@@ -197,8 +197,8 @@ Oskari.clazz.define('Oskari.mapframework.bundle.downloadBasket.BundleInstance',
          * @method stop
          */
         stop: function () {
-            var sandbox = this.sandbox,
-                p,
+            const sandbox = this.sandbox;
+            let p,
                 request;
             for (p in this.eventHandlers) {
                 if (this.eventHandlers.hasOwnProperty(p)) {

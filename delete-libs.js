@@ -1,9 +1,9 @@
-var path = require('path');
-var fs = require('fs');
-var glob = require('glob');
+const path = require('path');
+const fs = require('fs');
+const glob = require('glob');
 const fse = require('fs-extra');
 
-var bundleFilePaths = glob.sync('/packages/**/bundle.js', {root: path.join(__dirname)});
+const bundleFilePaths = glob.sync('/packages/**/bundle.js', {root: path.join(__dirname)});
 
 const libPath = path.join(__dirname, '/libraries/');
 
