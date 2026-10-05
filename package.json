@@ -1,19 +1,19 @@
 {
   "name": "oskari-frontend-contrib",
-  "version": "3.4.0-dev",
+  "version": "3.4.0",
   "description": "These are unofficial bundles for Oskari created by the Oskari community. Many of them add value to your Oskari install, but they come with no official support from the core Oskari team.",
   "keywords": [
     "Oskari"
   ],
   "peerDependencies": {
-    "oskari-frontend": "git+https://git@github.com/oskariorg/oskari-frontend.git#develop"
+    "oskari-frontend": "git+https://git@github.com/oskariorg/oskari-frontend.git#3.4.0"
   },
   "devDependencies": {
-    "eslint": "9.39.4"
+    "eslint": "9.39.5"
   },
   "engines": {
-    "node": ">=16.20.0",
-    "npm": ">=6.0.0"
+    "node": ">=22.13.0",
+    "npm": ">=10.8.1"
   },
   "scripts": {
     "test": "eslint --config ./node_modules/oskari-frontend/eslint.config.js bundles"
